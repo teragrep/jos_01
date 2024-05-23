@@ -43,10 +43,10 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs;
+package com.teragrep.jos_01.procfs;
 
-import src.main.java.procfs.status.GenericStatus;
-import src.main.java.procfs.status.ProcessStat;
+import com.teragrep.jos_01.procfs.status.GenericStatus;
+import com.teragrep.jos_01.procfs.status.ProcessStat;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs.fields.stat;
+package com.teragrep.jos_01.procfs.fields.stat;
 
 public enum ProcessStatFields {
     pid, // Process id

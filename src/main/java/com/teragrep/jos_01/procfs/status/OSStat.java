@@ -43,8 +43,52 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs.fields.stat;
+package com.teragrep.jos_01.procfs.status;
 
-public enum OSStatFields {
-    cpu, cpu0, cpu1, cpu2, cpu3, intr, ctxt, btime, processes, procs_running, procs_blocked, softirq
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import com.teragrep.jos_01.procfs.fields.stat.OSStatFields;
+
+public class OSStat implements Status {
+
+    private ArrayList<String> rows;
+    private final LocalDateTime timestamp;
+    private final Map<String, String> statistics;
+
+    public OSStat(ArrayList<String> rows) {
+        this.rows = rows;
+        statistics = new LinkedHashMap<String, String>();
+        for (int i = 0; i < rows.size(); i++) {
+            {
+                String[] fields = rows.get(i).split(OSStatFields.values()[i].name());
+                statistics.put(OSStatFields.values()[i].toString(), fields[1]);
+            }
+        }
+        timestamp = LocalDateTime.now();
+    }
+
+    public Map<String, String> statistics() {
+        return statistics;
+    }
+
+    public void printStatistics() {
+        for (Map.Entry<String, String> statistic : statistics.entrySet()) {
+            System.out.print(statistic.getKey() + ": ");
+            System.out.println(statistic.getValue());
+        }
+    }
+
+    public ArrayList<String> rows() {
+        return this.rows;
+    }
+
+    public LocalDateTime timestamp() {
+        return timestamp;
+    }
+
+    public void printTimestamp() {
+        System.out.println(timestamp);
+    }
 }

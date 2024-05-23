@@ -43,53 +43,36 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs.status;
+package com.teragrep.jos_01.procfs;
 
-import src.main.java.procfs.fields.stat.OSStatFields;
-
-import java.time.LocalDateTime;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-public class OSStat implements Status {
+public class ProcFile extends File {
 
-    private ArrayList<String> rows;
-    private final LocalDateTime timestamp;
-    private final Map<String, String> statistics;
+    public ProcFile(File procDirectory, String fileName) {
+        super(procDirectory, fileName);
+    }
 
-    public OSStat(ArrayList<String> rows) {
-        this.rows = rows;
-        statistics = new LinkedHashMap<String, String>();
-        for (int i = 0; i < rows.size(); i++) {
+    public ArrayList<String> readFile() {
+        ArrayList<String> rows = new ArrayList<String>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(this));
             {
-                String[] fields = rows.get(i).split(OSStatFields.values()[i].name());
-                statistics.put(OSStatFields.values()[i].toString(), fields[1]);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    rows.add(line);
+                }
             }
         }
-        timestamp = LocalDateTime.now();
-    }
-
-    public Map<String, String> statistics() {
-        return statistics;
-    }
-
-    public void printStatistics() {
-        for (Map.Entry<String, String> statistic : statistics.entrySet()) {
-            System.out.print(statistic.getKey() + ": ");
-            System.out.println(statistic.getValue());
+        catch (FileNotFoundException notFoundException) {
+            System.out.println("File \"" + this.getPath() + "\" not found!");
+            System.out.println("Reason: " + notFoundException.getMessage());
         }
-    }
-
-    public ArrayList<String> rows() {
-        return this.rows;
-    }
-
-    public LocalDateTime timestamp() {
-        return timestamp;
-    }
-
-    public void printTimestamp() {
-        System.out.println(timestamp);
+        catch (IOException ioException) {
+            System.out.println("Failed to read file \"" + this.getName() + "\" due to an I/O exception!");
+            System.out.println("Reason: " + ioException.getMessage());
+        }
+        return rows;
     }
 }

@@ -43,53 +43,8 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs.status;
+package com.teragrep.jos_01.procfs.fields.stat;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-// Handles any proc file without setting any special formatting
-public class GenericStatus implements Status {
-
-    private ArrayList<String> rows;
-    private Map<String, String> statistics;
-    private final LocalDateTime timestamp;
-
-    public GenericStatus(ArrayList<String> rows) {
-        this.rows = rows;
-        timestamp = LocalDateTime.now();
-        statistics = new LinkedHashMap<String, String>();
-    }
-
-    public void printStatistics() {
-        for (String row : rows) {
-            System.out.println(row);
-        }
-    }
-
-    public Map<String, String> statistics() {
-        int index = 0;
-        for (String row : rows) {
-            for (String field : row.split("\n")) {
-                statistics.put(Integer.toString(index), field);
-                index++;
-            }
-        }
-        return statistics;
-    }
-
-    public ArrayList<String> rows() {
-        return this.rows;
-    }
-
-    public LocalDateTime timestamp() {
-        return timestamp;
-    }
-
-    public void printTimestamp() {
-        System.out.println(timestamp);
-    }
-
+public enum OSStatFields {
+    cpu, cpu0, cpu1, cpu2, cpu3, intr, ctxt, btime, processes, procs_running, procs_blocked, softirq
 }

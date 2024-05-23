@@ -43,21 +43,43 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs.status;
+package com.teragrep.jos_01.procfs;
 
-import java.time.LocalDateTime;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
+import com.teragrep.jos_01.procfs.status.OSStat;
+import com.teragrep.jos_01.procfs.status.GenericStatus;
 
-public interface Status {
+public class OS {
 
-    void printStatistics();
+    private final File procDirectory;
 
-    void printTimestamp();
+    public OS() {
+        procDirectory = new File("/proc");
+    }
 
-    Map<String, String> statistics();
+    private ArrayList<String> readProcFile(String procFileName) {
+        ProcFile procFile = new ProcFile(procDirectory, procFileName);
+        ArrayList<String> rows = procFile.readFile();
+        return rows;
+    }
 
-    ArrayList<String> rows();
+    public OSStat stat() {
+        ArrayList<String> rows = readProcFile("stat");
+        return new OSStat(rows);
+    }
 
-    LocalDateTime timestamp();
+    // Estimates page size in kB. TODO: implement specific status object for memInfo and vmStat to make getting these fields prettier
+    float pageSize() {
+        String field = proc("meminfo").rows().get(21).split(":")[1].split("kB")[0].trim();
+        float mapped = Long.parseLong(field);
+        float nr_mapped = Long.parseLong(proc("vmstat").rows().get(35).split(" ")[1]);
+        float pageSize = mapped / nr_mapped;
+        return pageSize;
+    }
+
+    public GenericStatus proc(String procFileName) {
+        ArrayList<String> rows = readProcFile(procFileName);
+        return new GenericStatus(rows);
+    }
 }

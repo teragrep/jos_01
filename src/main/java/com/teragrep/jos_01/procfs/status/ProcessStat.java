@@ -43,14 +43,13 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs.status;
-
-import src.main.java.procfs.fields.stat.ProcessStatFields;
+package com.teragrep.jos_01.procfs.status;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import com.teragrep.jos_01.procfs.fields.stat.ProcessStatFields;
 
 public class ProcessStat implements Status {
 

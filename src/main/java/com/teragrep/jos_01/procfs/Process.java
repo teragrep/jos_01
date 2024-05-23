@@ -43,14 +43,12 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.main.java.procfs;
-
-import src.main.java.procfs.status.GenericStatus;
-import src.main.java.procfs.status.ProcessStat;
-import src.main.java.procfs.status.Status;
+package com.teragrep.jos_01.procfs;
 
 import java.io.File;
 import java.util.ArrayList;
+import com.teragrep.jos_01.procfs.status.ProcessStat;
+import com.teragrep.jos_01.procfs.status.GenericStatus;
 
 public class Process {
 
@@ -121,7 +119,7 @@ public class Process {
 
     // Prints RSS in kB TODO: Implement Statm specific Status object to get rssPages more easily
     public float residentSetSize() {
-        Status statm = proc("statm");
+        GenericStatus statm = proc("statm");
         String rssPages = statm.rows().get(0).split(" ")[1];
         int pageCount = Integer.parseInt(rssPages);
         float pageSize = new OS().pageSize();

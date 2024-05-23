@@ -43,36 +43,73 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package src.test.java.procfs;
+package com.teragrep.jos_01.procfs;
 
 import org.junit.Assert;
 import org.junit.Test;
-import src.main.java.procfs.Process;
-import src.main.java.procfs.Task;
 
 import java.util.ArrayList;
-
 import java.util.Map;
 
-public class TaskTest {
+public class ProcessTest {
 
     @Test
-    public void statTest() {
+    public void readFileTest() {
+        Process systemd = new Process(1);
+        Map<String, String> systemdStats = systemd.stat().statistics();
+        Assert.assertEquals("1", systemdStats.get("pid"));
+        Assert.assertEquals("(systemd)", systemdStats.get("comm"));
+        Assert.assertEquals(52, systemdStats.size());
+        for (Map.Entry<String, String> entry : systemdStats.entrySet()) {
+            Assert.assertNotNull(entry.getValue());
+            Assert.assertNotNull(entry.getKey());
+        }
+
+        Process kthreadd = new Process(2);
+        Map<String, String> kthreaddStats = kthreadd.stat().statistics();
+        Assert.assertEquals("2", kthreaddStats.get("pid"));
+        Assert.assertEquals("(kthreadd)", kthreaddStats.get("comm"));
+        Assert.assertEquals(52, kthreaddStats.size());
+        for (Map.Entry<String, String> entry : kthreaddStats.entrySet()) {
+            Assert.assertNotNull(entry.getValue());
+            Assert.assertNotNull(entry.getKey());
+        }
+    }
+
+    @Test
+    public void constructorTest() {
         Process process = new Process(1);
-        ArrayList<Task> tasks = process.tasks();
-        Map<String, String> statistics = tasks.get(0).stat().statistics();
-        Assert.assertEquals(52, statistics.size());
-        Assert.assertEquals("0", statistics.get("ppid"));
-        Assert.assertEquals("1", statistics.get("pid"));
+        Process processString = new Process("1");
+    }
+
+    @Test
+    public void noSuchProcessTest() {
+        Process process = new Process(-1);
+        Assert.assertFalse(process.isAlive());
+    }
+
+    @Test
+    public void procFileNamesTest() {
+        Process process = new Process(1);
+        ArrayList<String> fileNames = process.availableProcFiles();
+        Assert.assertEquals(243, fileNames.size());
+    }
+
+    @Test
+    public void correctNumberOfTasksTest() {
+        Process process = new Process(1);
+        String statTaskcount = process.stat().statistics().get("num_threads");
+        int taskCount = process.tasks().size();
+        Assert.assertEquals(statTaskcount, String.valueOf(taskCount));
     }
 
     @Test
     public void procTest() {
         Process process = new Process(1);
-        ArrayList<String> rows = process.tasks().get(0).proc("status").rows();
+        ArrayList<String> rows = process.proc("status").rows();
         Assert.assertEquals(59, rows.size());
 
-        rows = process.tasks().get(0).proc("comm").rows();
+        rows = process.proc("comm").rows();
         Assert.assertEquals(1, rows.size());
         Assert.assertEquals("systemd", rows.get(0));
     }
