@@ -53,8 +53,8 @@ import java.util.Map;
 // Handles any proc file without setting any special formatting
 public class GenericStatus implements Status {
 
-    private ArrayList<String> rows;
-    private Map<String, String> statistics;
+    private final ArrayList<String> rows;
+    private final Map<String, String> statistics;
     private final LocalDateTime timestamp;
 
     public GenericStatus(ArrayList<String> rows) {

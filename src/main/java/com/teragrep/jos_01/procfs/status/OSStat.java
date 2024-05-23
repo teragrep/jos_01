@@ -53,7 +53,7 @@ import com.teragrep.jos_01.procfs.fields.stat.OSStatFields;
 
 public class OSStat implements Status {
 
-    private ArrayList<String> rows;
+    private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
 
