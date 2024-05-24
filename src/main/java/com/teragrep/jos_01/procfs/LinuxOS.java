@@ -43,60 +43,45 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs.fields.stat;
+package com.teragrep.jos_01.procfs;
 
-public enum ProcessStatFields {
-    pid, // Process id
-    comm, // Filename of the executable
-    state, // Process state: R Running, S Sleeping, D Waiting in disk sleep, Z Zombie, T Stopped on a signal, t Tracing stop, W Paging, X Dead, x Dead, W Waking, P Parked, I Idle
-    ppid,
-    pgrp,
-    session,
-    tty_nr,
-    tpgid,
-    flags,
-    minflt,
-    cminflt,
-    majflt,
-    cmajflt,
-    utime,
-    stime,
-    cutime,
-    cstime,
-    priority,
-    nice,
-    num_threads,
-    itrealvalue,
-    starttime,
-    vsize,
-    rss,
-    rsslim,
-    startcode,
-    endcode,
-    encode,
-    startstack,
-    kstkesp,
-    kstkeip,
-    signal,
-    blocked,
-    sigignore,
-    sigcatch,
-    wchan,
-    nswap,
-    cnswap,
-    exit_signal,
-    processor,
-    rt_priority,
-    policy,
-    delayacct_blkio_ticks,
-    guest_time,
-    cguest_time,
-    start_data,
-    end_data,
-    start_brk,
-    arg_start,
-    arg_end,
-    env_start,
-    env_end,
-    exit_code,
+import java.io.File;
+import java.util.ArrayList;
+import com.teragrep.jos_01.procfs.status.OSStat;
+
+public class LinuxOS {
+
+    private final File procDirectory;
+
+    public LinuxOS() {
+        this("/proc");
+    }
+    public LinuxOS(String procDirectoryPath){
+        procDirectory = new File(procDirectoryPath);
+    }
+
+    private ArrayList<String> readProcFile(String procFileName) {
+        RowFile procFile = new RowFile(procDirectory, procFileName);
+        ArrayList<String> rows = procFile.readFile();
+        return rows;
+    }
+
+    public OSStat stat() {
+        ArrayList<String> rows = readProcFile("stat");
+        return new OSStat(rows);
+    }
+
+    // Estimates page size in kB. TODO: implement specific status object for memInfo and vmStat to make getting these fields prettier
+    float pageSize() {
+        String field = proc("meminfo").get(21).split(":")[1].split("kB")[0].trim();
+        float mapped = Long.parseLong(field);
+        float nr_mapped = Long.parseLong(proc("vmstat").get(35).split(" ")[1]);
+        float pageSize = mapped / nr_mapped;
+        return pageSize;
+    }
+
+    public ArrayList<String> proc(String procFileName) {
+        ArrayList<String> rows = readProcFile(procFileName);
+        return rows;
+    }
 }

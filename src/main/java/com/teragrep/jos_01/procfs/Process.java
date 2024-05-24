@@ -46,9 +46,9 @@
 package com.teragrep.jos_01.procfs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import com.teragrep.jos_01.procfs.status.ProcessStat;
-import com.teragrep.jos_01.procfs.status.GenericStatus;
 
 public class Process {
 
@@ -60,26 +60,28 @@ public class Process {
     }
 
     public Process(long processId) {
+        this(processId,"/proc");
+    }
+    public Process(long processId, String procDirectoryPath){
         this.processId = processId;
-        this.procDirectory = new File("/proc", Long.toString(processId));
+        this.procDirectory = new File(procDirectoryPath,Long.toString(processId));
     }
 
     // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
-    private GenericStatus reportStatistics(String procFileName) {
+    private ArrayList<String> reportStatistics(String procFileName) {
         ArrayList<String> rows = readProcFile(procFileName);
-        GenericStatus status = new GenericStatus(rows);
-        return status;
+        return rows;
     }
 
     private ArrayList<String> readProcFile(String procFileName) {
-        ProcFile procFile = new ProcFile(procDirectory, procFileName);
+        RowFile procFile = new RowFile(procDirectory, procFileName);
         ArrayList<String> rows = procFile.readFile();
         return rows;
     }
 
-    public GenericStatus proc(String procFileName) {
+    public ArrayList<String> proc(String procFileName) {
         ArrayList<String> rows = readProcFile(procFileName);
-        return new GenericStatus(rows);
+        return rows;
     }
 
     public ProcessStat stat() {
@@ -97,13 +99,13 @@ public class Process {
             nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
         }
         else {
-            try {
-                for (File child : file.listFiles()) {
-                    procFileNames(nameList, child);
-                }
+            File[] subdirectories = file.listFiles();
+            if(subdirectories == null){
+                System.out.println("Failed to get all file names! Either no permission to open file at "+file.getPath()+" or it is not a directory!");
+                return nameList;
             }
-            catch (NullPointerException npe) {
-                System.out.println("I/O Exception while attempting to access children of " + file.getPath());
+            for (File child : file.listFiles()) {
+                procFileNames(nameList, child);
             }
         }
         return nameList;
@@ -119,10 +121,10 @@ public class Process {
 
     // Prints RSS in kB TODO: Implement Statm specific Status object to get rssPages more easily
     public float residentSetSize() {
-        GenericStatus statm = proc("statm");
-        String rssPages = statm.rows().get(0).split(" ")[1];
+        ArrayList<String> statm = proc("statm");
+        String rssPages = statm.get(0).split(" ")[1];
         int pageCount = Integer.parseInt(rssPages);
-        float pageSize = new OS().pageSize();
+        float pageSize = new LinuxOS().pageSize();
         return pageCount * pageSize;
     }
 

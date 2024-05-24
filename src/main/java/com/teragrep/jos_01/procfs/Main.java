@@ -51,7 +51,7 @@ import com.teragrep.jos_01.procfs.status.ProcessStat;
 public class Main {
 
     public static void main(String[] args) {
-        Process process = new Process(1);
+        Process process = new Process(2782);
 
         // Find out if a process is alive with a simple call to isAlive().
         System.out.println("Find out if a process is alive with a simple call to isAlive().");
@@ -59,8 +59,8 @@ public class Main {
 
         // Get either a List of rows or an indexed Map of any proc file within the process.
         System.out.println("\nGet either a List of rows or an indexed Map of any proc file within the process.");
-        System.out.println(process.proc("status").rows());
-        System.out.println(process.proc("net/netstat").statistics());
+        System.out.println(process.proc("status"));
+        System.out.println(process.proc("net/netstat"));
 
         // Some files are protected, such files will throw an error when accessed.
         System.out.println("\nSome files are protected, such files will throw an error when accessed");
@@ -72,6 +72,7 @@ public class Main {
                         "\nProcess methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call."
                 );
         ProcessStat pstat = process.stat();
+        System.out.println("Final result = "+pstat.statistics());
 
         // Status object contains a timestamp and a Map containing keys to find wanted field more easily. Specific proc files are also formatted properly
         System.out
@@ -89,7 +90,7 @@ public class Main {
         // Each Thread has the ability to report on its status just like a Process can:
         System.out.println("\nEach Thread has the ability to report on its status just like a Process can:");
         System.out.println(tasks.get(0).stat().statistics());
-        System.out.println(tasks.get(0).proc("statm").statistics());
+        System.out.println(tasks.get(0).proc("statm"));
 
         // High level methods can be used to quickly calculate specific performance statistics:
         System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
@@ -97,13 +98,11 @@ public class Main {
 
         // OS statistics are available via the OS class
         System.out.println("\nOS statistics are available via the OS class using similar methods");
-        OS os = new OS();
+        LinuxOS os = new LinuxOS();
         System.out.println(os.stat().statistics());
 
         // OS Specific files can be accessed via the proc() method
         System.out.println("\nOS Specific files can be accessed via the proc() method");
-        System.out.println(os.proc("cpuinfo").rows());
-
-        os.pageSize();
+        System.out.println(os.proc("cpuinfo"));
     }
 }

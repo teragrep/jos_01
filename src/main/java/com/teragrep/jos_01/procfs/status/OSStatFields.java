@@ -43,36 +43,8 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs;
+package com.teragrep.jos_01.procfs.status;
 
-import java.io.*;
-import java.util.ArrayList;
-
-public class ProcFile extends File {
-
-    public ProcFile(File procDirectory, String fileName) {
-        super(procDirectory, fileName);
-    }
-
-    public ArrayList<String> readFile() {
-        ArrayList<String> rows = new ArrayList<String>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(this));
-            {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    rows.add(line);
-                }
-            }
-        }
-        catch (FileNotFoundException notFoundException) {
-            System.out.println("File \"" + this.getPath() + "\" not found!");
-            System.out.println("Reason: " + notFoundException.getMessage());
-        }
-        catch (IOException ioException) {
-            System.out.println("Failed to read file \"" + this.getName() + "\" due to an I/O exception!");
-            System.out.println("Reason: " + ioException.getMessage());
-        }
-        return rows;
-    }
+public enum OSStatFields {
+    cpu, cpu0, cpu1, cpu2, cpu3, intr, ctxt, btime, processes, procs_running, procs_blocked, softirq
 }

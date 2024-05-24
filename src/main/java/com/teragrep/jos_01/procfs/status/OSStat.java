@@ -49,21 +49,23 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import com.teragrep.jos_01.procfs.fields.stat.OSStatFields;
 
 public class OSStat implements Status {
 
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
+    private enum statFields {
+        cpu, cpu0, cpu1, cpu2, cpu3, intr, ctxt, btime, processes, procs_running, procs_blocked, softirq
+    };
 
     public OSStat(ArrayList<String> rows) {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
         for (int i = 0; i < rows.size(); i++) {
             {
-                String[] fields = rows.get(i).split(OSStatFields.values()[i].name());
-                statistics.put(OSStatFields.values()[i].toString(), fields[1]);
+                String[] fields = rows.get(i).split(statFields.values()[i].name());
+                statistics.put(statFields.values()[i].toString(), fields[1]);
             }
         }
         timestamp = LocalDateTime.now();

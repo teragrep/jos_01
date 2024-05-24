@@ -45,7 +45,6 @@
  */
 package com.teragrep.jos_01.procfs;
 
-import com.teragrep.jos_01.procfs.status.GenericStatus;
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 
 import java.io.File;
@@ -56,7 +55,6 @@ public class Task {
     private final long taskId;
     private final long processId;
     private final File procDirectory;
-    private ArrayList<GenericStatus> processStatuses;
 
     public Task(String taskId, Process parentProcess) {
         this(Long.parseLong(taskId), parentProcess);
@@ -66,26 +64,23 @@ public class Task {
         this.taskId = taskId;
         this.processId = parentProcess.pid();
         this.procDirectory = new File("/proc/" + processId + "/task/", Long.toString(processId));
-        this.processStatuses = new ArrayList<GenericStatus>();
     }
 
     // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
-    private GenericStatus reportStatistics(String procFileName) {
+    private ArrayList<String> reportStatistics(String procFileName) {
         ArrayList<String> rows = readProcFile(procFileName);
-        GenericStatus status = new GenericStatus(rows);
-        processStatuses.add(status);
-        return status;
+        return rows;
     }
 
     private ArrayList<String> readProcFile(String procFileName) {
-        ProcFile procFile = new ProcFile(procDirectory, procFileName);
+        RowFile procFile = new RowFile(procDirectory, procFileName);
         ArrayList<String> rows = procFile.readFile();
         return rows;
     }
 
-    public GenericStatus proc(String procFileName) {
+    public ArrayList<String> proc(String procFileName) {
         ArrayList<String> rows = readProcFile(procFileName);
-        return new GenericStatus(rows);
+        return rows;
     }
 
     public ProcessStat stat() {
@@ -115,11 +110,11 @@ public class Task {
         return nameList;
     }
 
-    public Long tid() {
+    public long tid() {
         return taskId;
     }
 
-    public Long pid() {
+    public long pid() {
         return processId;
     }
 

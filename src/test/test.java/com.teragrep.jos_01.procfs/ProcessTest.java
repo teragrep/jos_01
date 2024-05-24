@@ -106,10 +106,10 @@ public class ProcessTest {
     @Test
     public void procTest() {
         Process process = new Process(1);
-        ArrayList<String> rows = process.proc("status").rows();
+        ArrayList<String> rows = process.proc("status");
         Assert.assertEquals(59, rows.size());
 
-        rows = process.proc("comm").rows();
+        rows = process.proc("comm");
         Assert.assertEquals(1, rows.size());
         Assert.assertEquals("systemd", rows.get(0));
     }

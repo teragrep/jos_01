@@ -43,53 +43,36 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs.status;
+package com.teragrep.jos_01.procfs;
 
-import java.time.LocalDateTime;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-// Handles any proc file without setting any special formatting
-public class GenericStatus implements Status {
+public class RowFile extends File {
 
-    private final ArrayList<String> rows;
-    private final Map<String, String> statistics;
-    private final LocalDateTime timestamp;
-
-    public GenericStatus(ArrayList<String> rows) {
-        this.rows = rows;
-        timestamp = LocalDateTime.now();
-        statistics = new LinkedHashMap<String, String>();
+    public RowFile(File procDirectory, String fileName) {
+        super(procDirectory, fileName);
     }
 
-    public void printStatistics() {
-        for (String row : rows) {
-            System.out.println(row);
-        }
-    }
-
-    public Map<String, String> statistics() {
-        int index = 0;
-        for (String row : rows) {
-            for (String field : row.split("\n")) {
-                statistics.put(Integer.toString(index), field);
-                index++;
+    public ArrayList<String> readFile() {
+        ArrayList<String> rows = new ArrayList<String>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(this));
+            {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    rows.add(line);
+                }
             }
         }
-        return statistics;
+        catch (FileNotFoundException notFoundException) {
+            System.out.println("File \"" + this.getPath() + "\" not found!");
+            System.out.println("Reason: " + notFoundException.getMessage());
+        }
+        catch (IOException ioException) {
+            System.out.println("Failed to read file \"" + this.getName() + "\" due to an I/O exception!");
+            System.out.println("Reason: " + ioException.getMessage());
+        }
+        return rows;
     }
-
-    public ArrayList<String> rows() {
-        return this.rows;
-    }
-
-    public LocalDateTime timestamp() {
-        return timestamp;
-    }
-
-    public void printTimestamp() {
-        System.out.println(timestamp);
-    }
-
 }
