@@ -47,12 +47,12 @@ package com.teragrep.jos_01.procfs;
 
 import java.util.ArrayList;
 import com.teragrep.jos_01.procfs.status.ProcessStat;
+import com.teragrep.jos_01.procfs.status.Statm;
 
 public class Main {
 
     public static void main(String[] args) {
-        Process process = new Process(2782);
-
+        Process process = new Process(1);
         // Find out if a process is alive with a simple call to isAlive().
         System.out.println("Find out if a process is alive with a simple call to isAlive().");
         System.out.println(process.isAlive());
@@ -72,7 +72,9 @@ public class Main {
                         "\nProcess methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call."
                 );
         ProcessStat pstat = process.stat();
-        System.out.println("Final result = "+pstat.statistics());
+        System.out.println("Process stat = "+pstat.statistics());
+        Statm statm = process.statm();
+        System.out.println("Process statm = "+statm.statistics());
 
         // Status object contains a timestamp and a Map containing keys to find wanted field more easily. Specific proc files are also formatted properly
         System.out
