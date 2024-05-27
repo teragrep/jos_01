@@ -102,6 +102,8 @@ public class Main {
         System.out.println("\nOS statistics are available via the OS class using similar methods");
         LinuxOS os = new LinuxOS();
         System.out.println(os.stat().statistics());
+        System.out.println(os.vmstat().statistics());
+        System.out.println(os.meminfo().statistics());
 
         // OS Specific files can be accessed via the proc() method
         System.out.println("\nOS Specific files can be accessed via the proc() method");

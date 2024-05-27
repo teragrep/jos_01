@@ -43,59 +43,60 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs;
+package com.teragrep.jos_01.procfs.status;
 
-import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.teragrep.jos_01.procfs.status.Meminfo;
-import com.teragrep.jos_01.procfs.status.OSStat;
-import com.teragrep.jos_01.procfs.status.Vmstat;
 
-public class LinuxOS {
+// Provides information about memory usage, measured in pages.
+// Some of these values are inaccurate because of a kernel-internal scalability optimization.
+// If accurate values are required, use smaps or smaps_rollup instead, which are much slower but provide accurate, detailed information
+public class Meminfo implements Status {
 
-    private final File procDirectory;
+    private final ArrayList<String> rows;
+    private final LocalDateTime timestamp;
+    private final Map<String, String> statistics;
 
-    public LinuxOS() {
-        this("/proc");
-    }
-    public LinuxOS(String procDirectoryPath){
-        procDirectory = new File(procDirectoryPath);
-    }
-
-    private ArrayList<String> readProcFile(String procFileName) {
-        RowFile procFile = new RowFile(procDirectory, procFileName);
-        ArrayList<String> rows = procFile.readFile();
-        return rows;
-    }
-
-    public OSStat stat() {
-        ArrayList<String> rows = readProcFile("stat");
-        return new OSStat(rows);
-    }
-
-    public Vmstat vmstat(){
-        ArrayList<String> rows = readProcFile("vmstat");
-        return new Vmstat(rows);
+    public Meminfo(ArrayList<String> rows) {
+        this.rows = rows;
+        statistics = new LinkedHashMap<String, String>();
+        for (String row : rows) {
+            Pattern pattern = Pattern.compile("(\\w*): *(\\d*)");
+            Matcher matcher = pattern.matcher(row);
+            if(matcher.find()){
+                for(int i = 0; i < matcher.groupCount();i++){
+                    statistics.put(matcher.group(1),matcher.group(2));
+                }
+            }
+        }
+        timestamp = LocalDateTime.now();
     }
 
-    public Meminfo meminfo(){
-        ArrayList<String> rows = readProcFile("meminfo");
-        return new Meminfo(rows);
+    public Map<String, String> statistics() {
+        return statistics;
     }
 
-    // Estimates page size in kB.
-    float pageSize() {
-        Vmstat vmstat = vmstat();
-        Meminfo meminfo = meminfo();
-        float mapped = Long.parseLong(meminfo.statistics().get("Mapped"));
-        float nr_mapped = Long.parseLong(vmstat.statistics().get("nr_mapped"));
-        float pageSize = mapped / nr_mapped;
-        return pageSize;
+    public void printStatistics() {
+        for (Map.Entry<String, String> statistic : statistics.entrySet()) {
+            System.out.print(statistic.getKey() + ": ");
+            System.out.println(statistic.getValue());
+        }
     }
 
-    public ArrayList<String> proc(String procFileName) {
-        ArrayList<String> rows = readProcFile(procFileName);
-        return rows;
+    public ArrayList<String> rows() {
+        return this.rows;
+    }
+
+    public LocalDateTime timestamp() {
+        return timestamp;
+    }
+
+    public void printTimestamp() {
+        System.out.println(timestamp);
     }
 }
