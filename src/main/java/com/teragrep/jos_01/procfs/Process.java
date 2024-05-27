@@ -124,10 +124,10 @@ public class Process {
         return tasks;
     }
 
-    // Prints RSS in kB TODO: Implement Statm specific Status object to get rssPages more easily
+    // Prints RSS in kB
     public float residentSetSize() {
-        ArrayList<String> statm = proc("statm");
-        String rssPages = statm.get(0).split(" ")[1];
+        Statm statm = statm();
+        String rssPages = statm.statistics().get("resident");
         int pageCount = Integer.parseInt(rssPages);
         float pageSize = new LinuxOS().pageSize();
         return pageCount * pageSize;
