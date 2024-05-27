@@ -97,6 +97,8 @@ public class Main {
         // High level methods can be used to quickly calculate specific performance statistics:
         System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
         System.out.println(process.residentSetSize());
+        System.out.println(process.cpuTime());
+        System.out.println(process.cpuUsage());
 
         // OS statistics are available via the OS class
         System.out.println("\nOS statistics are available via the OS class using similar methods");

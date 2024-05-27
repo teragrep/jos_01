@@ -93,6 +93,27 @@ public class LinuxOS {
         float pageSize = mapped / nr_mapped;
         return pageSize;
     }
+    // Returns total RAM in kB
+    public long totalRAM(){
+        Meminfo meminfo = meminfo();
+        return Long.parseLong(meminfo.statistics().get("MemTotal"));
+    }
+
+    public int cpuCount(){
+        int cpuCount = 0;
+        ArrayList<String> cpuinfo = proc("cpuinfo");
+        for (String row : cpuinfo){
+            if(row.startsWith("processor")){
+                cpuCount++;
+            }
+        }
+        return cpuCount;
+    }
+
+    public int cpuTicksPerSecond(){
+        return 10;
+    }
+
 
     public ArrayList<String> proc(String procFileName) {
         ArrayList<String> rows = readProcFile(procFileName);

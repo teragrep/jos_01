@@ -132,6 +132,33 @@ public class Process {
         float pageSize = new LinuxOS().pageSize();
         return pageCount * pageSize;
     }
+    public float cpuUsage(){
+        LinuxOS os = new LinuxOS();
+        int cpuCount = os.cpuCount();
+        int cpuTicksPerSecond = os.cpuTicksPerSecond();
+
+        float OSUpTime =  Float.parseFloat(os.proc("uptime").get(0).split(" ")[0]);
+        ProcessStat status = stat();
+
+        float utime = Float.parseFloat(status.statistics().get("utime"))/cpuTicksPerSecond;
+        float stime = Float.parseFloat(status.statistics().get("stime"))/cpuTicksPerSecond;
+        float starttime = Float.parseFloat(status.statistics().get("starttime"))/cpuTicksPerSecond;
+        float cpuTime = utime+stime;
+
+        float cpuUsage = cpuTime/(OSUpTime-starttime);
+        return cpuUsage;
+    }
+
+    public float cpuTime(){
+        LinuxOS os = new LinuxOS();
+        ProcessStat status = stat();
+        int cpuTicksPerSecond = os.cpuTicksPerSecond();
+        float utime = Float.parseFloat(status.statistics().get("utime"))/cpuTicksPerSecond;
+        float stime = Float.parseFloat(status.statistics().get("stime"))/cpuTicksPerSecond;
+
+        float cpuTime =utime+stime;
+        return cpuTime;
+    }
 
     public long pid() {
         return processId;
