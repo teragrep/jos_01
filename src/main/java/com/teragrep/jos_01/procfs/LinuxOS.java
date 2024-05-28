@@ -46,6 +46,7 @@
 package com.teragrep.jos_01.procfs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.teragrep.jos_01.procfs.status.Meminfo;
@@ -110,8 +111,13 @@ public class LinuxOS {
         return cpuCount;
     }
 
-    public int cpuTicksPerSecond(){
-        return 10;
+    public long cpuTicksPerSecond() throws IOException {
+        Sysconf sysconf = new Sysconf();
+        long clkTck = sysconf.main();
+        if(clkTck == -1){
+            throw new IOException("");
+        }
+        return clkTck;
     }
 
 

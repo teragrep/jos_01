@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
@@ -96,9 +97,25 @@ public class Main {
 
         // High level methods can be used to quickly calculate specific performance statistics:
         System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
-        System.out.println(process.residentSetSize());
-        System.out.println(process.cpuTime());
-        System.out.println(process.cpuUsage());
+        System.out.println("RSS: "+process.residentSetSize());
+        try{
+            System.out.println("CpuTime: "+process.cpuTime());
+            System.out.println("Cpu%: "+process.cpuUsage());
+        }catch (IOException e){
+            System.err.println("Could not calculate Cpu statistics:\n"+e);
+        }
+
+        Sysconf sysconf = new Sysconf();
+        long tickrate;
+        try{
+            tickrate = sysconf.main();
+        }
+        catch (IOException e){
+            System.err.println(e);
+            System.out.println("Failed to get system clock tick rate! Defaulting to 100");
+            tickrate = 100;
+        }
+        System.out.println("System tickrate: "+tickrate);
 
         // OS statistics are available via the OS class
         System.out.println("\nOS statistics are available via the OS class using similar methods");

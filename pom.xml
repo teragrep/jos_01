@@ -46,6 +46,11 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>5.5.0</version>
+    </dependency>
   </dependencies>
   <build>
     <directory>${project.basedir}/target</directory>
@@ -99,9 +104,9 @@
               <keepBlankLines>false</keepBlankLines>
               <nrOfIndentSpace>2</nrOfIndentSpace>
               <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
-              <sortProperties>true</sortProperties>
-              <sortModules>true</sortModules>
-              <sortExecutions>true</sortExecutions>
+              <sortProperties>false</sortProperties>
+              <sortModules>false</sortModules>
+              <sortExecutions>false</sortExecutions>
             </sortPom>
           </pom>
           <formats>
@@ -146,6 +151,108 @@
             <phase>prepare-package</phase>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-sources</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <executable>cp</executable>
+              <arguments>
+                <argument>-a</argument>
+                <argument>${project.build.directory}/../src/main/c/.</argument>
+                <argument>.</argument>
+              </arguments>
+              <workingDirectory>${project.build.directory}/${project.artifactId}/src/main/c</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>autoreconf</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <executable>autoreconf</executable>
+              <arguments>
+                <argument>-fvi</argument>
+              </arguments>
+              <workingDirectory>${project.build.directory}/${project.artifactId}/src/main/c</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>configure</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <executable>./configure</executable>
+              <arguments>
+                <argument>--prefix=/opt/Fail-Safe/${project.artifactId}</argument>
+              </arguments>
+              <workingDirectory>${project.build.directory}/${project.artifactId}/src/main/c</workingDirectory>
+              <environmentVariables>
+                <LDFLAGS>-pie -Wl,-z,relro -Wl,-z,now</LDFLAGS>
+                <LD_LIBRARY_PATH></LD_LIBRARY_PATH>
+                <LIBS>-ldl -lrt</LIBS>
+                <CFLAGS>-ggdb -fpie -fPIC -std=c99 -I/usr/include/sysconf -DHAVE_ATOMIC_BUILTINS64 -D_DEFAULT_SOURCE</CFLAGS>
+              </environmentVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <executable>make</executable>
+              <arguments>
+                <argument>-j1</argument>
+              </arguments>
+              <workingDirectory>${project.build.directory}/${project.artifactId}/src/main/c</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-install</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <executable>make</executable>
+              <arguments>
+                <argument>-j1</argument>
+                <argument>install</argument>
+                <argument>DESTDIR=${project.build.directory}/classes/lib</argument>
+              </arguments>
+              <workingDirectory>${project.build.directory}/${project.artifactId}/src/main/c</workingDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <!-- <classpathPrefix>lib</classpathPrefix> -->
+              <!-- <mainClass>test.org.Cliente</mainClass> -->
+            </manifest>
+            <manifestEntries>
+              <Class-Path>lib/</Class-Path>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>

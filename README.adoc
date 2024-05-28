@@ -28,7 +28,14 @@ See the official documentation on https://docs.teragrep.com[docs.teragrep.com].
 
 == How to [compile/use/implement]
 
-TBD
+Run "mvn clean install" successfully before use.
+Maven build includes automake scripts to compile the code in "sysconf.c", which is used in the program during runtime via JNA.
+Requirements for compiling the C code:
+- automake
+- autoreconf
+- gcc
+
+
 // add instructions how people can start to use your project
 
 == Contributing
