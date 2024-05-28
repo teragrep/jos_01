@@ -55,6 +55,7 @@ public class OSStat implements Status {
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
+
     private enum statFields {
         cpu, cpu0, cpu1, cpu2, cpu3, intr, ctxt, btime, processes, procs_running, procs_blocked, softirq
     };

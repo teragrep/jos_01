@@ -60,7 +60,8 @@ public class LinuxOS {
     public LinuxOS() {
         this("/proc");
     }
-    public LinuxOS(String procDirectoryPath){
+
+    public LinuxOS(String procDirectoryPath) {
         procDirectory = new File(procDirectoryPath);
     }
 
@@ -75,12 +76,12 @@ public class LinuxOS {
         return new OSStat(rows);
     }
 
-    public Vmstat vmstat(){
+    public Vmstat vmstat() {
         ArrayList<String> rows = readProcFile("vmstat");
         return new Vmstat(rows);
     }
 
-    public Meminfo meminfo(){
+    public Meminfo meminfo() {
         ArrayList<String> rows = readProcFile("meminfo");
         return new Meminfo(rows);
     }
@@ -94,17 +95,18 @@ public class LinuxOS {
         float pageSize = mapped / nr_mapped;
         return pageSize;
     }
+
     // Returns total RAM in kB
-    public long totalRAM(){
+    public long totalRAM() {
         Meminfo meminfo = meminfo();
         return Long.parseLong(meminfo.statistics().get("MemTotal"));
     }
 
-    public int cpuCount(){
+    public int cpuCount() {
         int cpuCount = 0;
         ArrayList<String> cpuinfo = proc("cpuinfo");
-        for (String row : cpuinfo){
-            if(row.startsWith("processor")){
+        for (String row : cpuinfo) {
+            if (row.startsWith("processor")) {
                 cpuCount++;
             }
         }
@@ -114,12 +116,11 @@ public class LinuxOS {
     public long cpuTicksPerSecond() throws IOException {
         Sysconf sysconf = new Sysconf();
         long clkTck = sysconf.main();
-        if(clkTck == -1){
+        if (clkTck == -1) {
             throw new IOException("");
         }
         return clkTck;
     }
-
 
     public ArrayList<String> proc(String procFileName) {
         ArrayList<String> rows = readProcFile(procFileName);

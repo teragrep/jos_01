@@ -73,9 +73,9 @@ public class Main {
                         "\nProcess methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call."
                 );
         ProcessStat pstat = process.stat();
-        System.out.println("Process stat = "+pstat.statistics());
+        System.out.println("Process stat = " + pstat.statistics());
         Statm statm = process.statm();
-        System.out.println("Process statm = "+statm.statistics());
+        System.out.println("Process statm = " + statm.statistics());
 
         // Status object contains a timestamp and a Map containing keys to find wanted field more easily. Specific proc files are also formatted properly
         System.out
@@ -97,25 +97,26 @@ public class Main {
 
         // High level methods can be used to quickly calculate specific performance statistics:
         System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
-        System.out.println("RSS: "+process.residentSetSize());
-        try{
-            System.out.println("CpuTime: "+process.cpuTime());
-            System.out.println("Cpu%: "+process.cpuUsage());
-        }catch (IOException e){
-            System.err.println("Could not calculate Cpu statistics:\n"+e);
+        System.out.println("RSS: " + process.residentSetSize());
+        try {
+            System.out.println("CpuTime: " + process.cpuTime());
+            System.out.println("Cpu%: " + process.cpuUsage());
+        }
+        catch (IOException e) {
+            System.err.println("Could not calculate Cpu statistics:\n" + e);
         }
 
         Sysconf sysconf = new Sysconf();
         long tickrate;
-        try{
+        try {
             tickrate = sysconf.main();
         }
-        catch (IOException e){
+        catch (IOException e) {
             System.err.println(e);
             System.out.println("Failed to get system clock tick rate! Defaulting to 100");
             tickrate = 100;
         }
-        System.out.println("System tickrate: "+tickrate);
+        System.out.println("System tickrate: " + tickrate);
 
         // OS statistics are available via the OS class
         System.out.println("\nOS statistics are available via the OS class using similar methods");

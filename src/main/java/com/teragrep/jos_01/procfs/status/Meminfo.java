@@ -52,7 +52,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 // Provides information about memory usage, measured in pages.
 // Some of these values are inaccurate because of a kernel-internal scalability optimization.
 // If accurate values are required, use smaps or smaps_rollup instead, which are much slower but provide accurate, detailed information
@@ -68,9 +67,9 @@ public class Meminfo implements Status {
         for (String row : rows) {
             Pattern pattern = Pattern.compile("(\\w*): *(\\d*)");
             Matcher matcher = pattern.matcher(row);
-            if(matcher.find()){
-                for(int i = 0; i < matcher.groupCount();i++){
-                    statistics.put(matcher.group(1),matcher.group(2));
+            if (matcher.find()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    statistics.put(matcher.group(1), matcher.group(2));
                 }
             }
         }

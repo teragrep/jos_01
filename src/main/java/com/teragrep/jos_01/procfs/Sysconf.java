@@ -53,8 +53,10 @@ import java.io.IOException;
 public class Sysconf {
 
     public interface LibSysconf extends Library {
+
         LibSysconf INSTANCE = (LibSysconf) Native
                 .load("/lib/opt/Fail-Safe/jos_01/lib/sysconf/sysconf.so", LibSysconf.class);
+
         public long main();
     }
 
@@ -62,7 +64,7 @@ public class Sysconf {
     // If an error occurs, this funcion returns -1
     public long main() throws IOException {
         long clk_tck = LibSysconf.INSTANCE.main();
-        if(clk_tck == -1){
+        if (clk_tck == -1) {
             throw new IOException("Could not get system clock tick rate! sysconf(_SC_CLK_TCK) encountered an error!");
         }
         return clk_tck;

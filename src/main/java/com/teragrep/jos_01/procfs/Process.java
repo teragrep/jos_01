@@ -61,11 +61,12 @@ public class Process {
     }
 
     public Process(long processId) {
-        this(processId,"/proc");
+        this(processId, "/proc");
     }
-    public Process(long processId, String procDirectoryPath){
+
+    public Process(long processId, String procDirectoryPath) {
         this.processId = processId;
-        this.procDirectory = new File(procDirectoryPath,Long.toString(processId));
+        this.procDirectory = new File(procDirectoryPath, Long.toString(processId));
     }
 
     // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
@@ -90,7 +91,7 @@ public class Process {
         return new ProcessStat(rows);
     }
 
-    public Statm statm(){
+    public Statm statm() {
         ArrayList<String> rows = readProcFile("statm");
         return new Statm(rows);
     }
@@ -106,8 +107,12 @@ public class Process {
         }
         else {
             File[] subdirectories = file.listFiles();
-            if(subdirectories == null){
-                System.out.println("Failed to get all file names! Either no permission to open file at "+file.getPath()+" or it is not a directory!");
+            if (subdirectories == null) {
+                System.out
+                        .println(
+                                "Failed to get all file names! Either no permission to open file at " + file.getPath()
+                                        + " or it is not a directory!"
+                        );
                 return nameList;
             }
             for (File child : file.listFiles()) {
@@ -133,20 +138,21 @@ public class Process {
         float pageSize = new LinuxOS().pageSize();
         return pageCount * pageSize;
     }
+
     public float cpuUsage() throws IOException {
         LinuxOS os = new LinuxOS();
         int cpuCount = os.cpuCount();
         long cpuTicksPerSecond = os.cpuTicksPerSecond();
 
-        float OSUpTime =  Float.parseFloat(os.proc("uptime").get(0).split(" ")[0]);
+        float OSUpTime = Float.parseFloat(os.proc("uptime").get(0).split(" ")[0]);
         ProcessStat status = stat();
 
-        float utime = Float.parseFloat(status.statistics().get("utime"))/cpuTicksPerSecond;
-        float stime = Float.parseFloat(status.statistics().get("stime"))/cpuTicksPerSecond;
-        float starttime = Float.parseFloat(status.statistics().get("starttime"))/cpuTicksPerSecond;
-        float cpuTime = utime+stime;
+        float utime = Float.parseFloat(status.statistics().get("utime")) / cpuTicksPerSecond;
+        float stime = Float.parseFloat(status.statistics().get("stime")) / cpuTicksPerSecond;
+        float starttime = Float.parseFloat(status.statistics().get("starttime")) / cpuTicksPerSecond;
+        float cpuTime = utime + stime;
 
-        float cpuUsage = cpuTime/(OSUpTime-starttime);
+        float cpuUsage = cpuTime / (OSUpTime - starttime);
         return cpuUsage;
     }
 
@@ -154,10 +160,10 @@ public class Process {
         LinuxOS os = new LinuxOS();
         ProcessStat status = stat();
         long cpuTicksPerSecond = os.cpuTicksPerSecond();
-        float utime = Float.parseFloat(status.statistics().get("utime"))/cpuTicksPerSecond;
-        float stime = Float.parseFloat(status.statistics().get("stime"))/cpuTicksPerSecond;
+        float utime = Float.parseFloat(status.statistics().get("utime")) / cpuTicksPerSecond;
+        float stime = Float.parseFloat(status.statistics().get("stime")) / cpuTicksPerSecond;
 
-        float cpuTime =utime+stime;
+        float cpuTime = utime + stime;
         return cpuTime;
     }
 
