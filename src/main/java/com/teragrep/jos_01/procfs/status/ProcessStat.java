@@ -57,16 +57,75 @@ public class ProcessStat implements Status {
     private ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
-    private enum fields {pid, comm, state, ppid, pgrp, session, tty_nr, tpgid, flags, minflt, cminflt, majflt, cmajflt, utime, stime, cutime, cstime, priority, nice, num_threads, itrealvalue, starttime, vsize, rss, rsslim, startcode, endcode, startstack,kstkesp,kstkeip,signal,blocked,sigignore,sigcatch,wchan,nswap,cnswap,exit_signal,processor,rt_priority,policy,delayacct_blkio_ticks,guest_time,cguest_time,start_data,end_data,start_brk,arg_start,arg_end,env_start,env_end,exit_code,};
+
+    private enum fields {
+        pid,
+        comm,
+        state,
+        ppid,
+        pgrp,
+        session,
+        tty_nr,
+        tpgid,
+        flags,
+        minflt,
+        cminflt,
+        majflt,
+        cmajflt,
+        utime,
+        stime,
+        cutime,
+        cstime,
+        priority,
+        nice,
+        num_threads,
+        itrealvalue,
+        starttime,
+        vsize,
+        rss,
+        rsslim,
+        startcode,
+        endcode,
+        startstack,
+        kstkesp,
+        kstkeip,
+        signal,
+        blocked,
+        sigignore,
+        sigcatch,
+        wchan,
+        nswap,
+        cnswap,
+        exit_signal,
+        processor,
+        rt_priority,
+        policy,
+        delayacct_blkio_ticks,
+        guest_time,
+        cguest_time,
+        start_data,
+        end_data,
+        start_brk,
+        arg_start,
+        arg_end,
+        env_start,
+        env_end,
+        exit_code,
+    };
+
     public ProcessStat(ArrayList<String> rows) {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
         for (String row : rows) {
-            Pattern pattern = Pattern.compile("(?<pid>\\d+) (?<comm>\\(.+\\)) (?<state>\\w) (?<ppid>\\d+) (?<pgrp>\\d+) (?<session>\\d+) (?<ttynr>\\d+) (?<tpgid>-?\\d+) (?<flags>\\d+) (?<minflt>\\d+) (?<cminflt>\\d+) (?<majflt>\\d+) (?<cmajflt>\\d+) (?<utime>\\d+) (?<stime>\\d+) (?<cutime>\\d+) (?<cstime>\\d+) (?<priority>\\d+) (?<nice>\\d+) (?<numthreads>\\d+) (?<itrealvalue>\\d+) (?<starttime>\\d+) (?<vsize>\\d+) (?<rss>\\d+) (?<rsslim>\\d+) (?<startcode>\\d+) (?<endcode>\\d+) (?<startstack>\\d+) (?<kstkesp>\\d+) (?<kstkeip>\\d+) (?<signal>\\d+) (?<blocked>\\d+) (?<sigignore>\\d+) (?<sigcatch>\\d+) (?<wchan>\\d+) (?<nswap>\\d+) (?<cnswap>\\d+) (?<exitsignal>\\d+) (?<processor>\\d+) (?<rtpriority>\\d+) (?<policy>\\d+) (?<delayacctblkioticks>\\d+) (?<guesttime>\\d+) (?<cguesttime>\\d+) (?<startdata>\\d+) (?<enddata>\\d+) (?<startbrk>\\d+) (?<argstart>\\d+) (?<argend>\\d+) (?<envstart>\\d+) (?<envend>\\d+) (?<exitcode>\\d+)");
+            Pattern pattern = Pattern
+                    .compile(
+                            "(?<pid>\\d+) (?<comm>\\(.+\\)) (?<state>\\w) (?<ppid>\\d+) (?<pgrp>\\d+) (?<session>\\d+) (?<ttynr>\\d+) (?<tpgid>-?\\d+) (?<flags>\\d+) (?<minflt>\\d+) (?<cminflt>\\d+) (?<majflt>\\d+) (?<cmajflt>\\d+) (?<utime>\\d+) (?<stime>\\d+) (?<cutime>\\d+) (?<cstime>\\d+) (?<priority>\\d+) (?<nice>\\d+) (?<numthreads>\\d+) (?<itrealvalue>\\d+) (?<starttime>\\d+) (?<vsize>\\d+) (?<rss>\\d+) (?<rsslim>\\d+) (?<startcode>\\d+) (?<endcode>\\d+) (?<startstack>\\d+) (?<kstkesp>\\d+) (?<kstkeip>\\d+) (?<signal>\\d+) (?<blocked>\\d+) (?<sigignore>\\d+) (?<sigcatch>\\d+) (?<wchan>\\d+) (?<nswap>\\d+) (?<cnswap>\\d+) (?<exitsignal>\\d+) (?<processor>\\d+) (?<rtpriority>\\d+) (?<policy>\\d+) (?<delayacctblkioticks>\\d+) (?<guesttime>\\d+) (?<cguesttime>\\d+) (?<startdata>\\d+) (?<enddata>\\d+) (?<startbrk>\\d+) (?<argstart>\\d+) (?<argend>\\d+) (?<envstart>\\d+) (?<envend>\\d+) (?<exitcode>\\d+)"
+                    );
             Matcher matcher = pattern.matcher(row);
-            if(matcher.find()){
-                for(int i = 0; i < matcher.groupCount();i++){
-                    statistics.put(fields.values()[i].name(),matcher.group(fields.values()[i].name().replace("_","")));
+            if (matcher.find()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    statistics
+                            .put(fields.values()[i].name(), matcher.group(fields.values()[i].name().replace("_", "")));
                 }
             }
         }

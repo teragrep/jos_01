@@ -117,16 +117,15 @@ public class Main {
         System.out.println(os.meminfo().statistics());
         System.out.println(os.cpuinfo().statistics());
 
-
         // OS also has high-level methods just like processes:
         System.out.println("\nOS also has high-level methods just like processes:");
-        System.out.println("Number of physical CPUs: "+os.cpuCount());
-        System.out.println("Number of physical CPU cores: "+os.cpuPhysicalCoreCount());
-        System.out.println("Number of CPU threads (physical cores can have multiple threads): "+os.cpuThreadCount());
+        System.out.println("Number of physical CPUs: " + os.cpuCount());
+        System.out.println("Number of physical CPU cores: " + os.cpuPhysicalCoreCount());
+        System.out.println("Number of CPU threads (physical cores can have multiple threads): " + os.cpuThreadCount());
         try {
-            System.out.println("OS CPU tick rate: "+ os.cpuTicksPerSecond());
+            System.out.println("OS CPU tick rate: " + os.cpuTicksPerSecond());
         }
-        catch (IOException e){
+        catch (IOException e) {
             System.out.println("Failed to get OS tick rate!");
         }
     }

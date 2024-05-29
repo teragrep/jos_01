@@ -57,6 +57,7 @@ public class Uptime implements Status {
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
+
     private enum fields {
         uptimeSeconds, combinedCpuCoreIdleTimeSeconds
     };
@@ -65,11 +66,12 @@ public class Uptime implements Status {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
         for (String row : rows) {
-            Pattern pattern = Pattern.compile("(?<uptimeSeconds>\\d+.\\d+) (?<combinedCpuCoreIdleTimeSeconds>\\d+.\\d+)");
+            Pattern pattern = Pattern
+                    .compile("(?<uptimeSeconds>\\d+.\\d+) (?<combinedCpuCoreIdleTimeSeconds>\\d+.\\d+)");
             Matcher matcher = pattern.matcher(row);
-            if(matcher.find()){
-                for(int i = 0; i < matcher.groupCount();i++){
-                    statistics.put(fields.values()[i].name(),matcher.group(fields.values()[i].name()));
+            if (matcher.find()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    statistics.put(fields.values()[i].name(), matcher.group(fields.values()[i].name()));
                 }
             }
         }

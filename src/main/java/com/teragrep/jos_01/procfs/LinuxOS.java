@@ -58,7 +58,8 @@ public class LinuxOS {
     public LinuxOS() {
         this("/proc");
     }
-    public LinuxOS(String procDirectoryPath){
+
+    public LinuxOS(String procDirectoryPath) {
         procDirectory = new File(procDirectoryPath);
     }
 
@@ -73,12 +74,12 @@ public class LinuxOS {
         return new OSStat(rows);
     }
 
-    public Vmstat vmstat(){
+    public Vmstat vmstat() {
         ArrayList<String> rows = readProcFile("vmstat");
         return new Vmstat(rows);
     }
 
-    public Meminfo meminfo(){
+    public Meminfo meminfo() {
         ArrayList<String> rows = readProcFile("meminfo");
         return new Meminfo(rows);
     }
@@ -92,32 +93,34 @@ public class LinuxOS {
         float pageSize = mapped / nr_mapped;
         return pageSize;
     }
+
     // Returns total RAM in kB
-    public long totalRAM(){
+    public long totalRAM() {
         Meminfo meminfo = meminfo();
         return Long.parseLong(meminfo.statistics().get("MemTotal"));
     }
 
-    public int cpuCount(){
+    public int cpuCount() {
         Cpuinfo cpuinfo = cpuinfo();
         return cpuinfo.cpuCount();
     }
 
-    public int cpuPhysicalCoreCount(){
+    public int cpuPhysicalCoreCount() {
         Cpuinfo cpuinfo = cpuinfo();
         return cpuinfo.cpuPhysicalCoreCount();
     }
-    public int cpuThreadCount(){
+
+    public int cpuThreadCount() {
         Cpuinfo cpuinfo = cpuinfo();
         return cpuinfo.cpuThreadCount();
     }
 
-
-    public Cpuinfo cpuinfo(){
+    public Cpuinfo cpuinfo() {
         ArrayList<String> rows = readProcFile("cpuinfo");
         return new Cpuinfo(rows);
     }
-    public Uptime uptime(){
+
+    public Uptime uptime() {
         ArrayList<String> rows = readProcFile("uptime");
         return new Uptime(rows);
     }

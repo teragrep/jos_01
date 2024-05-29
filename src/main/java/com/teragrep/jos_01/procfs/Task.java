@@ -79,11 +79,11 @@ public class Task {
         return rows;
     }
 
-
     public ProcessStat stat() {
         ArrayList<String> rows = readProcFile("stat");
         return new ProcessStat(rows);
     }
+
     public Statm statm() {
         ArrayList<String> rows = readProcFile("statm");
         return new Statm(rows);

@@ -52,7 +52,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 // Provides information about memory usage, measured in pages.
 // Some of these values are inaccurate because of a kernel-internal scalability optimization.
 // If accurate values are required, use smaps or smaps_rollup instead, which are much slower but provide accurate, detailed information
@@ -61,6 +60,7 @@ public class Statm implements Status {
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
+
     private enum fields {
         size, resident, shared, text, lib, data, dt;
     };
@@ -69,11 +69,15 @@ public class Statm implements Status {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
         for (String row : rows) {
-            Pattern pattern = Pattern.compile("(?<size>\\d+) (?<resident>\\d+) (?<shared>\\d+) (?<text>\\d+) (?<lib>\\d+) (?<data>\\d+) (?<dt>\\d+)");
+            Pattern pattern = Pattern
+                    .compile(
+                            "(?<size>\\d+) (?<resident>\\d+) (?<shared>\\d+) (?<text>\\d+) (?<lib>\\d+) (?<data>\\d+) (?<dt>\\d+)"
+                    );
             Matcher matcher = pattern.matcher(row);
-            if(matcher.find()){
-                for(int i = 0; i < matcher.groupCount();i++){
-                    statistics.put(fields.values()[i].name(),matcher.group(fields.values()[i].name().replace("_","")));
+            if (matcher.find()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    statistics
+                            .put(fields.values()[i].name(), matcher.group(fields.values()[i].name().replace("_", "")));
                 }
             }
         }

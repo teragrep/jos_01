@@ -47,9 +47,6 @@ package com.teragrep.jos_01.procfs.status;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 // Provides information about memory usage, measured in pages.
 // Some of these values are inaccurate because of a kernel-internal scalability optimization.
@@ -67,87 +64,118 @@ public class Cpuinfo implements Status {
         this.timestamp = LocalDateTime.now();
         this.statistics = new LinkedHashMap<>();
 
-        HashMap<String,String> processorFields = new LinkedHashMap<String, String>();
+        HashMap<String, String> processorFields = new LinkedHashMap<String, String>();
         for (String row : rows) {
-            if(row.equals("")){
-                Processor processor = new Processor(processorFields.get("processor"), processorFields.get("vendor id"), processorFields.get("cpu family"), processorFields.get("model"), processorFields.get("model name"), processorFields.get("stepping"), processorFields.get("microcode"), processorFields.get("cpu MHz"), processorFields.get("cache size"), processorFields.get("physical id"), processorFields.get("siblings"), processorFields.get("core id"), processorFields.get("cpu cores"), processorFields.get("apicid"), processorFields.get("initial apicid"), processorFields.get("fpu"), processorFields.get("fpu_exception"), processorFields.get("cpuid level"), processorFields.get("wp"), processorFields.get("flags"), processorFields.get("vmx flags"), processorFields.get("bugs"), processorFields.get("bogomips"), processorFields.get("clflush size"), processorFields.get("cache_alignment"), processorFields.get("address sizes"), processorFields.get("power management"),processorFields);
+            if (row.equals("")) {
+                Processor processor = new Processor(
+                        processorFields.get("processor"),
+                        processorFields.get("vendor id"),
+                        processorFields.get("cpu family"),
+                        processorFields.get("model"),
+                        processorFields.get("model name"),
+                        processorFields.get("stepping"),
+                        processorFields.get("microcode"),
+                        processorFields.get("cpu MHz"),
+                        processorFields.get("cache size"),
+                        processorFields.get("physical id"),
+                        processorFields.get("siblings"),
+                        processorFields.get("core id"),
+                        processorFields.get("cpu cores"),
+                        processorFields.get("apicid"),
+                        processorFields.get("initial apicid"),
+                        processorFields.get("fpu"),
+                        processorFields.get("fpu_exception"),
+                        processorFields.get("cpuid level"),
+                        processorFields.get("wp"),
+                        processorFields.get("flags"),
+                        processorFields.get("vmx flags"),
+                        processorFields.get("bugs"),
+                        processorFields.get("bogomips"),
+                        processorFields.get("clflush size"),
+                        processorFields.get("cache_alignment"),
+                        processorFields.get("address sizes"),
+                        processorFields.get("power management"),
+                        processorFields
+                );
                 processors.add(processor);
-                processorFields = new LinkedHashMap<String,String>();
+                processorFields = new LinkedHashMap<String, String>();
                 continue;
             }
             String[] keyValuePair = row.split(":");
             String key = keyValuePair[0].trim();
             String value;
-            if(keyValuePair.length==1){
+            if (keyValuePair.length == 1) {
                 value = "";
             }
-            else{
+            else {
                 value = keyValuePair[1].trim();
             }
-            processorFields.put(key,value);
+            processorFields.put(key, value);
         }
     }
 
-    public ArrayList<Processor> processors(){
+    public ArrayList<Processor> processors() {
         return processors;
     }
 
-    public int cpuPhysicalCoreCount(){
-        Map<Integer,Integer> coreCounts = new HashMap<>();
-        for (Processor processor : processors){
-            coreCounts.put(processor.physical_id,processor.cpu_cores);
+    public int cpuPhysicalCoreCount() {
+        Map<Integer, Integer> coreCounts = new HashMap<>();
+        for (Processor processor : processors) {
+            coreCounts.put(processor.physical_id, processor.cpu_cores);
         }
         int coreCount = 0;
-        for (Map.Entry<Integer,Integer> physicalCPU : coreCounts.entrySet()){
+        for (Map.Entry<Integer, Integer> physicalCPU : coreCounts.entrySet()) {
             coreCount = coreCount + physicalCPU.getValue();
         }
         return coreCount;
     }
 
-    public int cpuCount(){
+    public int cpuCount() {
         ArrayList<Integer> physicalIds = new ArrayList();
-        for (Processor processor : processors){
+        for (Processor processor : processors) {
             physicalIds.add(processor.physical_id);
         }
-        Map<Integer,Integer> distinct = new HashMap<>();
-        for (int physicalId : physicalIds){
-            distinct.put(physicalId,distinct.getOrDefault(physicalId,0)+1);
+        Map<Integer, Integer> distinct = new HashMap<>();
+        for (int physicalId : physicalIds) {
+            distinct.put(physicalId, distinct.getOrDefault(physicalId, 0) + 1);
         }
         return distinct.size();
     }
 
-    public int cpuThreadCount(){
+    public int cpuThreadCount() {
         return processors.size();
     }
 
     public Map<String, String> statistics() {
         for (Processor processor : processors) {
             for (Map.Entry<String, String> entry : processor.statistics().entrySet()) {
-                statistics.put(entry.getKey()+"_"+processor.processor(),entry.getValue());
+                statistics.put(entry.getKey() + "_" + processor.processor(), entry.getValue());
             }
         }
         return statistics;
     }
 
-        public void printStatistics () {
-            for (Map.Entry<String, String> statistic : statistics.entrySet()) {
-                System.out.print(statistic.getKey() + ": ");
-                System.out.println(statistic.getValue());
-            }
+    public void printStatistics() {
+        for (Map.Entry<String, String> statistic : statistics.entrySet()) {
+            System.out.print(statistic.getKey() + ": ");
+            System.out.println(statistic.getValue());
         }
+    }
 
-        public ArrayList<String> rows () {
-            return this.rows;
-        }
+    public ArrayList<String> rows() {
+        return this.rows;
+    }
 
-        public LocalDateTime timestamp () {
-            return timestamp;
-        }
+    public LocalDateTime timestamp() {
+        return timestamp;
+    }
 
-        public void printTimestamp () {
-            System.out.println(timestamp);
-        }
+    public void printTimestamp() {
+        System.out.println(timestamp);
+    }
+
     private class Processor {
+
         private final int processor;
         private final String vendor_id;
         private final String cpu_family;
@@ -177,7 +205,36 @@ public class Cpuinfo implements Status {
         private final String power_management;
         private final Map<String, String> statistics;
 
-        Processor(String processor, String vendor_id, String cpu_family, String model, String model_name, String stepping, String microcode, String cpu_MHz, String cache_size, String physical_id, String siblings, String core_id, String cpu_cores, String apicid, String initial_apicid, String fpu, String fpu_exception, String cpuid_level, String wp, String flags, String vmx_flags, String bugs, String bogomips, String clflush_size, String cache_alignment, String address_sizes, String power_management, Map<String, String> processorFields) {
+        Processor(
+                String processor,
+                String vendor_id,
+                String cpu_family,
+                String model,
+                String model_name,
+                String stepping,
+                String microcode,
+                String cpu_MHz,
+                String cache_size,
+                String physical_id,
+                String siblings,
+                String core_id,
+                String cpu_cores,
+                String apicid,
+                String initial_apicid,
+                String fpu,
+                String fpu_exception,
+                String cpuid_level,
+                String wp,
+                String flags,
+                String vmx_flags,
+                String bugs,
+                String bogomips,
+                String clflush_size,
+                String cache_alignment,
+                String address_sizes,
+                String power_management,
+                Map<String, String> processorFields
+        ) {
             this.processor = Integer.parseInt(processor);
             this.vendor_id = vendor_id;
             this.cpu_family = cpu_family;
