@@ -61,7 +61,7 @@ public class Statm implements Status {
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
-    private enum statFields {
+    private enum fields {
         size, resident, shared, text, lib, data, dt;
     };
 
@@ -73,7 +73,7 @@ public class Statm implements Status {
             Matcher matcher = pattern.matcher(row);
             if(matcher.find()){
                 for(int i = 0; i < matcher.groupCount();i++){
-                    statistics.put(statFields.values()[i].name(),matcher.group(statFields.values()[i].name().replace("_","")));
+                    statistics.put(fields.values()[i].name(),matcher.group(fields.values()[i].name().replace("_","")));
                 }
             }
         }

@@ -48,6 +48,7 @@ package com.teragrep.jos_01.procfs;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.teragrep.jos_01.procfs.status.Cpuinfo;
 import com.teragrep.jos_01.procfs.status.Meminfo;
 import com.teragrep.jos_01.procfs.status.OSStat;
 import com.teragrep.jos_01.procfs.status.Vmstat;
@@ -100,14 +101,23 @@ public class LinuxOS {
     }
 
     public int cpuCount(){
-        int cpuCount = 0;
-        ArrayList<String> cpuinfo = proc("cpuinfo");
-        for (String row : cpuinfo){
-            if(row.startsWith("processor")){
-                cpuCount++;
-            }
-        }
-        return cpuCount;
+        Cpuinfo cpuinfo = cpuinfo();
+        return cpuinfo.cpuCount();
+    }
+
+    public int cpuPhysicalCoreCount(){
+        Cpuinfo cpuinfo = cpuinfo();
+        return cpuinfo.cpuPhysicalCoreCount();
+    }
+    public int cpuThreadCount(){
+        Cpuinfo cpuinfo = cpuinfo();
+        return cpuinfo.cpuThreadCount();
+    }
+
+
+    public Cpuinfo cpuinfo(){
+        ArrayList<String> rows = readProcFile("cpuinfo");
+        return new Cpuinfo(rows);
     }
 
     public int cpuTicksPerSecond(){

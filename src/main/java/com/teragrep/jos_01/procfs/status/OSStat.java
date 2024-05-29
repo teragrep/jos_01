@@ -55,7 +55,7 @@ public class OSStat implements Status {
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
-    private enum statFields {
+    private enum fields {
         cpu, cpu0, cpu1, cpu2, cpu3, intr, ctxt, btime, processes, procs_running, procs_blocked, softirq
     };
 
@@ -64,8 +64,8 @@ public class OSStat implements Status {
         statistics = new LinkedHashMap<String, String>();
         for (int i = 0; i < rows.size(); i++) {
             {
-                String[] fields = rows.get(i).split(statFields.values()[i].name());
-                statistics.put(statFields.values()[i].toString(), fields[1]);
+                String[] fieldArray = rows.get(i).split(fields.values()[i].name());
+                statistics.put(fields.values()[i].toString(), fieldArray[1]);
             }
         }
         timestamp = LocalDateTime.now();

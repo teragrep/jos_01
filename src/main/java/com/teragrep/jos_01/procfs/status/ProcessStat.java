@@ -57,7 +57,7 @@ public class ProcessStat implements Status {
     private ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
-    private enum statFields {pid, comm, state, ppid, pgrp, session, tty_nr, tpgid, flags, minflt, cminflt, majflt, cmajflt, utime, stime, cutime, cstime, priority, nice, num_threads, itrealvalue, starttime, vsize, rss, rsslim, startcode, endcode, startstack,kstkesp,kstkeip,signal,blocked,sigignore,sigcatch,wchan,nswap,cnswap,exit_signal,processor,rt_priority,policy,delayacct_blkio_ticks,guest_time,cguest_time,start_data,end_data,start_brk,arg_start,arg_end,env_start,env_end,exit_code,};
+    private enum fields {pid, comm, state, ppid, pgrp, session, tty_nr, tpgid, flags, minflt, cminflt, majflt, cmajflt, utime, stime, cutime, cstime, priority, nice, num_threads, itrealvalue, starttime, vsize, rss, rsslim, startcode, endcode, startstack,kstkesp,kstkeip,signal,blocked,sigignore,sigcatch,wchan,nswap,cnswap,exit_signal,processor,rt_priority,policy,delayacct_blkio_ticks,guest_time,cguest_time,start_data,end_data,start_brk,arg_start,arg_end,env_start,env_end,exit_code,};
     public ProcessStat(ArrayList<String> rows) {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
@@ -66,7 +66,7 @@ public class ProcessStat implements Status {
             Matcher matcher = pattern.matcher(row);
             if(matcher.find()){
                 for(int i = 0; i < matcher.groupCount();i++){
-                    statistics.put(statFields.values()[i].name(),matcher.group(statFields.values()[i].name().replace("_","")));
+                    statistics.put(fields.values()[i].name(),matcher.group(fields.values()[i].name().replace("_","")));
                 }
             }
         }

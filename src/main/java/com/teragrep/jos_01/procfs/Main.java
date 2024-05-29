@@ -107,8 +107,16 @@ public class Main {
         System.out.println(os.vmstat().statistics());
         System.out.println(os.meminfo().statistics());
 
+
+        // OS also has high-level methods just like processes:
+        System.out.println("\nOS also has high-level methods just like processes:");
+        System.out.println("Number of physical CPUs: "+os.cpuCount());
+        System.out.println("Number of physical CPU cores: "+os.cpuPhysicalCoreCount());
+        System.out.println("Number of CPU threads (physical cores can have multiple threads): "+os.cpuThreadCount());
+        System.out.println("OS CPU tick rate: "+ os.cpuTicksPerSecond());
+
         // OS Specific files can be accessed via the proc() method
         System.out.println("\nOS Specific files can be accessed via the proc() method");
-        System.out.println(os.proc("cpuinfo"));
+        System.out.println(os.cpuinfo().statistics());
     }
 }

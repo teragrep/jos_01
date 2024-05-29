@@ -134,7 +134,6 @@ public class Process {
     }
     public float cpuUsage(){
         LinuxOS os = new LinuxOS();
-        int cpuCount = os.cpuCount();
         int cpuTicksPerSecond = os.cpuTicksPerSecond();
 
         float OSUpTime =  Float.parseFloat(os.proc("uptime").get(0).split(" ")[0]);
