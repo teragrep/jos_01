@@ -48,10 +48,7 @@ package com.teragrep.jos_01.procfs;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.teragrep.jos_01.procfs.status.Cpuinfo;
-import com.teragrep.jos_01.procfs.status.Meminfo;
-import com.teragrep.jos_01.procfs.status.OSStat;
-import com.teragrep.jos_01.procfs.status.Vmstat;
+import com.teragrep.jos_01.procfs.status.*;
 
 public class LinuxOS {
 
@@ -118,6 +115,10 @@ public class LinuxOS {
     public Cpuinfo cpuinfo(){
         ArrayList<String> rows = readProcFile("cpuinfo");
         return new Cpuinfo(rows);
+    }
+    public Uptime uptime(){
+        ArrayList<String> rows = readProcFile("uptime");
+        return new Uptime(rows);
     }
 
     public int cpuTicksPerSecond(){

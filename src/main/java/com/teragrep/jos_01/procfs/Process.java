@@ -136,7 +136,7 @@ public class Process {
         LinuxOS os = new LinuxOS();
         int cpuTicksPerSecond = os.cpuTicksPerSecond();
 
-        float OSUpTime =  Float.parseFloat(os.proc("uptime").get(0).split(" ")[0]);
+        float OSUpTime =  Float.parseFloat(os.uptime().statistics().get("uptimeSeconds"));
         ProcessStat status = stat();
 
         float utime = Float.parseFloat(status.statistics().get("utime"))/cpuTicksPerSecond;
