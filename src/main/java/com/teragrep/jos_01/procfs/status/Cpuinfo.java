@@ -320,4 +320,5 @@ public class Cpuinfo implements Status {
             return statistics;
         }
     }
-    }
+
+}

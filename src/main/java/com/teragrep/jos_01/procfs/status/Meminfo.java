@@ -61,6 +61,9 @@ public class Meminfo implements Status {
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final Map<String, String> statistics;
+    private enum fields {
+        MemTotal,MemFree,MemAvailable,Buffers,Cached,SwapCached,Active,Inactive,Activeanon,Inactiveanon,Activefile,Inactivefile,Unevictable,Mlocked,SwapTotal,SwapFree,Zswap,Zswapped,Dirty,Writeback,AnonPages,Mapped,Shmem,KReclaimable,Slab,SReclaimable,SUnreclaim,KernelStack,PageTables,SecPageTables,NFS_Unstable,Bounce,WritebackTmp,CommitLimit,Committed_AS,VmallocTotal,VmallocUsed,VmallocChunk,Percpu,HardwareCorrupted,AnonHugePages,ShmemHugePages,ShmemPmdMapped,FileHugePages,FilePmdMapped,CmaTotal,CmaFree,HugePages_Total,HugePages_Free,HugePages_Rsvd,HugePages_Surp,Hugepagesize,Hugetlb,DirectMap4k,DirectMap2M,DirectMap1G
+    };
 
     public Meminfo(ArrayList<String> rows) {
         this.rows = rows;
