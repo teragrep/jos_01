@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
@@ -63,9 +64,9 @@ public class Main {
                         "\nProcess methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call."
                 );
         ProcessStat pstat = process.stat();
-        System.out.println("Process stat = "+pstat.statistics());
+        System.out.println("Process stat = " + pstat.statistics());
         Statm statm = process.statm();
-        System.out.println("Process statm = "+statm.statistics());
+        System.out.println("Process statm = " + statm.statistics());
 
         // Status object contains a timestamp and a Map containing keys to find wanted field more easily. Specific proc files are also formatted properly
         System.out
@@ -87,9 +88,26 @@ public class Main {
 
         // High level methods can be used to quickly calculate specific performance statistics:
         System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
-        System.out.println(process.residentSetSize());
-        System.out.println(process.cpuTime());
-        System.out.println(process.cpuUsage());
+        System.out.println("RSS: " + process.residentSetSize());
+        try {
+            System.out.println("CpuTime: " + process.cpuTime());
+            System.out.println("Cpu%: " + process.cpuUsage());
+        }
+        catch (IOException e) {
+            System.err.println("Could not calculate Cpu statistics:\n" + e);
+        }
+
+        Sysconf sysconf = new Sysconf();
+        long tickrate;
+        try {
+            tickrate = sysconf.main();
+        }
+        catch (IOException e) {
+            System.err.println(e);
+            System.out.println("Failed to get system clock tick rate! Defaulting to 100");
+            tickrate = 100;
+        }
+        System.out.println("System tickrate: " + tickrate);
 
         // OS statistics are available via the OS class
         System.out.println("\nOS statistics are available via the OS class using similar methods");
@@ -105,6 +123,11 @@ public class Main {
         System.out.println("Number of physical CPUs: "+os.cpuCount());
         System.out.println("Number of physical CPU cores: "+os.cpuPhysicalCoreCount());
         System.out.println("Number of CPU threads (physical cores can have multiple threads): "+os.cpuThreadCount());
-        System.out.println("OS CPU tick rate: "+ os.cpuTicksPerSecond());
+        try {
+            System.out.println("OS CPU tick rate: "+ os.cpuTicksPerSecond());
+        }
+        catch (IOException e){
+            System.out.println("Failed to get OS tick rate!");
+        }
     }
 }

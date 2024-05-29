@@ -107,7 +107,60 @@ public class ProcessTest {
 
     @Test
     public void statTest() {
-        String[] expectedKeys = {"pid","comm","state","ppid","pgrp","session","tty_nr","tpgid","flags","minflt","cminflt","majflt","cmajflt","utime","stime","cutime","cstime","priority","nice","num_threads","itrealvalue","starttime","vsize","rss","rsslim","startcode","endcode","startstack","kstkesp","kstkeip","signal","blocked","sigignore","sigcatch","wchan","nswap","cnswap","exit_signal","processor","rt_priority","policy","delayacct_blkio_ticks","guest_time","cguest_time","start_data","end_data","start_brk","arg_start","arg_end","env_start","env_end","exit_code"};
+        String[] expectedKeys = {
+                "pid",
+                "comm",
+                "state",
+                "ppid",
+                "pgrp",
+                "session",
+                "tty_nr",
+                "tpgid",
+                "flags",
+                "minflt",
+                "cminflt",
+                "majflt",
+                "cmajflt",
+                "utime",
+                "stime",
+                "cutime",
+                "cstime",
+                "priority",
+                "nice",
+                "num_threads",
+                "itrealvalue",
+                "starttime",
+                "vsize",
+                "rss",
+                "rsslim",
+                "startcode",
+                "endcode",
+                "startstack",
+                "kstkesp",
+                "kstkeip",
+                "signal",
+                "blocked",
+                "sigignore",
+                "sigcatch",
+                "wchan",
+                "nswap",
+                "cnswap",
+                "exit_signal",
+                "processor",
+                "rt_priority",
+                "policy",
+                "delayacct_blkio_ticks",
+                "guest_time",
+                "cguest_time",
+                "start_data",
+                "end_data",
+                "start_brk",
+                "arg_start",
+                "arg_end",
+                "env_start",
+                "env_end",
+                "exit_code"
+        };
         Process process = new Process(1);
         ProcessStat stat = process.stat();
         for (String key : expectedKeys) {
@@ -115,14 +168,17 @@ public class ProcessTest {
             Assert.assertNotNull(stat.statistics().get(key));
         }
     }
+
     @Test
-    public void statmTest(){
-        String[] expectedKeys = {"size","resident","shared","text","lib","data","dt"};
+    public void statmTest() {
+        String[] expectedKeys = {
+                "size", "resident", "shared", "text", "lib", "data", "dt"
+        };
         Process process = new Process(1);
         Statm statm = process.statm();
         for (String key : expectedKeys) {
             System.out.println(key + " " + statm.statistics().get(key));
             Assert.assertNotNull(statm.statistics().get(key));
         }
-        }
     }
+}

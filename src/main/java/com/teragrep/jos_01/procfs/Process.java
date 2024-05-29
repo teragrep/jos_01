@@ -46,6 +46,7 @@
 package com.teragrep.jos_01.procfs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
@@ -127,9 +128,10 @@ public class Process {
         float pageSize = new LinuxOS().pageSize();
         return pageCount * pageSize;
     }
-    public float cpuUsage(){
+    public float cpuUsage() throws IOException {
         LinuxOS os = new LinuxOS();
-        int cpuTicksPerSecond = os.cpuTicksPerSecond();
+        int cpuCount = os.cpuCount();
+        long cpuTicksPerSecond = os.cpuTicksPerSecond();
 
         float OSUpTime =  Float.parseFloat(os.uptime().statistics().get("uptimeSeconds"));
         ProcessStat status = stat();
@@ -143,10 +145,10 @@ public class Process {
         return cpuUsage;
     }
 
-    public float cpuTime(){
+    public float cpuTime() throws IOException {
         LinuxOS os = new LinuxOS();
         ProcessStat status = stat();
-        int cpuTicksPerSecond = os.cpuTicksPerSecond();
+        long cpuTicksPerSecond = os.cpuTicksPerSecond();
         float utime = Float.parseFloat(status.statistics().get("utime"))/cpuTicksPerSecond;
         float stime = Float.parseFloat(status.statistics().get("stime"))/cpuTicksPerSecond;
 
