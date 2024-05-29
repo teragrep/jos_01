@@ -79,11 +79,6 @@ public class Process {
         return rows;
     }
 
-    public ArrayList<String> proc(String procFileName) {
-        ArrayList<String> rows = readProcFile(procFileName);
-        return rows;
-    }
-
     public ProcessStat stat() {
         ArrayList<String> rows = readProcFile("stat");
         return new ProcessStat(rows);

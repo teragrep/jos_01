@@ -46,6 +46,7 @@
 package com.teragrep.jos_01.procfs;
 
 import com.teragrep.jos_01.procfs.status.ProcessStat;
+import com.teragrep.jos_01.procfs.status.Statm;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,14 +79,14 @@ public class Task {
         return rows;
     }
 
-    public ArrayList<String> proc(String procFileName) {
-        ArrayList<String> rows = readProcFile(procFileName);
-        return rows;
-    }
 
     public ProcessStat stat() {
         ArrayList<String> rows = readProcFile("stat");
         return new ProcessStat(rows);
+    }
+    public Statm statm() {
+        ArrayList<String> rows = readProcFile("statm");
+        return new Statm(rows);
     }
 
     public ArrayList<String> availableProcFiles() {

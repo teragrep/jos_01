@@ -63,15 +63,4 @@ public class TaskTest {
         Assert.assertEquals("0", statistics.get("ppid"));
         Assert.assertEquals("1", statistics.get("pid"));
     }
-
-    @Test
-    public void procTest() {
-        Process process = new Process(1);
-        ArrayList<String> rows = process.tasks().get(0).proc("status");
-        Assert.assertEquals(59, rows.size());
-
-        rows = process.tasks().get(0).proc("comm");
-        Assert.assertEquals(1, rows.size());
-        Assert.assertEquals("systemd", rows.get(0));
-    }
 }

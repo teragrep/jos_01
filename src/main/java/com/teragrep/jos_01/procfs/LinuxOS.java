@@ -125,9 +125,4 @@ public class LinuxOS {
         return 10;
     }
 
-
-    public ArrayList<String> proc(String procFileName) {
-        ArrayList<String> rows = readProcFile(procFileName);
-        return rows;
-    }
 }

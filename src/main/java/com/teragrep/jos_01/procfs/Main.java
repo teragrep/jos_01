@@ -57,15 +57,6 @@ public class Main {
         System.out.println("Find out if a process is alive with a simple call to isAlive().");
         System.out.println(process.isAlive());
 
-        // Get either a List of rows or an indexed Map of any proc file within the process.
-        System.out.println("\nGet either a List of rows or an indexed Map of any proc file within the process.");
-        System.out.println(process.proc("status"));
-        System.out.println(process.proc("net/netstat"));
-
-        // Some files are protected, such files will throw an error when accessed.
-        System.out.println("\nSome files are protected, such files will throw an error when accessed");
-        process.proc("mem");
-
         // Process methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call.
         System.out
                 .println(
@@ -92,7 +83,7 @@ public class Main {
         // Each Thread has the ability to report on its status just like a Process can:
         System.out.println("\nEach Thread has the ability to report on its status just like a Process can:");
         System.out.println(tasks.get(0).stat().statistics());
-        System.out.println(tasks.get(0).proc("statm"));
+        System.out.println(tasks.get(0).statm().statistics());
 
         // High level methods can be used to quickly calculate specific performance statistics:
         System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
@@ -106,6 +97,7 @@ public class Main {
         System.out.println(os.stat().statistics());
         System.out.println(os.vmstat().statistics());
         System.out.println(os.meminfo().statistics());
+        System.out.println(os.cpuinfo().statistics());
 
 
         // OS also has high-level methods just like processes:
@@ -114,9 +106,5 @@ public class Main {
         System.out.println("Number of physical CPU cores: "+os.cpuPhysicalCoreCount());
         System.out.println("Number of CPU threads (physical cores can have multiple threads): "+os.cpuThreadCount());
         System.out.println("OS CPU tick rate: "+ os.cpuTicksPerSecond());
-
-        // OS Specific files can be accessed via the proc() method
-        System.out.println("\nOS Specific files can be accessed via the proc() method");
-        System.out.println(os.cpuinfo().statistics());
     }
 }

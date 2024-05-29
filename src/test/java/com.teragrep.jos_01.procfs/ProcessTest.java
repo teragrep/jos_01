@@ -106,17 +106,6 @@ public class ProcessTest {
     }
 
     @Test
-    public void procTest() {
-        Process process = new Process(1);
-        ArrayList<String> rows = process.proc("status");
-        Assert.assertEquals(59, rows.size());
-
-        rows = process.proc("comm");
-        Assert.assertEquals(1, rows.size());
-        Assert.assertEquals("systemd", rows.get(0));
-    }
-
-    @Test
     public void statTest() {
         String[] expectedKeys = {"pid","comm","state","ppid","pgrp","session","tty_nr","tpgid","flags","minflt","cminflt","majflt","cmajflt","utime","stime","cutime","cstime","priority","nice","num_threads","itrealvalue","starttime","vsize","rss","rsslim","startcode","endcode","startstack","kstkesp","kstkeip","signal","blocked","sigignore","sigcatch","wchan","nswap","cnswap","exit_signal","processor","rt_priority","policy","delayacct_blkio_ticks","guest_time","cguest_time","start_data","end_data","start_brk","arg_start","arg_end","env_start","env_end","exit_code"};
         Process process = new Process(1);
