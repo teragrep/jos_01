@@ -88,6 +88,8 @@ public class ProcessTest {
     public void constructorTest() {
         Process process = new Process(1);
         Process processString = new Process("1");
+        Assertions.assertNotNull(process.isAlive());
+        Assertions.assertNotNull(processString.isAlive());
     }
 
     @Test
