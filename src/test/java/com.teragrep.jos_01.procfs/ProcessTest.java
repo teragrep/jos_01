@@ -47,36 +47,42 @@ package com.teragrep.jos_01.procfs;
 
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class ProcessTest {
 
+    Process systemd;
+    Process kthreadd;
+
     @Test
-    public void readFileTest() {
+    public void readSystemdFileTest() {
         Process systemd = new Process(1);
         Map<String, String> systemdStats = systemd.stat().statistics();
-        Assert.assertEquals("1", systemdStats.get("pid"));
-        Assert.assertEquals("(systemd)", systemdStats.get("comm"));
-        Assert.assertEquals(52, systemdStats.size());
+        Assertions.assertEquals("1", systemdStats.get("pid"));
+        Assertions.assertEquals("(systemd)", systemdStats.get("comm"));
+        Assertions.assertEquals(52, systemdStats.size());
         for (Map.Entry<String, String> entry : systemdStats.entrySet()) {
-            Assert.assertNotNull(entry.getValue());
-            Assert.assertNotNull(entry.getKey());
-        }
-
-        Process kthreadd = new Process(2);
-        Map<String, String> kthreaddStats = kthreadd.stat().statistics();
-        Assert.assertEquals("2", kthreaddStats.get("pid"));
-        Assert.assertEquals("(kthreadd)", kthreaddStats.get("comm"));
-        Assert.assertEquals(52, kthreaddStats.size());
-        for (Map.Entry<String, String> entry : kthreaddStats.entrySet()) {
-            Assert.assertNotNull(entry.getValue());
-            Assert.assertNotNull(entry.getKey());
+            Assertions.assertNotNull(entry.getValue());
+            Assertions.assertNotNull(entry.getKey());
         }
     }
+    @Test
+    public void readKthreaddFileTest() {
+        Process kthreadd = new Process(2);
+        Map<String, String> kthreaddStats = kthreadd.stat().statistics();
+        Assertions.assertEquals("2", kthreaddStats.get("pid"));
+        Assertions.assertEquals("(kthreadd)", kthreaddStats.get("comm"));
+        Assertions.assertEquals(52, kthreaddStats.size());
+        for (Map.Entry<String, String> entry : kthreaddStats.entrySet()) {
+            Assertions.assertNotNull(entry.getValue());
+            Assertions.assertNotNull(entry.getKey());
+        }
+    }
+
 
     @Test
     public void constructorTest() {
@@ -87,14 +93,14 @@ public class ProcessTest {
     @Test
     public void noSuchProcessTest() {
         Process process = new Process(-1);
-        Assert.assertFalse(process.isAlive());
+        Assertions.assertFalse(process.isAlive());
     }
 
     @Test
     public void procFileNamesTest() {
         Process process = new Process(1);
         ArrayList<String> fileNames = process.availableProcFiles();
-        Assert.assertEquals(243, fileNames.size());
+        Assertions.assertEquals(243, fileNames.size());
     }
 
     @Test
@@ -102,7 +108,7 @@ public class ProcessTest {
         Process process = new Process(1);
         String statTaskcount = process.stat().statistics().get("num_threads");
         int taskCount = process.tasks().size();
-        Assert.assertEquals(statTaskcount, String.valueOf(taskCount));
+        Assertions.assertEquals(statTaskcount, String.valueOf(taskCount));
     }
 
     @Test
@@ -165,7 +171,7 @@ public class ProcessTest {
         ProcessStat stat = process.stat();
         for (String key : expectedKeys) {
             System.out.println(key + " " + stat.statistics().get(key));
-            Assert.assertNotNull(stat.statistics().get(key));
+            Assertions.assertNotNull(stat.statistics().get(key));
         }
     }
 
@@ -178,7 +184,7 @@ public class ProcessTest {
         Statm statm = process.statm();
         for (String key : expectedKeys) {
             System.out.println(key + " " + statm.statistics().get(key));
-            Assert.assertNotNull(statm.statistics().get(key));
+            Assertions.assertNotNull(statm.statistics().get(key));
         }
     }
 }

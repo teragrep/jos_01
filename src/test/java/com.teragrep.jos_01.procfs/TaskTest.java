@@ -45,8 +45,8 @@
  */
 package com.teragrep.jos_01.procfs;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
@@ -59,8 +59,8 @@ public class TaskTest {
         Process process = new Process(1);
         ArrayList<Task> tasks = process.tasks();
         Map<String, String> statistics = tasks.get(0).stat().statistics();
-        Assert.assertEquals(52, statistics.size());
-        Assert.assertEquals("0", statistics.get("ppid"));
-        Assert.assertEquals("1", statistics.get("pid"));
+        Assertions.assertEquals(52, statistics.size());
+        Assertions.assertEquals("0", statistics.get("ppid"));
+        Assertions.assertEquals("1", statistics.get("pid"));
     }
 }

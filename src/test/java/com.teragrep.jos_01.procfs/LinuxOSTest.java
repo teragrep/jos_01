@@ -46,31 +46,27 @@
 package com.teragrep.jos_01.procfs;
 
 import com.teragrep.jos_01.procfs.status.*;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LinuxOSTest {
 
-    private LinuxOS os;
-
-    @Before
-    public void setUp() {
-        os = new LinuxOS();
-    }
-
     @Test
     public void upTimeTest() {
+
+        LinuxOS os = new LinuxOS();
         Uptime uptime = os.uptime();
-        Assert.assertEquals(2, uptime.statistics().size());
-        Assert.assertTrue(Float.parseFloat(uptime.statistics().get("uptimeSeconds")) > 0);
-        Assert.assertTrue(Float.parseFloat(uptime.statistics().get("combinedCpuCoreIdleTimeSeconds")) > 0);
+        Assertions.assertEquals(2, uptime.statistics().size());
+        Assertions.assertTrue(Float.parseFloat(uptime.statistics().get("uptimeSeconds")) > 0);
+        Assertions.assertTrue(Float.parseFloat(uptime.statistics().get("combinedCpuCoreIdleTimeSeconds")) > 0);
     }
 
     @Test
     public void statTest() {
+
+        LinuxOS os = new LinuxOS();
         OSStat stat = os.stat();
-        Assert.assertEquals(12, stat.statistics().size());
+        Assertions.assertEquals(12, stat.statistics().size());
 
         String[] expectedKeys = {
                 "cpu",
@@ -93,8 +89,9 @@ public class LinuxOSTest {
 
     @Test
     public void cpuInfoTest() {
+        LinuxOS os = new LinuxOS();
         Cpuinfo cpuinfo = os.cpuinfo();
-        Assert.assertEquals(os.cpuThreadCount() * 27, cpuinfo.statistics().size());
+        Assertions.assertEquals(os.cpuThreadCount() * 27, cpuinfo.statistics().size());
         String[] expectedKeys = {
                 "processor",
                 "vendor_id",
@@ -128,15 +125,16 @@ public class LinuxOSTest {
         System.out.println(cpuinfo.statistics());
         for (int i = 0; i < cpuinfo.cpuThreadCount(); i++) {
             for (String key : expectedKeys) {
-                Assert.assertTrue(cpuinfo.statistics().containsKey(key + "_" + i));
+                Assertions.assertTrue(cpuinfo.statistics().containsKey(key + "_" + i));
             }
         }
     }
 
     @Test
     public void memInfoTest() {
+        LinuxOS os = new LinuxOS();
         Meminfo meminfo = os.meminfo();
-        Assert.assertEquals(53, meminfo.statistics().size());
+        Assertions.assertEquals(53, meminfo.statistics().size());
 
         String[] expectedKeys = {
                 "MemTotal",
@@ -203,10 +201,11 @@ public class LinuxOSTest {
 
     @Test
     public void highLevelMethodsTest() {
-        Assert.assertEquals(1, os.cpuCount());
-        Assert.assertEquals(4, os.cpuThreadCount());
-        Assert.assertEquals(4, os.cpuPhysicalCoreCount());
-        Assert.assertEquals(4.0, os.pageSize(), 0);
-        Assert.assertEquals(32790864, os.totalRAM());
+        LinuxOS os = new LinuxOS();
+        Assertions.assertEquals(1, os.cpuCount());
+        Assertions.assertEquals(4, os.cpuThreadCount());
+        Assertions.assertEquals(4, os.cpuPhysicalCoreCount());
+        Assertions.assertEquals(4.0, os.pageSize(), 0);
+        Assertions.assertEquals(32790864, os.totalRAM());
     }
 }
