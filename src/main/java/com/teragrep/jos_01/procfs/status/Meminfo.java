@@ -123,8 +123,8 @@ public class Meminfo implements Status {
     public Meminfo(ArrayList<String> rows) {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
+        Pattern pattern = Pattern.compile("(\\w*): *(\\d*)");
         for (String row : rows) {
-            Pattern pattern = Pattern.compile("(\\w*): *(\\d*)");
             Matcher matcher = pattern.matcher(row);
             if (matcher.find()) {
                 for (int i = 0; i < matcher.groupCount(); i++) {

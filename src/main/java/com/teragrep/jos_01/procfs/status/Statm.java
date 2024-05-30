@@ -68,11 +68,11 @@ public class Statm implements Status {
     public Statm(ArrayList<String> rows) {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
+        Pattern pattern = Pattern
+                .compile(
+                        "(?<size>\\d+) (?<resident>\\d+) (?<shared>\\d+) (?<text>\\d+) (?<lib>\\d+) (?<data>\\d+) (?<dt>\\d+)"
+                );
         for (String row : rows) {
-            Pattern pattern = Pattern
-                    .compile(
-                            "(?<size>\\d+) (?<resident>\\d+) (?<shared>\\d+) (?<text>\\d+) (?<lib>\\d+) (?<data>\\d+) (?<dt>\\d+)"
-                    );
             Matcher matcher = pattern.matcher(row);
             if (matcher.find()) {
                 for (int i = 0; i < matcher.groupCount(); i++) {

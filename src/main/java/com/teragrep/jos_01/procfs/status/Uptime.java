@@ -65,9 +65,9 @@ public class Uptime implements Status {
     public Uptime(ArrayList<String> rows) {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
+        Pattern pattern = Pattern
+                .compile("(?<uptimeSeconds>\\d+.\\d+) (?<combinedCpuCoreIdleTimeSeconds>\\d+.\\d+)");
         for (String row : rows) {
-            Pattern pattern = Pattern
-                    .compile("(?<uptimeSeconds>\\d+.\\d+) (?<combinedCpuCoreIdleTimeSeconds>\\d+.\\d+)");
             Matcher matcher = pattern.matcher(row);
             if (matcher.find()) {
                 for (int i = 0; i < matcher.groupCount(); i++) {

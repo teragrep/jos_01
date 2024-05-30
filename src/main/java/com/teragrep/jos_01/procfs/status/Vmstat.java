@@ -197,9 +197,8 @@ public class Vmstat implements Status {
     public Vmstat(ArrayList<String> rows) {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
+        Pattern pattern = Pattern.compile("(.*) (.*)");
         for (String row : rows) {
-
-            Pattern pattern = Pattern.compile("(.*) (.*)");
             Matcher matcher = pattern.matcher(row);
             if (matcher.find()) {
                 for (int i = 0; i < matcher.groupCount(); i++) {

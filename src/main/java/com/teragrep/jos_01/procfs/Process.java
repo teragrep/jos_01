@@ -99,8 +99,7 @@ public class Process {
     private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) {
         if (!file.isDirectory()) {
             nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
-        }
-        else {
+        } else {
             File[] subdirectories = file.listFiles();
             if (subdirectories == null) {
                 System.out
@@ -168,11 +167,6 @@ public class Process {
 
     // Only the OS kernel can write or delete files from /proc, so if the process ID directory exists, the process is alive.
     public boolean isAlive() {
-        if (procDirectory.exists()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return procDirectory.exists();
     }
 }
