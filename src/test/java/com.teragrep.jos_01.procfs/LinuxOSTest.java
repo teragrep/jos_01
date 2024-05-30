@@ -83,7 +83,7 @@ public class LinuxOSTest {
                 "softirq"
         };
         for (String key : expectedKeys) {
-            os.stat().statistics().containsKey(key);
+            Assertions.assertTrue(stat.statistics().containsKey(key));
         }
     }
 
@@ -134,7 +134,7 @@ public class LinuxOSTest {
     public void memInfoTest() {
         LinuxOS os = new LinuxOS();
         Meminfo meminfo = os.meminfo();
-        Assertions.assertEquals(53, meminfo.statistics().size());
+        Assertions.assertEquals(56, meminfo.statistics().size());
 
         String[] expectedKeys = {
                 "MemTotal",
@@ -194,8 +194,9 @@ public class LinuxOSTest {
                 "DirectMap2M",
                 "DirectMap1G"
         };
+        System.out.println(meminfo.statistics());
         for (String key : expectedKeys) {
-            os.stat().statistics().containsKey(key);
+            Assertions.assertTrue(meminfo.statistics().containsKey(key));
         }
     }
 
