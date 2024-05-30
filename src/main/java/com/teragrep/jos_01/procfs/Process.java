@@ -99,7 +99,8 @@ public class Process {
     private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) {
         if (!file.isDirectory()) {
             nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
-        } else {
+        }
+        else {
             File[] subdirectories = file.listFiles();
             if (subdirectories == null) {
                 System.out

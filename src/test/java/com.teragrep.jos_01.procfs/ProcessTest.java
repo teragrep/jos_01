@@ -70,6 +70,7 @@ public class ProcessTest {
             Assertions.assertNotNull(entry.getKey());
         }
     }
+
     @Test
     public void readKthreaddFileTest() {
         Process kthreadd = new Process(2);
@@ -82,7 +83,6 @@ public class ProcessTest {
             Assertions.assertNotNull(entry.getKey());
         }
     }
-
 
     @Test
     public void constructorTest() {
