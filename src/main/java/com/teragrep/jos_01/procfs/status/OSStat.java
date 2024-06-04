@@ -64,10 +64,8 @@ public class OSStat implements Status {
         this.rows = rows;
         statistics = new LinkedHashMap<String, String>();
         for (int i = 0; i < rows.size(); i++) {
-            {
-                String[] fieldArray = rows.get(i).split(fields.values()[i].name());
-                statistics.put(fields.values()[i].toString(), fieldArray[1]);
-            }
+            String[] fieldArray = rows.get(i).split(fields.values()[i].name());
+            statistics.put(fields.values()[i].toString(), fieldArray[1]);
         }
         timestamp = LocalDateTime.now();
     }

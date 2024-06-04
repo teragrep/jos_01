@@ -63,29 +63,29 @@ public class LinuxOS {
         procDirectory = new File(procDirectoryPath);
     }
 
-    private ArrayList<String> readProcFile(String procFileName) {
+    private ArrayList<String> readProcFile(String procFileName) throws IOException {
         RowFile procFile = new RowFile(procDirectory, procFileName);
         ArrayList<String> rows = procFile.readFile();
         return rows;
     }
 
-    public OSStat stat() {
+    public OSStat stat() throws IOException {
         ArrayList<String> rows = readProcFile("stat");
         return new OSStat(rows);
     }
 
-    public Vmstat vmstat() {
+    public Vmstat vmstat() throws IOException {
         ArrayList<String> rows = readProcFile("vmstat");
         return new Vmstat(rows);
     }
 
-    public Meminfo meminfo() {
+    public Meminfo meminfo() throws IOException {
         ArrayList<String> rows = readProcFile("meminfo");
         return new Meminfo(rows);
     }
 
     // Estimates page size in kB.
-    float pageSize() {
+    public float pageSize() throws IOException {
         Vmstat vmstat = vmstat();
         Meminfo meminfo = meminfo();
         float mapped = Long.parseLong(meminfo.statistics().get("Mapped"));
@@ -95,32 +95,32 @@ public class LinuxOS {
     }
 
     // Returns total RAM in kB
-    public long totalRAM() {
+    public long totalRAM() throws IOException {
         Meminfo meminfo = meminfo();
         return Long.parseLong(meminfo.statistics().get("MemTotal"));
     }
 
-    public int cpuCount() {
+    public int cpuCount() throws IOException {
         Cpuinfo cpuinfo = cpuinfo();
         return cpuinfo.cpuCount();
     }
 
-    public int cpuPhysicalCoreCount() {
+    public int cpuPhysicalCoreCount() throws IOException {
         Cpuinfo cpuinfo = cpuinfo();
         return cpuinfo.cpuPhysicalCoreCount();
     }
 
-    public int cpuThreadCount() {
+    public int cpuThreadCount() throws IOException {
         Cpuinfo cpuinfo = cpuinfo();
         return cpuinfo.cpuThreadCount();
     }
 
-    public Cpuinfo cpuinfo() {
+    public Cpuinfo cpuinfo() throws IOException {
         ArrayList<String> rows = readProcFile("cpuinfo");
         return new Cpuinfo(rows);
     }
 
-    public Uptime uptime() {
+    public Uptime uptime() throws IOException {
         ArrayList<String> rows = readProcFile("uptime");
         return new Uptime(rows);
     }
@@ -129,7 +129,9 @@ public class LinuxOS {
         Sysconf sysconf = new Sysconf();
         long clkTck = sysconf.main();
         if (clkTck == -1) {
-            throw new IOException("");
+            throw new IOException(
+                    "Failed to get system cpu tick rate! Call to Sysconf(_SC_CLK_TCK) returned -1, indicating an error."
+            );
         }
         return clkTck;
     }

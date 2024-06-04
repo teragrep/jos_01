@@ -52,7 +52,7 @@ import com.teragrep.jos_01.procfs.status.Statm;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Process process = new Process(1);
         // Find out if a process is alive with a simple call to isAlive().
         System.out.println("Find out if a process is alive with a simple call to isAlive().");

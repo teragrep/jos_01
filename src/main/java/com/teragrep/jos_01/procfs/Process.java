@@ -70,23 +70,23 @@ public class Process {
     }
 
     // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
-    private ArrayList<String> reportStatistics(String procFileName) {
+    private ArrayList<String> reportStatistics(String procFileName) throws IOException {
         ArrayList<String> rows = readProcFile(procFileName);
         return rows;
     }
 
-    private ArrayList<String> readProcFile(String procFileName) {
+    private ArrayList<String> readProcFile(String procFileName) throws IOException {
         RowFile procFile = new RowFile(procDirectory, procFileName);
         ArrayList<String> rows = procFile.readFile();
         return rows;
     }
 
-    public ProcessStat stat() {
+    public ProcessStat stat() throws IOException {
         ArrayList<String> rows = readProcFile("stat");
         return new ProcessStat(rows);
     }
 
-    public Statm statm() {
+    public Statm statm() throws IOException {
         ArrayList<String> rows = readProcFile("statm");
         return new Statm(rows);
     }
@@ -126,7 +126,7 @@ public class Process {
     }
 
     // Prints RSS in kB
-    public float residentSetSize() {
+    public float residentSetSize() throws IOException {
         Statm statm = statm();
         String rssPages = statm.statistics().get("resident");
         int pageCount = Integer.parseInt(rssPages);

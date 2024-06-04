@@ -62,10 +62,21 @@ public class Sysconf {
 
     // Returns the number of clock ticks per second.
     // If an error occurs, this funcion returns -1
-    public long main() throws IOException {
-        long clk_tck = LibSysconf.INSTANCE.main();
+    public long main() throws IOException, RuntimeException {
+        long clk_tck;
+        try {
+            clk_tck = LibSysconf.INSTANCE.main();
+        }
+        catch (UnsatisfiedLinkError unsatisfiedLinkError) {
+            throw new IOException(
+                    "Failed to initialize Native C library! Make sure that classes/lib/opt/Fail-Safe/jos_01/lib/sysconf/sysconf.so exists and is readable! Try running \"mvn clean install\" to generate required files",
+                    unsatisfiedLinkError
+            );
+        }
         if (clk_tck == -1) {
-            throw new IOException("Could not get system clock tick rate! sysconf(_SC_CLK_TCK) encountered an error!");
+            throw new RuntimeException(
+                    "Could not get system clock tick rate! sysconf(_SC_CLK_TCK) returned -1, indicating an error!"
+            );
         }
         return clk_tck;
     }

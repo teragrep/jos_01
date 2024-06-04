@@ -48,6 +48,7 @@ package com.teragrep.jos_01.procfs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.Map;
@@ -55,7 +56,7 @@ import java.util.Map;
 public class TaskTest {
 
     @Test
-    public void statTest() {
+    public void statTest() throws IOException {
         Process process = new Process(1);
         ArrayList<Task> tasks = process.tasks();
         Map<String, String> statistics = tasks.get(0).stat().statistics();

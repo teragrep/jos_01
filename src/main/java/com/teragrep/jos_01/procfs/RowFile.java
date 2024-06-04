@@ -54,24 +54,23 @@ public class RowFile extends File {
         super(procDirectory, fileName);
     }
 
-    public ArrayList<String> readFile() {
+    public ArrayList<String> readFile() throws IOException {
         ArrayList<String> rows = new ArrayList<String>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(this));
-            {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    rows.add(line);
-                }
+            String line;
+            while ((line = br.readLine()) != null) {
+                rows.add(line);
             }
         }
         catch (FileNotFoundException notFoundException) {
-            System.out.println("File \"" + this.getPath() + "\" not found!");
-            System.out.println("Reason: " + notFoundException.getMessage());
+            throw new IOException("File \"" + this.getPath() + "\" not found!", notFoundException);
         }
         catch (IOException ioException) {
-            System.out.println("Failed to read file \"" + this.getName() + "\" due to an I/O exception!");
-            System.out.println("Reason: " + ioException.getMessage());
+            throw new IOException(
+                    "Failed to read file \"" + this.getName() + "\" due to an I/O exception!",
+                    ioException
+            );
         }
         return rows;
     }

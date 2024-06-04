@@ -201,9 +201,7 @@ public class Vmstat implements Status {
         for (String row : rows) {
             Matcher matcher = pattern.matcher(row);
             if (matcher.find()) {
-                for (int i = 0; i < matcher.groupCount(); i++) {
-                    statistics.put(matcher.group(1), matcher.group(2));
-                }
+                statistics.put(matcher.group(1), matcher.group(2));
             }
         }
         timestamp = LocalDateTime.now();

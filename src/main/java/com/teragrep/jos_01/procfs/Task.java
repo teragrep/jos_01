@@ -49,6 +49,7 @@ import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Task {
@@ -68,23 +69,23 @@ public class Task {
     }
 
     // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
-    private ArrayList<String> reportStatistics(String procFileName) {
+    private ArrayList<String> reportStatistics(String procFileName) throws IOException {
         ArrayList<String> rows = readProcFile(procFileName);
         return rows;
     }
 
-    private ArrayList<String> readProcFile(String procFileName) {
+    private ArrayList<String> readProcFile(String procFileName) throws IOException {
         RowFile procFile = new RowFile(procDirectory, procFileName);
         ArrayList<String> rows = procFile.readFile();
         return rows;
     }
 
-    public ProcessStat stat() {
+    public ProcessStat stat() throws IOException {
         ArrayList<String> rows = readProcFile("stat");
         return new ProcessStat(rows);
     }
 
-    public Statm statm() {
+    public Statm statm() throws IOException {
         ArrayList<String> rows = readProcFile("statm");
         return new Statm(rows);
     }
@@ -121,11 +122,6 @@ public class Task {
 
     // Only the OS kernel can write or delete files from /proc, so if the process ID directory exists, the process is alive.
     public boolean isAlive() {
-        if (procDirectory.exists()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return (procDirectory.exists());
     }
 }

@@ -50,6 +50,7 @@ import com.teragrep.jos_01.procfs.status.Statm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public class ProcessTest {
     Process kthreadd;
 
     @Test
-    public void readSystemdFileTest() {
+    public void readSystemdFileTest() throws IOException {
         Process systemd = new Process(1);
         Map<String, String> systemdStats = systemd.stat().statistics();
         Assertions.assertEquals("1", systemdStats.get("pid"));
@@ -72,7 +73,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void readKthreaddFileTest() {
+    public void readKthreaddFileTest() throws IOException {
         Process kthreadd = new Process(2);
         Map<String, String> kthreaddStats = kthreadd.stat().statistics();
         Assertions.assertEquals("2", kthreaddStats.get("pid"));
@@ -88,8 +89,8 @@ public class ProcessTest {
     public void constructorTest() {
         Process process = new Process(1);
         Process processString = new Process("1");
-        Assertions.assertNotNull(process.isAlive());
-        Assertions.assertNotNull(processString.isAlive());
+        Assertions.assertTrue(process.isAlive());
+        Assertions.assertTrue(processString.isAlive());
     }
 
     @Test
@@ -102,11 +103,11 @@ public class ProcessTest {
     public void procFileNamesTest() {
         Process process = new Process(1);
         ArrayList<String> fileNames = process.availableProcFiles();
-        Assertions.assertEquals(243, fileNames.size());
+        //Assertions.assertEquals(243, fileNames.size());  // This can change over time, find some other solution
     }
 
     @Test
-    public void correctNumberOfTasksTest() {
+    public void correctNumberOfTasksTest() throws IOException {
         Process process = new Process(1);
         String statTaskcount = process.stat().statistics().get("num_threads");
         int taskCount = process.tasks().size();
@@ -114,7 +115,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void statTest() {
+    public void statTest() throws IOException {
         String[] expectedKeys = {
                 "pid",
                 "comm",
@@ -178,7 +179,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void statmTest() {
+    public void statmTest() throws IOException {
         String[] expectedKeys = {
                 "size", "resident", "shared", "text", "lib", "data", "dt"
         };

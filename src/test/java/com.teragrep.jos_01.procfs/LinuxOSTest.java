@@ -49,10 +49,12 @@ import com.teragrep.jos_01.procfs.status.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 public class LinuxOSTest {
 
     @Test
-    public void upTimeTest() {
+    public void upTimeTest() throws IOException {
 
         LinuxOS os = new LinuxOS();
         Uptime uptime = os.uptime();
@@ -62,7 +64,7 @@ public class LinuxOSTest {
     }
 
     @Test
-    public void statTest() {
+    public void statTest() throws IOException {
 
         LinuxOS os = new LinuxOS();
         OSStat stat = os.stat();
@@ -88,7 +90,7 @@ public class LinuxOSTest {
     }
 
     @Test
-    public void cpuInfoTest() {
+    public void cpuInfoTest() throws IOException {
         LinuxOS os = new LinuxOS();
         Cpuinfo cpuinfo = os.cpuinfo();
         Assertions.assertEquals(os.cpuThreadCount() * 27, cpuinfo.statistics().size());
@@ -131,7 +133,7 @@ public class LinuxOSTest {
     }
 
     @Test
-    public void memInfoTest() {
+    public void memInfoTest() throws IOException {
         LinuxOS os = new LinuxOS();
         Meminfo meminfo = os.meminfo();
         Assertions.assertEquals(56, meminfo.statistics().size());
@@ -201,7 +203,7 @@ public class LinuxOSTest {
     }
 
     @Test
-    public void highLevelMethodsTest() {
+    public void highLevelMethodsTest() throws IOException {
         LinuxOS os = new LinuxOS();
         Assertions.assertEquals(1, os.cpuCount());
         Assertions.assertEquals(4, os.cpuThreadCount());

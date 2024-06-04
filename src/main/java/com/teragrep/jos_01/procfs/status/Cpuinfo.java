@@ -147,6 +147,7 @@ public class Cpuinfo implements Status {
     }
 
     public Map<String, String> statistics() {
+        statistics.clear();
         for (Processor processor : processors) {
             for (Map.Entry<String, String> entry : processor.statistics().entrySet()) {
                 statistics.put(entry.getKey() + "_" + processor.processor(), entry.getValue());
