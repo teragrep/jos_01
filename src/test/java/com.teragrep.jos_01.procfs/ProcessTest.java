@@ -52,7 +52,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -61,10 +63,42 @@ public class ProcessTest {
     private final Logger LOGGER = LoggerFactory.getLogger(ProcessTest.class);
     Process systemd;
     Process kthreadd;
+    public class TestThread implements Runnable {
+        ProcessBuilder processBuilder;
+        java.lang.Process process;
+        long pid;
+        public TestThread(ProcessBuilder processBuilder) throws IOException, NoSuchFieldException, IllegalAccessException {
+            this.processBuilder = processBuilder;
+        }
+        @Override
+        public void run() {
+            try {
+                this.process = processBuilder.start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public ArrayList<Integer> getPidByCommand(String command) throws IOException {
+        ArrayList<Integer> pids = new ArrayList<Integer>();
+
+        java.lang.Process ps = Runtime.getRuntime().exec("ps");
+        BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+        String line;
+        int pid = -1;
+        while ((line = br.readLine()) != null){
+            if(line.contains(command)){
+                pid = Integer.parseInt(line.trim().replaceAll("(\\d+).+","$1"));
+                pids.add(pid);
+            }
+        }
+        return pids;
+    }
 
     @Test
     public void readSystemdFileTest() throws IOException {
-        Process systemd = new Process(1);
+        systemd = new Process(1);
         Map<String, String> systemdStats = systemd.stat().statistics();
         Assertions.assertEquals("1", systemdStats.get("pid"));
         Assertions.assertEquals("(systemd)", systemdStats.get("comm"));
@@ -77,7 +111,7 @@ public class ProcessTest {
 
     @Test
     public void readKthreaddFileTest() throws IOException {
-        Process kthreadd = new Process(2);
+        kthreadd = new Process(2);
         Map<String, String> kthreaddStats = kthreadd.stat().statistics();
         Assertions.assertEquals("2", kthreaddStats.get("pid"));
         Assertions.assertEquals("(kthreadd)", kthreaddStats.get("comm"));
@@ -100,6 +134,31 @@ public class ProcessTest {
     public void noSuchProcessTest() {
         Process process = new Process(-1);
         Assertions.assertFalse(process.isAlive());
+    }
+
+    @Test
+    public void isAliveTest() throws IOException, NoSuchFieldException, IllegalAccessException {
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command("sleep","10");
+
+        TestThread processThread = new TestThread(pb);
+        processThread.run();
+
+        ArrayList<Integer> pids = getPidByCommand("sleep");
+
+        Process sleepingProcess = new Process(pids.get(0));
+
+        Assertions.assertTrue(sleepingProcess.isAlive());
+
+        java.lang.Process kill = Runtime.getRuntime().exec("kill "+ pids.get(0));
+        try{
+            kill.waitFor();
+        }catch (InterruptedException inter){
+            LOGGER.warn("Kill interrupted!");
+        }
+
+        Assertions.assertFalse(sleepingProcess.isAlive());
+
     }
 
     @Test
@@ -192,4 +251,82 @@ public class ProcessTest {
             Assertions.assertNotNull(statm.statistics().get(key));
         }
     }
+    /*
+    Process process = new Process(1);
+    // Find out if a process is alive with a simple call to isAlive().
+        System.out.println("Find out if a process is alive with a simple call to isAlive().");
+        System.out.println(process.isAlive());
+
+    // Process methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call.
+        System.out
+                .println(
+                "\nProcess methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call."
+                );
+    ProcessStat pstat = process.stat();
+        System.out.println("Process stat = " + pstat.statistics());
+    Statm statm = process.statm();
+        System.out.println("Process statm = " + statm.statistics());
+
+    // Status object contains a timestamp and a Map containing keys to find wanted field more easily. Specific proc files are also formatted properly
+        System.out
+                .println(
+                "\nStatus object contains a timestamp and a Map containing keys to find wanted field more easily."
+                );
+        System.out.println(pstat.statistics());
+        System.out.println(pstat.timestamp());
+
+    // Processes can list all of its currently running Threads:
+        System.out.println("\nProcesses can list all of its currently running Threads:");
+    ArrayList<Task> tasks = process.tasks();
+        System.out.println(tasks);
+
+    // Each Thread has the ability to report on its status just like a Process can:
+        System.out.println("\nEach Thread has the ability to report on its status just like a Process can:");
+        System.out.println(tasks.get(0).stat().statistics());
+        System.out.println(tasks.get(0).statm().statistics());
+
+    // High level methods can be used to quickly calculate specific performance statistics:
+        System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
+        System.out.println("RSS: " + process.residentSetSize());
+        try {
+        System.out.println("CpuTime: " + process.cpuTime());
+        System.out.println("Cpu%: " + process.cpuUsage());
+    }
+        catch (IOException e) {
+        System.err.println("Could not calculate Cpu statistics:\n" + e);
+    }
+
+    Sysconf sysconf = new Sysconf();
+    long tickrate;
+        try {
+        tickrate = sysconf.main();
+    }
+        catch (IOException e) {
+        System.err.println(e);
+        System.out.println("Failed to get system clock tick rate! Defaulting to 100");
+        tickrate = 100;
+    }
+        System.out.println("System tickrate: " + tickrate);
+
+    // OS statistics are available via the OS class
+        System.out.println("\nOS statistics are available via the OS class using similar methods");
+    LinuxOS os = new LinuxOS();
+        System.out.println(os.stat().statistics());
+        System.out.println(os.vmstat().statistics());
+        System.out.println(os.meminfo().statistics());
+        System.out.println(os.cpuinfo().statistics());
+
+    // OS also has high-level methods just like processes:
+        System.out.println("\nOS also has high-level methods just like processes:");
+        System.out.println("Number of physical CPUs: " + os.cpuCount());
+        System.out.println("Number of physical CPU cores: " + os.cpuPhysicalCoreCount());
+        System.out.println("Number of CPU threads (physical cores can have multiple threads): " + os.cpuThreadCount());
+        try {
+        System.out.println("OS CPU tick rate: " + os.cpuTicksPerSecond());
+    }
+        catch (IOException e) {
+        System.out.println("Failed to get OS tick rate!");
+    }
+
+     */
 }
