@@ -45,7 +45,11 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 // Provides information about memory usage, measured in pages.
@@ -53,6 +57,7 @@ import java.util.*;
 // If accurate values are required, use smaps or smaps_rollup instead, which are much slower but provide accurate, detailed information
 public class Cpuinfo implements Status {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(Cpuinfo.class);
     private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final ArrayList<Processor> processors;
@@ -158,8 +163,8 @@ public class Cpuinfo implements Status {
 
     public void printStatistics() {
         for (Map.Entry<String, String> statistic : statistics.entrySet()) {
-            System.out.print(statistic.getKey() + ": ");
-            System.out.println(statistic.getValue());
+            LOGGER.info(statistic.getKey() + ": ");
+            LOGGER.info(statistic.getValue());
         }
     }
 
@@ -172,7 +177,7 @@ public class Cpuinfo implements Status {
     }
 
     public void printTimestamp() {
-        System.out.println(timestamp);
+        LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
     }
 
     private class Processor {

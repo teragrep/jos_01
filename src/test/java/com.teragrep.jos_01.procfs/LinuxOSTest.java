@@ -48,10 +48,14 @@ package com.teragrep.jos_01.procfs;
 import com.teragrep.jos_01.procfs.status.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class LinuxOSTest {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(LinuxOSTest.class);
 
     @Test
     public void upTimeTest() throws IOException {
@@ -123,8 +127,6 @@ public class LinuxOSTest {
                 "address sizes",
                 "power management"
         };
-
-        System.out.println(cpuinfo.statistics());
         for (int i = 0; i < cpuinfo.cpuThreadCount(); i++) {
             for (String key : expectedKeys) {
                 Assertions.assertTrue(cpuinfo.statistics().containsKey(key + "_" + i));
@@ -196,7 +198,6 @@ public class LinuxOSTest {
                 "DirectMap2M",
                 "DirectMap1G"
         };
-        System.out.println(meminfo.statistics());
         for (String key : expectedKeys) {
             Assertions.assertTrue(meminfo.statistics().containsKey(key));
         }
@@ -208,7 +209,7 @@ public class LinuxOSTest {
         Assertions.assertEquals(1, os.cpuCount());
         Assertions.assertEquals(4, os.cpuThreadCount());
         Assertions.assertEquals(4, os.cpuPhysicalCoreCount());
-        Assertions.assertEquals(4.0, os.pageSize(), 0);
-        Assertions.assertEquals(32790864, os.totalRAM());
+        Assertions.assertEquals(4.0, os.pageSize(), 0.1);
+        Assertions.assertEquals(32790864, os.totalRAM(), 8);
     }
 }

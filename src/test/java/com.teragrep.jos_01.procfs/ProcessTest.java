@@ -49,6 +49,8 @@ import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ import java.util.Map;
 
 public class ProcessTest {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(ProcessTest.class);
     Process systemd;
     Process kthreadd;
 
@@ -173,7 +176,7 @@ public class ProcessTest {
         Process process = new Process(1);
         ProcessStat stat = process.stat();
         for (String key : expectedKeys) {
-            System.out.println(key + " " + stat.statistics().get(key));
+            LOGGER.debug("{}‚{}", key, stat.statistics().get(key));
             Assertions.assertNotNull(stat.statistics().get(key));
         }
     }
@@ -186,7 +189,6 @@ public class ProcessTest {
         Process process = new Process(1);
         Statm statm = process.statm();
         for (String key : expectedKeys) {
-            System.out.println(key + " " + statm.statistics().get(key));
             Assertions.assertNotNull(statm.statistics().get(key));
         }
     }

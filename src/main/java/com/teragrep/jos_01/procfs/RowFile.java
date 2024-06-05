@@ -45,10 +45,15 @@
  */
 package com.teragrep.jos_01.procfs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.ArrayList;
 
 public class RowFile extends File {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(RowFile.class);
 
     public RowFile(File procDirectory, String fileName) {
         super(procDirectory, fileName);

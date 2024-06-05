@@ -50,10 +50,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.teragrep.jos_01.procfs.status.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LinuxOS {
 
     private final File procDirectory;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(LinuxOS.class);
 
     public LinuxOS() {
         this("/proc");

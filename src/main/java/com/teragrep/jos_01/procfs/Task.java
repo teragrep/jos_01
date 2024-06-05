@@ -47,6 +47,8 @@ package com.teragrep.jos_01.procfs;
 
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +59,7 @@ public class Task {
     private final long taskId;
     private final long processId;
     private final File procDirectory;
+    private final Logger LOGGER = LoggerFactory.getLogger(Task.class);
 
     public Task(String taskId, Process parentProcess) {
         this(Long.parseLong(taskId), parentProcess);
@@ -106,7 +109,7 @@ public class Task {
                 }
             }
             catch (NullPointerException npe) {
-                System.out.println("I/O Exception while attempting to access children of " + file.getPath());
+                LOGGER.error("I/O Exception while attempting to access children of {}", file.getPath());
             }
         }
         return nameList;

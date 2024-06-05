@@ -47,6 +47,8 @@ package com.teragrep.jos_01.procfs;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class TaskTest {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(TaskTest.class);
 
     @Test
     public void statTest() throws IOException {

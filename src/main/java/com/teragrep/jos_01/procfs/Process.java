@@ -48,13 +48,17 @@ package com.teragrep.jos_01.procfs;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Process {
 
     private final long processId;
     private final File procDirectory;
+    private final Logger LOGGER = LoggerFactory.getLogger(Process.class);
 
     public Process(String processId) {
         this(Integer.parseInt(processId));
@@ -103,10 +107,10 @@ public class Process {
         else {
             File[] subdirectories = file.listFiles();
             if (subdirectories == null) {
-                System.out
-                        .println(
-                                "Failed to get all file names! Either no permission to open file at " + file.getPath()
-                                        + " or it is not a directory!"
+                LOGGER
+                        .info(
+                                "Failed to get all file names! Either no permission to open file at {} or it is not a directory!",
+                                file.getPath()
                         );
                 return nameList;
             }

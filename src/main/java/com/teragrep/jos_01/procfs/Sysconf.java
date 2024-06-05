@@ -47,10 +47,14 @@ package com.teragrep.jos_01.procfs;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class Sysconf {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(Sysconf.class);
 
     public interface LibSysconf extends Library {
 
