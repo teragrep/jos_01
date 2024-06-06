@@ -139,9 +139,13 @@ public class Process {
     }
 
     public float cpuUsage() throws IOException {
+        return cpuUsage(new Sysconf());
+    }
+
+    public float cpuUsage(SysconfInterface sysconf) throws IOException {
         LinuxOS os = new LinuxOS();
         int cpuCount = os.cpuCount();
-        long cpuTicksPerSecond = os.cpuTicksPerSecond();
+        long cpuTicksPerSecond = os.cpuTicksPerSecond(sysconf);
 
         float OSUpTime = Float.parseFloat(os.uptime().statistics().get("uptimeSeconds"));
         ProcessStat status = stat();
