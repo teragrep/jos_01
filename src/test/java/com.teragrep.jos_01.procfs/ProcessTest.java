@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -63,18 +64,23 @@ public class ProcessTest {
     private final Logger LOGGER = LoggerFactory.getLogger(ProcessTest.class);
     Process systemd;
     Process kthreadd;
+
     public class TestThread implements Runnable {
+
         ProcessBuilder processBuilder;
         java.lang.Process process;
-        long pid;
-        public TestThread(ProcessBuilder processBuilder) throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        public TestThread(ProcessBuilder processBuilder)
+                throws IOException, NoSuchFieldException, IllegalAccessException {
             this.processBuilder = processBuilder;
         }
+
         @Override
         public void run() {
             try {
                 this.process = processBuilder.start();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -87,15 +93,16 @@ public class ProcessTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
         String line;
         int pid = -1;
-        while ((line = br.readLine()) != null){
-            if(line.contains(command)){
-                pid = Integer.parseInt(line.trim().replaceAll("(\\d+).+","$1"));
+        while ((line = br.readLine()) != null) {
+            if (line.contains(" " + command)) {
+                pid = Integer.parseInt(line.trim().replaceAll("(\\d+).+", "$1"));
                 pids.add(pid);
             }
         }
         return pids;
     }
 
+    // Kthreadd process (pid = 1) should have 52 fields in its Stat file, and it should have (systemd) as comm value and 1 as pid value in the file. None of the fields should be null
     @Test
     public void readSystemdFileTest() throws IOException {
         systemd = new Process(1);
@@ -109,6 +116,7 @@ public class ProcessTest {
         }
     }
 
+    // Kthreadd process (pid = 2) should have 52 fields in its Stat file, and it should have (kthreadd) as comm value and 2 as pid value in the file. None of the fields should be null
     @Test
     public void readKthreaddFileTest() throws IOException {
         kthreadd = new Process(2);
@@ -122,6 +130,7 @@ public class ProcessTest {
         }
     }
 
+    // Process object should be able to be instantiated with an integer and a String
     @Test
     public void constructorTest() {
         Process process = new Process(1);
@@ -130,16 +139,18 @@ public class ProcessTest {
         Assertions.assertTrue(processString.isAlive());
     }
 
+    // If a process with the designated ID is not found, the returned Process object should be a stub, and isAlive should return false.
     @Test
     public void noSuchProcessTest() {
         Process process = new Process(-1);
         Assertions.assertFalse(process.isAlive());
     }
 
+    // After starting a sleeping process in a new thread, isAlive should return true. After killing the process, it should return false.
     @Test
-    public void isAliveTest() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public void isAliveTest() throws IOException, NoSuchFieldException, IllegalAccessException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command("sleep","10");
+        pb.command("sleep", "10");
 
         TestThread processThread = new TestThread(pb);
         processThread.run();
@@ -150,32 +161,102 @@ public class ProcessTest {
 
         Assertions.assertTrue(sleepingProcess.isAlive());
 
-        java.lang.Process kill = Runtime.getRuntime().exec("kill "+ pids.get(0));
-        try{
+        java.lang.Process kill = Runtime.getRuntime().exec("kill " + pids.get(0));
+        try {
             kill.waitFor();
-        }catch (InterruptedException inter){
+        }
+        catch (InterruptedException inter) {
             LOGGER.warn("Kill interrupted!");
         }
-
+        Thread.sleep(10);
         Assertions.assertFalse(sleepingProcess.isAlive());
 
     }
 
+    // Check that at least the top level of proc files defined here are present when asking for a list of file names from Systemd
     @Test
     public void procFileNamesTest() {
         Process process = new Process(1);
         ArrayList<String> fileNames = process.availableProcFiles();
-        //Assertions.assertEquals(243, fileNames.size());  // This can change over time, find some other solution
+        String[] expectedKeys = {
+                "arch_status",
+                "environ",
+                "maps",
+                "patch_state",
+                "statm",
+                "exe",
+                "mem",
+                "personality",
+                "status",
+                "autogroup",
+                "mountinfo",
+                "projid_map",
+                "syscall",
+                "auxv",
+                "mounts",
+                "root",
+                "cgroup",
+                "gid_map",
+                "mountstats",
+                "sched",
+                "timens_offsets",
+                "clear_refs",
+                "io",
+                "schedstat",
+                "timers",
+                "cmdline",
+                "ksm_merging_pages",
+                "sessionid",
+                "timerslack_ns",
+                "comm",
+                "ksm_stat",
+                "numa_maps",
+                "setgroups",
+                "uid_map",
+                "coredump_filter",
+                "latency",
+                "oom_adj",
+                "smaps",
+                "wchan",
+                "cpu_resctrl_groups",
+                "limits",
+                "oom_score",
+                "smaps_rollup",
+                "cpuset",
+                "loginuid",
+                "oom_score_adj",
+                "stack",
+                "cwd",
+                "pagemap",
+                "stat"
+        };
+        for (String key : expectedKeys) {
+            boolean found = false;
+            for (String fileName : fileNames) {
+                if (("/" + key).equals(fileName)) {
+                    found = true;
+                    break;
+                }
+            }
+            Assertions.assertTrue(found);
+        }
     }
 
+    // The number of tasks should be equal to the number of threads in /proc/pid/stat. Test for both systemd and the current JVM
     @Test
     public void correctNumberOfTasksTest() throws IOException {
         Process process = new Process(1);
         String statTaskcount = process.stat().statistics().get("num_threads");
         int taskCount = process.tasks().size();
         Assertions.assertEquals(statTaskcount, String.valueOf(taskCount));
+
+        Process jvm = new Process(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+        String jvmStatTaskcount = jvm.stat().statistics().get("num_threads");
+        int jvmTaskCount = jvm.tasks().size();
+        Assertions.assertEquals(jvmStatTaskcount, String.valueOf(jvmTaskCount));
     }
 
+    // Stat status object should contain all of the listed fields.
     @Test
     public void statTest() throws IOException {
         String[] expectedKeys = {
@@ -235,11 +316,11 @@ public class ProcessTest {
         Process process = new Process(1);
         ProcessStat stat = process.stat();
         for (String key : expectedKeys) {
-            LOGGER.debug("{}‚{}", key, stat.statistics().get(key));
             Assertions.assertNotNull(stat.statistics().get(key));
         }
     }
 
+    // Statm status object should contain all of the listed fields.
     @Test
     public void statmTest() throws IOException {
         String[] expectedKeys = {
@@ -251,82 +332,62 @@ public class ProcessTest {
             Assertions.assertNotNull(statm.statistics().get(key));
         }
     }
-    /*
-    Process process = new Process(1);
-    // Find out if a process is alive with a simple call to isAlive().
-        System.out.println("Find out if a process is alive with a simple call to isAlive().");
-        System.out.println(process.isAlive());
 
-    // Process methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call.
-        System.out
-                .println(
-                "\nProcess methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call."
-                );
-    ProcessStat pstat = process.stat();
-        System.out.println("Process stat = " + pstat.statistics());
-    Statm statm = process.statm();
-        System.out.println("Process statm = " + statm.statistics());
+    // Timestamps should be available and should be different if the proc method is called later
+    @Test
+    public void timestampTest() throws IOException {
+        systemd = new Process(1);
+        ProcessStat stat = systemd.stat();
+        ProcessStat stat2 = systemd.stat();
+        Statm statm = systemd.statm();
 
-    // Status object contains a timestamp and a Map containing keys to find wanted field more easily. Specific proc files are also formatted properly
-        System.out
-                .println(
-                "\nStatus object contains a timestamp and a Map containing keys to find wanted field more easily."
-                );
-        System.out.println(pstat.statistics());
-        System.out.println(pstat.timestamp());
+        // Timestamps should always have a value
+        Assertions.assertTrue(stat.timestamp() != null);
+        Assertions.assertTrue(statm.timestamp() != null);
 
-    // Processes can list all of its currently running Threads:
-        System.out.println("\nProcesses can list all of its currently running Threads:");
-    ArrayList<Task> tasks = process.tasks();
-        System.out.println(tasks);
-
-    // Each Thread has the ability to report on its status just like a Process can:
-        System.out.println("\nEach Thread has the ability to report on its status just like a Process can:");
-        System.out.println(tasks.get(0).stat().statistics());
-        System.out.println(tasks.get(0).statm().statistics());
-
-    // High level methods can be used to quickly calculate specific performance statistics:
-        System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
-        System.out.println("RSS: " + process.residentSetSize());
-        try {
-        System.out.println("CpuTime: " + process.cpuTime());
-        System.out.println("Cpu%: " + process.cpuUsage());
-    }
-        catch (IOException e) {
-        System.err.println("Could not calculate Cpu statistics:\n" + e);
+        // Timestamps should be different if called at different times, even when calling the same method again
+        Assertions.assertFalse(stat.timestamp().equals(stat2.timestamp()));
+        Assertions.assertFalse(stat.timestamp().equals(statm.timestamp()));
     }
 
-    Sysconf sysconf = new Sysconf();
-    long tickrate;
-        try {
-        tickrate = sysconf.main();
-    }
-        catch (IOException e) {
-        System.err.println(e);
-        System.out.println("Failed to get system clock tick rate! Defaulting to 100");
-        tickrate = 100;
-    }
-        System.out.println("System tickrate: " + tickrate);
+    // Get the JVM process this test is running in, and make two delayed calls to cpuTime to make sure cpuTime actually increments as process is in use
+    // Uses SysconfInterface.Fake() to get a hardcoded CPU tick rate (100) without actually having to compile Native C code.
+    @Test
+    public void CpuTimeTest() throws IOException, InterruptedException {
 
-    // OS statistics are available via the OS class
-        System.out.println("\nOS statistics are available via the OS class using similar methods");
-    LinuxOS os = new LinuxOS();
-        System.out.println(os.stat().statistics());
-        System.out.println(os.vmstat().statistics());
-        System.out.println(os.meminfo().statistics());
-        System.out.println(os.cpuinfo().statistics());
-
-    // OS also has high-level methods just like processes:
-        System.out.println("\nOS also has high-level methods just like processes:");
-        System.out.println("Number of physical CPUs: " + os.cpuCount());
-        System.out.println("Number of physical CPU cores: " + os.cpuPhysicalCoreCount());
-        System.out.println("Number of CPU threads (physical cores can have multiple threads): " + os.cpuThreadCount());
-        try {
-        System.out.println("OS CPU tick rate: " + os.cpuTicksPerSecond());
-    }
-        catch (IOException e) {
-        System.out.println("Failed to get OS tick rate!");
+        long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+        Process jvm = new Process(pid);
+        float cpuTime1 = jvm.cpuTime(new SysconfInterface.Fake());
+        Thread.sleep(1500);
+        float cpuTime2 = jvm.cpuTime(new SysconfInterface.Fake());
+        Assertions.assertNotEquals(cpuTime2, cpuTime1);
     }
 
-     */
+    // As resident set size for the whole JVM fluctuates a lot we need to create a real chonker of an object to be sure that RSS increases when creating objects
+    @Test
+    public void residentSetSizeTest() throws IOException, InterruptedException {
+        Process jvm = new Process(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+        float rssBefore = jvm.residentSetSize();
+        float freeMemoryBefore = Runtime.getRuntime().freeMemory();
+        ArrayList<Integer> numbers = new ArrayList<Integer>();
+        for (int i = 0; i < 10000000; i++) {
+            numbers.add((int) Math.floor(Math.random() * 100));
+        }
+        float rssAfter = jvm.residentSetSize();
+        float freeMemoryAfter = Runtime.getRuntime().freeMemory();
+        Assertions.assertEquals(freeMemoryBefore, freeMemoryAfter + (rssAfter - rssBefore) * 1000, 20000000); // Based on testing JVM seems to allocate 15-20 megabytes of memory outside of the numbers object.
+        numbers.clear();
+    }
+
+    // CpuUsage of JVM should increase over time
+    @Test
+    public void cpuUsageTest() throws IOException, InterruptedException {
+
+        long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+        Process jvm = new Process(pid);
+        float cpuUsage1 = jvm.cpuUsage(new SysconfInterface.Fake());
+        Thread.sleep(1500);
+        float cpuUsage2 = jvm.cpuUsage(new SysconfInterface.Fake());
+        Assertions.assertNotEquals(cpuUsage1, cpuUsage2);
+    }
 }
