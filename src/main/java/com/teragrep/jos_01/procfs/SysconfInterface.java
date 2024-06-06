@@ -45,43 +45,18 @@
  */
 package com.teragrep.jos_01.procfs;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 
-public class Sysconf implements SysconfInterface {
+// Exposes a Fake class that can be used for testing without having to compile the C code. Fake class simply returns a hardcoded value
+public interface SysconfInterface {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(Sysconf.class);
+    final class Fake implements SysconfInterface {
 
-    public interface LibSysconf extends Library {
-
-        LibSysconf INSTANCE = (LibSysconf) Native
-                .load("/lib/opt/Fail-Safe/jos_01/lib/sysconf/sysconf.so", LibSysconf.class);
-
-        public long main();
+        @Override
+        public long main() throws IOException, RuntimeException {
+            return 100;
+        }
     }
 
-    // Returns the number of clock ticks per second.
-    // If an error occurs, this funcion returns -1
-    public long main() throws IOException, RuntimeException {
-        long clk_tck;
-        try {
-            clk_tck = LibSysconf.INSTANCE.main();
-        }
-        catch (UnsatisfiedLinkError unsatisfiedLinkError) {
-            throw new IOException(
-                    "Failed to initialize Native C library! Make sure that classes/lib/opt/Fail-Safe/jos_01/lib/sysconf/sysconf.so exists and is readable! Try running \"mvn clean install\" to generate required files",
-                    unsatisfiedLinkError
-            );
-        }
-        if (clk_tck == -1) {
-            throw new RuntimeException(
-                    "Could not get system clock tick rate! sysconf(_SC_CLK_TCK) returned -1, indicating an error!"
-            );
-        }
-        return clk_tck;
-    }
+    long main() throws IOException, RuntimeException;
 }

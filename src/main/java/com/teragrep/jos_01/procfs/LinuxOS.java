@@ -130,7 +130,10 @@ public class LinuxOS {
     }
 
     public long cpuTicksPerSecond() throws IOException {
-        Sysconf sysconf = new Sysconf();
+        return cpuTicksPerSecond(new Sysconf());
+    }
+
+    public long cpuTicksPerSecond(SysconfInterface sysconf) throws IOException {
         long clkTck = sysconf.main();
         if (clkTck == -1) {
             throw new IOException(
@@ -138,6 +141,7 @@ public class LinuxOS {
             );
         }
         return clkTck;
+
     }
 
 }

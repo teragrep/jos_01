@@ -156,9 +156,13 @@ public class Process {
     }
 
     public float cpuTime() throws IOException {
+        return cpuTime(new Sysconf());
+    }
+
+    public float cpuTime(SysconfInterface sysconf) throws IOException {
         LinuxOS os = new LinuxOS();
         ProcessStat status = stat();
-        long cpuTicksPerSecond = os.cpuTicksPerSecond();
+        long cpuTicksPerSecond = os.cpuTicksPerSecond(sysconf);
         float utime = Float.parseFloat(status.statistics().get("utime")) / cpuTicksPerSecond;
         float stime = Float.parseFloat(status.statistics().get("stime")) / cpuTicksPerSecond;
 
