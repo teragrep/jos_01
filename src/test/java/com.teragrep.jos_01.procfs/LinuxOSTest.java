@@ -68,20 +68,24 @@ public class LinuxOSTest {
         Assertions.assertTrue(Float.parseFloat(uptime.statistics().get("combinedCpuCoreIdleTimeSeconds")) > 0);
     }
 
-    // Stat should have 12 fields, and all expected keys should be present.
+    // Stat should have 7 fields in addition to cpu lines, and all expected keys should be present.
+    // The number of cpu lines is one aggregate line + one line for each logical core. The number of logical cores should be the same as reported in /proc/cpuinfo
     @Test
     public void statTest() throws IOException {
 
         LinuxOS os = new LinuxOS();
         OSStat stat = os.stat();
-        Assertions.assertEquals(12, stat.statistics().size());
+
+        int numberOfCpus = 0;
+        for (Map.Entry entry : stat.statistics().entrySet()) {
+            if(entry.getKey().toString().startsWith("cpu")){
+                numberOfCpus++;
+            }
+        }
+        Assertions.assertEquals(7+numberOfCpus, stat.statistics().size());
 
         String[] expectedKeys = {
                 "cpu",
-                "cpu0",
-                "cpu1",
-                "cpu2",
-                "cpu3",
                 "intr",
                 "ctxt",
                 "btime",
