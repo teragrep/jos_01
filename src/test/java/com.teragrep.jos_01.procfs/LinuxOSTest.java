@@ -102,7 +102,7 @@ public class LinuxOSTest {
         LinuxOS os = new LinuxOS();
         Vmstat vmstat = os.vmstat();
 
-        Assertions.assertEquals(178,vmstat.statistics().size());
+        Assertions.assertEquals(178, vmstat.statistics().size());
         String[] expectedKeys = {
                 "nr_free_pages",
                 "nr_zone_inactive_anon",
