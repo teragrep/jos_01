@@ -78,21 +78,14 @@ public class LinuxOSTest {
 
         int numberOfCpus = 0;
         for (Map.Entry entry : stat.statistics().entrySet()) {
-            if(entry.getKey().toString().startsWith("cpu")){
+            if (entry.getKey().toString().startsWith("cpu")) {
                 numberOfCpus++;
             }
         }
-        Assertions.assertEquals(7+numberOfCpus, stat.statistics().size());
+        Assertions.assertEquals(7 + numberOfCpus, stat.statistics().size());
 
         String[] expectedKeys = {
-                "cpu",
-                "intr",
-                "ctxt",
-                "btime",
-                "processes",
-                "procs_running",
-                "procs_blocked",
-                "softirq"
+                "cpu", "intr", "ctxt", "btime", "processes", "procs_running", "procs_blocked", "softirq"
         };
         for (String key : expectedKeys) {
             Assertions.assertTrue(stat.statistics().containsKey(key));
