@@ -358,7 +358,10 @@ public class ProcessTest {
         long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
         Process jvm = new Process(pid);
         float cpuTime1 = jvm.cpuTime(new SysconfInterface.Fake());
-        Thread.sleep(1500);
+        ArrayList<String> workArray = new ArrayList<String>();
+        for (int i = 0; i < 10000; i++) {
+            workArray.add("JVM doing important work for tests");
+        }
         float cpuTime2 = jvm.cpuTime(new SysconfInterface.Fake());
         Assertions.assertNotEquals(cpuTime2, cpuTime1);
     }
@@ -386,7 +389,10 @@ public class ProcessTest {
         long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
         Process jvm = new Process(pid);
         float cpuUsage1 = jvm.cpuUsage(new SysconfInterface.Fake());
-        Thread.sleep(1500);
+        ArrayList<String> workArray = new ArrayList<String>();
+        for (int i = 0; i < 10000; i++) {
+            workArray.add("JVM doing important work for tests");
+        }
         float cpuUsage2 = jvm.cpuUsage(new SysconfInterface.Fake());
         Assertions.assertNotEquals(cpuUsage1, cpuUsage2);
     }
