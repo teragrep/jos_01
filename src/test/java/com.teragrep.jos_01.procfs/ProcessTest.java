@@ -356,13 +356,13 @@ public class ProcessTest {
     public void CpuTimeTest() throws IOException, InterruptedException {
 
         long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-        Process jvm = new Process(pid);
-        float cpuTime1 = jvm.cpuTime(new SysconfInterface.Fake());
+        Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
+        float cpuTime1 = jvm.cpuTime();
         ArrayList<String> workArray = new ArrayList<String>();
         for (int i = 0; i < 10000; i++) {
             workArray.add("JVM doing important work for tests");
         }
-        float cpuTime2 = jvm.cpuTime(new SysconfInterface.Fake());
+        float cpuTime2 = jvm.cpuTime();
         Assertions.assertNotEquals(cpuTime2, cpuTime1);
     }
 
@@ -387,13 +387,13 @@ public class ProcessTest {
     public void cpuUsageTest() throws IOException, InterruptedException {
 
         long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-        Process jvm = new Process(pid);
-        float cpuUsage1 = jvm.cpuUsage(new SysconfInterface.Fake());
+        Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
+        float cpuUsage1 = jvm.cpuUsage();
         ArrayList<String> workArray = new ArrayList<String>();
         for (int i = 0; i < 10000; i++) {
             workArray.add("JVM doing important work for tests");
         }
-        float cpuUsage2 = jvm.cpuUsage(new SysconfInterface.Fake());
+        float cpuUsage2 = jvm.cpuUsage();
         Assertions.assertNotEquals(cpuUsage1, cpuUsage2);
     }
 }

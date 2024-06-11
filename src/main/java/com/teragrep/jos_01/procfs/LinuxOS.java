@@ -59,12 +59,19 @@ public class LinuxOS {
 
     private final Logger LOGGER = LoggerFactory.getLogger(LinuxOS.class);
 
-    public LinuxOS() {
-        this("/proc");
+    private final SysconfInterface sysconf;
+
+    public LinuxOS(SysconfInterface sysconf) {
+        this("/proc", sysconf);
     }
 
-    public LinuxOS(String procDirectoryPath) {
+    public LinuxOS() {
+        this("/proc", new Sysconf());
+    }
+
+    public LinuxOS(String procDirectoryPath, SysconfInterface sysconf) {
         procDirectory = new File(procDirectoryPath);
+        this.sysconf = sysconf;
     }
 
     private ArrayList<String> readProcFile(String procFileName) throws IOException {
@@ -130,10 +137,6 @@ public class LinuxOS {
     }
 
     public long cpuTicksPerSecond() throws IOException {
-        return cpuTicksPerSecond(new Sysconf());
-    }
-
-    public long cpuTicksPerSecond(SysconfInterface sysconf) throws IOException {
         long clkTck = sysconf.main();
         if (clkTck == -1) {
             throw new IOException(

@@ -59,18 +59,24 @@ public class Process {
     private final long processId;
     private final File procDirectory;
     private final Logger LOGGER = LoggerFactory.getLogger(Process.class);
+    private final LinuxOS os;
 
     public Process(String processId) {
         this(Long.parseLong(processId));
     }
 
     public Process(long processId) {
-        this(processId, "/proc");
+        this(processId, "/proc", new LinuxOS());
     }
 
-    public Process(long processId, String procDirectoryPath) {
+    public Process(long processId, LinuxOS os) {
+        this(processId, "/proc", os);
+    }
+
+    public Process(long processId, String procDirectoryPath, LinuxOS os) {
         this.processId = processId;
         this.procDirectory = new File(procDirectoryPath, Long.toString(processId));
+        this.os = os;
     }
 
     // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
@@ -151,13 +157,7 @@ public class Process {
     }
 
     public float cpuUsage() throws IOException {
-        return cpuUsage(new Sysconf());
-    }
-
-    public float cpuUsage(SysconfInterface sysconf) throws IOException {
-        LinuxOS os = new LinuxOS();
-        int cpuCount = os.cpuCount();
-        long cpuTicksPerSecond = os.cpuTicksPerSecond(sysconf);
+        long cpuTicksPerSecond = os.cpuTicksPerSecond();
 
         float OSUpTime = Float.parseFloat(os.uptime().statistics().get("uptimeSeconds"));
         ProcessStat status = stat();
@@ -172,13 +172,8 @@ public class Process {
     }
 
     public float cpuTime() throws IOException {
-        return cpuTime(new Sysconf());
-    }
-
-    public float cpuTime(SysconfInterface sysconf) throws IOException {
-        LinuxOS os = new LinuxOS();
         ProcessStat status = stat();
-        long cpuTicksPerSecond = os.cpuTicksPerSecond(sysconf);
+        long cpuTicksPerSecond = os.cpuTicksPerSecond();
         float utime = Float.parseFloat(status.statistics().get("utime")) / cpuTicksPerSecond;
         float stime = Float.parseFloat(status.statistics().get("stime")) / cpuTicksPerSecond;
 
