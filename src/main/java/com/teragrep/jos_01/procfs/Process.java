@@ -152,7 +152,7 @@ public class Process {
         Statm statm = statm();
         String rssPages = statm.statistics().get("resident");
         int pageCount = Integer.parseInt(rssPages);
-        float pageSize = new LinuxOS().pageSize();
+        float pageSize = os.pageSize();
         return pageCount * pageSize;
     }
 
