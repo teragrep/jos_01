@@ -226,7 +226,7 @@
                 <LDFLAGS>-pie -Wl,-z,relro -Wl,-z,now</LDFLAGS>
                 <LD_LIBRARY_PATH></LD_LIBRARY_PATH>
                 <LIBS>-ldl -lrt</LIBS>
-                <CFLAGS>-ggdb -fpie -fPIC -std=c99 -I/usr/include/sysconf -DHAVE_ATOMIC_BUILTINS64 -D_DEFAULT_SOURCE</CFLAGS>
+                <CFLAGS>-ggdb -fpie -fPIC -std=c99 -DHAVE_ATOMIC_BUILTINS64 -D_DEFAULT_SOURCE</CFLAGS>
               </environmentVariables>
             </configuration>
           </execution>
