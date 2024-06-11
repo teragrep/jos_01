@@ -61,7 +61,7 @@ public class Process {
     private final Logger LOGGER = LoggerFactory.getLogger(Process.class);
 
     public Process(String processId) {
-        this(Integer.parseInt(processId));
+        this(Long.parseLong(processId));
     }
 
     public Process(long processId) {
