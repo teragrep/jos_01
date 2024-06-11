@@ -50,21 +50,32 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class RowFile extends File {
+    private final BufferedReader reader;
+    private final ArrayList<String> rows;
 
     private final Logger LOGGER = LoggerFactory.getLogger(RowFile.class);
 
-    public RowFile(File procDirectory, String fileName) {
-        super(procDirectory, fileName);
+    public RowFile(File procDirectory, String fileName) throws FileNotFoundException {
+        this(new File(procDirectory,fileName));
+    }
+
+    public RowFile(File procFile) throws FileNotFoundException {
+        this(procFile,new BufferedReader(new FileReader(procFile)),new ArrayList<String>());
+    }
+
+    public RowFile(File procFile, BufferedReader reader, ArrayList<String> rows) {
+        super(procFile.toURI());
+        this.reader = reader;
+        this.rows = rows;
     }
 
     public ArrayList<String> readFile() throws IOException {
-        ArrayList<String> rows = new ArrayList<String>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(this));
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 rows.add(line);
             }
         }
