@@ -105,26 +105,38 @@ public class Process {
             nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
         }
         else {
-            File[] subdirectories = file.listFiles();
-            if (subdirectories == null) {
-                LOGGER
-                        .info(
-                                "Failed to get all file names! Either no permission to open file at {} or it is not a directory!",
-                                file.getPath()
-                        );
+            try {
+                File[] subdirectories = file.listFiles();
+                if (subdirectories == null) {
+                    throw new IOException(
+                            "Failed to get all file names! Either no permission to open file at " + file.getPath()
+                                    + " or it is not a directory!"
+                    );
+                }
+                for (File child : file.listFiles()) {
+                    procFileNames(nameList, child);
+                }
+            }
+            catch (IOException ioe) {
                 return nameList;
             }
-            for (File child : file.listFiles()) {
-                procFileNames(nameList, child);
-            }
+
         }
         return nameList;
     }
 
-    public ArrayList<Task> tasks() {
+    public ArrayList<Task> tasks() throws IOException {
         ArrayList<Task> tasks = new ArrayList<Task>();
-        for (File taskDirectory : new File(procDirectory, "task").listFiles()) {
-            tasks.add(new Task(Long.parseLong(taskDirectory.getName()), this));
+        File processTaskDirectory = new File(procDirectory, "task");
+        File[] childDirectories = processTaskDirectory.listFiles();
+        if (childDirectories == null) {
+            throw new IOException(
+                    "Failed to access list of tasks within " + processTaskDirectory.getPath()
+                            + " Either no permission or file is not a directory"
+            );
+        }
+        for (File directory : childDirectories) {
+            tasks.add(new Task(Long.parseLong(directory.getName()), this));
         }
         return tasks;
     }
