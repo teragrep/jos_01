@@ -74,25 +74,17 @@ public class LinuxOS {
         this.sysconf = sysconf;
     }
 
-    private ArrayList<String> readProcFile(String procFileName) throws IOException {
-        RowFile procFile = new RowFile(procDirectory, procFileName);
-        ArrayList<String> rows = procFile.readFile();
-        return rows;
-    }
 
     public OSStat stat() throws IOException {
-        ArrayList<String> rows = readProcFile("stat");
-        return new OSStat(rows);
+        return new OSStat(new RowFile(procDirectory,"stat"));
     }
 
     public Vmstat vmstat() throws IOException {
-        ArrayList<String> rows = readProcFile("vmstat");
-        return new Vmstat(rows);
+        return new Vmstat(new RowFile(procDirectory,"vmstat"));
     }
 
     public Meminfo meminfo() throws IOException {
-        ArrayList<String> rows = readProcFile("meminfo");
-        return new Meminfo(rows);
+        return new Meminfo(new RowFile(procDirectory,"meminfo"));
     }
 
     // Estimates page size in kB.
@@ -127,13 +119,11 @@ public class LinuxOS {
     }
 
     public Cpuinfo cpuinfo() throws IOException {
-        ArrayList<String> rows = readProcFile("cpuinfo");
-        return new Cpuinfo(rows);
+        return new Cpuinfo(new RowFile(procDirectory,"cpuinfo"));
     }
 
     public Uptime uptime() throws IOException {
-        ArrayList<String> rows = readProcFile("uptime");
-        return new Uptime(rows);
+        return new Uptime(new RowFile(procDirectory,"uptime"));
     }
 
     public long cpuTicksPerSecond() throws IOException {
@@ -144,7 +134,6 @@ public class LinuxOS {
             );
         }
         return clkTck;
-
     }
 
 }

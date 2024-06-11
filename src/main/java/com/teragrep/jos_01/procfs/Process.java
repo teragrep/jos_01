@@ -51,11 +51,11 @@ import java.util.ArrayList;
 
 import com.teragrep.jos_01.procfs.status.ProcessStat;
 import com.teragrep.jos_01.procfs.status.Statm;
+import com.teragrep.jos_01.procfs.status.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Process {
-
     private final long processId;
     private final File procDirectory;
     private final Logger LOGGER = LoggerFactory.getLogger(Process.class);
@@ -66,39 +66,25 @@ public class Process {
     }
 
     public Process(long processId) {
-        this(processId, "/proc", new LinuxOS());
+        this(processId, new File("/proc", Long.toString(processId)), new LinuxOS());
     }
 
     public Process(long processId, LinuxOS os) {
-        this(processId, "/proc", os);
+        this(processId, new File("/proc", Long.toString(processId)), os);
     }
 
-    public Process(long processId, String procDirectoryPath, LinuxOS os) {
+    public Process(long processId, File procDirectory, LinuxOS os) {
         this.processId = processId;
-        this.procDirectory = new File(procDirectoryPath, Long.toString(processId));
+        this.procDirectory = procDirectory;
         this.os = os;
     }
 
-    // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
-    private ArrayList<String> reportStatistics(String procFileName) throws IOException {
-        ArrayList<String> rows = readProcFile(procFileName);
-        return rows;
-    }
-
-    private ArrayList<String> readProcFile(String procFileName) throws IOException {
-        RowFile procFile = new RowFile(procDirectory, procFileName);
-        ArrayList<String> rows = procFile.readFile();
-        return rows;
-    }
-
     public ProcessStat stat() throws IOException {
-        ArrayList<String> rows = readProcFile("stat");
-        return new ProcessStat(rows);
+        return new ProcessStat(new RowFile(procDirectory,"stat"));
     }
 
     public Statm statm() throws IOException {
-        ArrayList<String> rows = readProcFile("statm");
-        return new Statm(rows);
+        return new Statm(new RowFile(procDirectory, "statm"));
     }
 
     public ArrayList<String> availableProcFiles() {

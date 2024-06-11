@@ -45,9 +45,11 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import com.teragrep.jos_01.procfs.RowFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -118,8 +120,8 @@ public class ProcessStat implements Status {
         exit_code,
     };
 
-    public ProcessStat(ArrayList<String> rows) {
-        this.rows = rows;
+    public ProcessStat(RowFile rowFile) throws IOException {
+        this.rows = rowFile.readFile();
         statistics = new LinkedHashMap<String, String>();
         Pattern pattern = Pattern
                 .compile(

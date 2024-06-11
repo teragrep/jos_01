@@ -45,9 +45,11 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import com.teragrep.jos_01.procfs.RowFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -68,8 +70,8 @@ public class Uptime implements Status {
         uptimeSeconds, combinedCpuCoreIdleTimeSeconds
     };
 
-    public Uptime(ArrayList<String> rows) {
-        this.rows = rows;
+    public Uptime(RowFile rowFile) throws IOException {
+        this.rows = rowFile.readFile();
         statistics = new LinkedHashMap<String, String>();
         Pattern pattern = Pattern.compile("(?<uptimeSeconds>\\d+.\\d+) (?<combinedCpuCoreIdleTimeSeconds>\\d+.\\d+)");
         for (String row : rows) {

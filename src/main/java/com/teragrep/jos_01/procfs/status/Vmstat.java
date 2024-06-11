@@ -45,9 +45,11 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import com.teragrep.jos_01.procfs.RowFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -200,8 +202,8 @@ public class Vmstat implements Status {
         vmacache_full_flushes
     };
 
-    public Vmstat(ArrayList<String> rows) {
-        this.rows = rows;
+    public Vmstat(RowFile rowFile) throws IOException {
+        this.rows = rowFile.readFile();
         statistics = new LinkedHashMap<String, String>();
         Pattern pattern = Pattern.compile("(.*) (.*)");
         for (String row : rows) {

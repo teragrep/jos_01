@@ -45,9 +45,11 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import com.teragrep.jos_01.procfs.RowFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -63,8 +65,8 @@ public class Cpuinfo implements Status {
     private final ArrayList<Processor> processors;
     private final Map<String, String> statistics;
 
-    public Cpuinfo(ArrayList<String> rows) {
-        this.rows = rows;
+    public Cpuinfo(RowFile rowFile) throws IOException {
+        this.rows = rowFile.readFile();
         this.processors = new ArrayList<Processor>();
         this.timestamp = LocalDateTime.now();
         this.statistics = new LinkedHashMap<>();

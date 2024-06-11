@@ -45,9 +45,11 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import com.teragrep.jos_01.procfs.RowFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -125,8 +127,8 @@ public class Meminfo implements Status {
         DirectMap1G
     };
 
-    public Meminfo(ArrayList<String> rows) {
-        this.rows = rows;
+    public Meminfo(RowFile rowFile) throws IOException {
+        this.rows = rowFile.readFile();
         statistics = new LinkedHashMap<String, String>();
         Pattern pattern = Pattern.compile("([a-zA-Z0-9_\\(\\)]*): *(\\d*)");
         for (String row : rows) {

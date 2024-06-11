@@ -71,26 +71,12 @@ public class Task {
         this.procDirectory = new File("/proc/" + processId + "/task/", Long.toString(processId));
     }
 
-    // Creates a Status object based on the chosen file name in /proc for this process. Overloaded to accept different kinds of Status objects
-    private ArrayList<String> reportStatistics(String procFileName) throws IOException {
-        ArrayList<String> rows = readProcFile(procFileName);
-        return rows;
-    }
-
-    private ArrayList<String> readProcFile(String procFileName) throws IOException {
-        RowFile procFile = new RowFile(procDirectory, procFileName);
-        ArrayList<String> rows = procFile.readFile();
-        return rows;
-    }
-
     public ProcessStat stat() throws IOException {
-        ArrayList<String> rows = readProcFile("stat");
-        return new ProcessStat(rows);
+        return new ProcessStat(new RowFile(procDirectory,"stat"));
     }
 
     public Statm statm() throws IOException {
-        ArrayList<String> rows = readProcFile("statm");
-        return new Statm(rows);
+        return new Statm(new RowFile(procDirectory,"statm"));
     }
 
     public ArrayList<String> availableProcFiles() {
