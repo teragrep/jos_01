@@ -43,9 +43,9 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs.status;
+package com.teragrep.jos_01.procfs.status.os;
 
-import com.teragrep.jos_01.procfs.RowFile;
+import com.teragrep.jos_01.procfs.status.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,71 +54,40 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-// Provides information about memory usage, measured in pages.
-// Some of these values are inaccurate because of a kernel-internal scalability optimization.
-// If accurate values are required, use smaps or smaps_rollup instead, which are much slower but provide accurate, detailed information
-public class Cpuinfo implements Status {
+// Provides information about CPUs.
+// There is 27 fields for each logical CPU. Every logical CPU is separated by an empty line, each field has a name and value is separated by whitespace and a colon character (:).
+// Fields can be either strings, integers or floating point numbers. Some fields contain multiple values with variable counts. Some fields may have empty values.
+public class Cpuinfo implements Text {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Cpuinfo.class);
-    private final ArrayList<String> rows;
     private final LocalDateTime timestamp;
     private final ArrayList<Processor> processors;
-    private final Map<String, String> statistics;
+    private final ArrayList<String> fields;
 
-    public Cpuinfo(RowFile rowFile) throws IOException {
-        this.rows = rowFile.readFile();
+    public Cpuinfo(Text origin) throws IOException {
+        fields = new NonEmptyLines(new Replaced(origin, "\\s+", " ")).read();
         this.processors = new ArrayList<Processor>();
-        this.timestamp = LocalDateTime.now();
-        this.statistics = new LinkedHashMap<>();
-
-        HashMap<String, String> processorFields = new LinkedHashMap<String, String>();
-        for (String row : rows) {
-            if (row.equals("")) {
-                Processor processor = new Processor(
-                        processorFields.get("processor"),
-                        processorFields.get("vendor id"),
-                        processorFields.get("cpu family"),
-                        processorFields.get("model"),
-                        processorFields.get("model name"),
-                        processorFields.get("stepping"),
-                        processorFields.get("microcode"),
-                        processorFields.get("cpu MHz"),
-                        processorFields.get("cache size"),
-                        processorFields.get("physical id"),
-                        processorFields.get("siblings"),
-                        processorFields.get("core id"),
-                        processorFields.get("cpu cores"),
-                        processorFields.get("apicid"),
-                        processorFields.get("initial apicid"),
-                        processorFields.get("fpu"),
-                        processorFields.get("fpu_exception"),
-                        processorFields.get("cpuid level"),
-                        processorFields.get("wp"),
-                        processorFields.get("flags"),
-                        processorFields.get("vmx flags"),
-                        processorFields.get("bugs"),
-                        processorFields.get("bogomips"),
-                        processorFields.get("clflush size"),
-                        processorFields.get("cache_alignment"),
-                        processorFields.get("address sizes"),
-                        processorFields.get("power management"),
-                        processorFields
-                );
-                processors.add(processor);
-                processorFields = new LinkedHashMap<String, String>();
-                continue;
+        ArrayList<String> processorFields = new ArrayList<>();
+        for (String field : fields) {
+            if (field.startsWith("processor") && processorFields.size() != 0) {
+                processors.add(new Processor(processorFields));
+                processorFields = new ArrayList<>();
             }
-            String[] keyValuePair = row.split(":");
-            String key = keyValuePair[0].trim();
+            ArrayList<String> keyValuePair = new Trimmed(new CharacterDelimited((new PlainText(field)), ":")).read();
+            String key;
             String value;
-            if (keyValuePair.length == 1) {
+            key = keyValuePair.get(0);
+            if (keyValuePair.size() == 1) {
                 value = "";
             }
             else {
-                value = keyValuePair[1].trim();
+                value = keyValuePair.get(1);
             }
-            processorFields.put(key, value);
+
+            processorFields.add(value);
         }
+        processors.add(new Processor(processorFields));
+        this.timestamp = origin.timestamp();
     }
 
     public ArrayList<Processor> processors() {
@@ -138,7 +107,7 @@ public class Cpuinfo implements Status {
     }
 
     public int cpuCount() {
-        ArrayList<Integer> physicalIds = new ArrayList();
+        ArrayList<Integer> physicalIds = new ArrayList<Integer>();
         for (Processor processor : processors) {
             physicalIds.add(processor.physical_id);
         }
@@ -153,25 +122,9 @@ public class Cpuinfo implements Status {
         return processors.size();
     }
 
-    public Map<String, String> statistics() {
-        statistics.clear();
-        for (Processor processor : processors) {
-            for (Map.Entry<String, String> entry : processor.statistics().entrySet()) {
-                statistics.put(entry.getKey() + "_" + processor.processor(), entry.getValue());
-            }
-        }
-        return statistics;
-    }
-
-    public void printStatistics() {
-        for (Map.Entry<String, String> statistic : statistics.entrySet()) {
-            LOGGER.info(statistic.getKey() + ": ");
-            LOGGER.info(statistic.getValue());
-        }
-    }
-
-    public ArrayList<String> rows() {
-        return this.rows;
+    @Override
+    public ArrayList<String> read() {
+        return fields;
     }
 
     public LocalDateTime timestamp() {
@@ -182,7 +135,7 @@ public class Cpuinfo implements Status {
         LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
     }
 
-    private class Processor {
+    private static class Processor {
 
         private final int processor;
         private final String vendor_id;
@@ -211,7 +164,36 @@ public class Cpuinfo implements Status {
         private final int cache_alignment;
         private final String[] address_sizes;
         private final String power_management;
-        private final Map<String, String> statistics;
+
+        Processor(ArrayList<String> processorFields) {
+            this.processor = Integer.parseInt(processorFields.get(0));
+            this.vendor_id = processorFields.get(1);
+            this.cpu_family = processorFields.get(2);
+            this.model = processorFields.get(3);
+            this.model_name = processorFields.get(4);
+            this.stepping = Integer.parseInt(processorFields.get(5));
+            this.microcode = processorFields.get(6);
+            this.cpu_MHz = Float.parseFloat(processorFields.get(7));
+            this.cache_size = processorFields.get(8);
+            this.physical_id = Integer.parseInt(processorFields.get(9));
+            this.siblings = Integer.parseInt(processorFields.get(10));
+            this.core_id = Integer.parseInt(processorFields.get(11));
+            this.cpu_cores = Integer.parseInt(processorFields.get(12));
+            this.apicid = Integer.parseInt(processorFields.get(13));
+            this.initial_apicid = Integer.parseInt(processorFields.get(14));
+            this.fpu = processorFields.get(15);
+            this.fpu_exception = processorFields.get(16);
+            this.cpuid_level = Integer.parseInt(processorFields.get(17));
+            this.wp = processorFields.get(18);
+            this.flags = processorFields.get(19).split(" ");
+            this.vmx_flags = processorFields.get(20).split(" ");
+            this.bugs = processorFields.get(21).split(" ");
+            this.bogomips = Float.parseFloat(processorFields.get(22));
+            this.clflush_size = Integer.parseInt(processorFields.get(23));
+            this.cache_alignment = Integer.parseInt(processorFields.get(24));
+            this.address_sizes = processorFields.get(25).split(",");
+            this.power_management = processorFields.get(26);
+        }
 
         Processor(
                 String processor,
@@ -270,7 +252,6 @@ public class Cpuinfo implements Status {
             this.cache_alignment = Integer.parseInt(cache_alignment);
             this.address_sizes = address_sizes.split(", ");
             this.power_management = power_management;
-            this.statistics = processorFields;
         }
 
         public int processor() {
@@ -379,10 +360,6 @@ public class Cpuinfo implements Status {
 
         public String power_management() {
             return power_management;
-        }
-
-        public Map<String, String> statistics() {
-            return statistics;
         }
     }
 

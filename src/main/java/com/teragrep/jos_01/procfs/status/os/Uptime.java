@@ -43,9 +43,9 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs.status;
+package com.teragrep.jos_01.procfs.status.os;
 
-import com.teragrep.jos_01.procfs.RowFile;
+import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,43 +53,31 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-public class OSStat implements Status {
+// Uptime contains information about system uptime.
+// Has two floating point numerical fields in a single row, separated by a spacebar.
+public class Uptime implements Text {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(OSStat.class);
-    private final ArrayList<String> rows;
+    private final Logger LOGGER = LoggerFactory.getLogger(Uptime.class);
+    private final ArrayList<String> fields;
+    private final double uptimeSeconds;
+    private final double combinedCpuCoreIdleTimeSeconds;
     private final LocalDateTime timestamp;
-    private final Map<String, String> statistics;
 
     private enum fields {
-        cpu, cpu0, cpu1, cpu2, cpu3, intr, ctxt, btime, processes, procs_running, procs_blocked, softirq
-    };
-
-    public OSStat(RowFile rowFile) throws IOException {
-        this.rows = rowFile.readFile();
-        statistics = new LinkedHashMap<String, String>();
-        for (int i = 0; i < rows.size(); i++) {
-            String[] fieldArray = rows.get(i).split(fields.values()[i].name());
-            statistics.put(fields.values()[i].toString(), fieldArray[1]);
-        }
-        timestamp = LocalDateTime.now();
+        uptimeSeconds, combinedCpuCoreIdleTimeSeconds
     }
 
-    public Map<String, String> statistics() {
-        return statistics;
+    public Uptime(Text origin) throws IOException {
+        fields = origin.read();
+        uptimeSeconds = Double.parseDouble(fields.get(0));
+        combinedCpuCoreIdleTimeSeconds = Double.parseDouble(fields.get(1));
+        timestamp = origin.timestamp();
     }
 
-    public void printStatistics() {
-        for (Map.Entry<String, String> statistic : statistics.entrySet()) {
-            LOGGER.info(statistic.getKey() + ": ");
-            LOGGER.info(statistic.getValue());
-        }
-    }
-
-    public ArrayList<String> rows() {
-        return this.rows;
+    @Override
+    public ArrayList<String> read() {
+        return fields;
     }
 
     public LocalDateTime timestamp() {
@@ -98,5 +86,13 @@ public class OSStat implements Status {
 
     public void printTimestamp() {
         LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
+    }
+
+    public double uptimeSeconds() {
+        return uptimeSeconds;
+    }
+
+    public double combinedCpuCoreIdleTimeSeconds() {
+        return combinedCpuCoreIdleTimeSeconds;
     }
 }

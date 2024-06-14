@@ -43,51 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs;
+package com.teragrep.jos_01.procfs.status;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 
-public class RowFile extends File {
-    private final BufferedReader reader;
-    private final ArrayList<String> rows;
+public interface Text {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(RowFile.class);
+    ArrayList<String> read() throws IOException;
 
-    public RowFile(File procDirectory, String fileName) throws FileNotFoundException {
-        this(new File(procDirectory,fileName));
-    }
-
-    public RowFile(File procFile) throws FileNotFoundException {
-        this(procFile,new BufferedReader(new FileReader(procFile)),new ArrayList<String>());
-    }
-
-    public RowFile(File procFile, BufferedReader reader, ArrayList<String> rows) {
-        super(procFile.toURI());
-        this.reader = reader;
-        this.rows = rows;
-    }
-
-    public ArrayList<String> readFile() throws IOException {
-        try {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                rows.add(line);
-            }
-        }
-        catch (FileNotFoundException notFoundException) {
-            throw new IOException("File \"" + this.getPath() + "\" not found!", notFoundException);
-        }
-        catch (IOException ioException) {
-            throw new IOException(
-                    "Failed to read file \"" + this.getName() + "\" due to an I/O exception!",
-                    ioException
-            );
-        }
-        return rows;
-    }
+    LocalDateTime timestamp();
 }

@@ -47,9 +47,9 @@ package com.teragrep.jos_01.procfs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.teragrep.jos_01.procfs.status.*;
+import com.teragrep.jos_01.procfs.status.os.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,33 +74,31 @@ public class LinuxOS {
         this.sysconf = sysconf;
     }
 
-
-    public OSStat stat() throws IOException {
-        return new OSStat(new RowFile(procDirectory,"stat"));
+    public Stat stat() throws IOException {
+        return new Stat(new RowFile(procDirectory, "stat"));
     }
 
     public Vmstat vmstat() throws IOException {
-        return new Vmstat(new RowFile(procDirectory,"vmstat"));
+        return new Vmstat(new RowFile(procDirectory, "vmstat"));
     }
 
     public Meminfo meminfo() throws IOException {
-        return new Meminfo(new RowFile(procDirectory,"meminfo"));
+        return new Meminfo(new RowFile(procDirectory, "meminfo"));
     }
 
     // Estimates page size in kB.
-    public float pageSize() throws IOException {
+    public long pageSize() throws IOException {
         Vmstat vmstat = vmstat();
         Meminfo meminfo = meminfo();
-        float mapped = Long.parseLong(meminfo.statistics().get("Mapped"));
-        float nr_mapped = Long.parseLong(vmstat.statistics().get("nr_mapped"));
-        float pageSize = mapped / nr_mapped;
-        return pageSize;
+        long mapped = meminfo.Mapped();
+        long nr_mapped = vmstat.nr_mapped();
+        return mapped / nr_mapped;
     }
 
     // Returns total RAM in kB
     public long totalRAM() throws IOException {
         Meminfo meminfo = meminfo();
-        return Long.parseLong(meminfo.statistics().get("MemTotal"));
+        return meminfo.MemTotal();
     }
 
     public int cpuCount() throws IOException {
@@ -119,11 +117,11 @@ public class LinuxOS {
     }
 
     public Cpuinfo cpuinfo() throws IOException {
-        return new Cpuinfo(new RowFile(procDirectory,"cpuinfo"));
+        return new Cpuinfo(new RowFile(procDirectory, "cpuinfo"));
     }
 
     public Uptime uptime() throws IOException {
-        return new Uptime(new RowFile(procDirectory,"uptime"));
+        return new Uptime(new CharacterDelimited(new RowFile(procDirectory, "uptime"), " "));
     }
 
     public long cpuTicksPerSecond() throws IOException {

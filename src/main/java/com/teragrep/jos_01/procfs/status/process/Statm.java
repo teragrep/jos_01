@@ -43,76 +43,89 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs;
+package com.teragrep.jos_01.procfs.status.process;
 
-import com.teragrep.jos_01.procfs.status.process.Stat;
-import com.teragrep.jos_01.procfs.status.RowFile;
 import com.teragrep.jos_01.procfs.status.CharacterDelimited;
-import com.teragrep.jos_01.procfs.status.process.Statm;
+import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-public class Task {
+// Provides information about memory usage of the process.
+// Fields are on a single row, separated by spacebars. Contains 7 fields.
+// All fields are integers.
+public class Statm implements Text {
 
-    private final long taskId;
-    private final long processId;
-    private final File procDirectory;
-    private final Logger LOGGER = LoggerFactory.getLogger(Task.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(Statm.class);
+    private final LocalDateTime timestamp;
+    private final long size;
+    private final long resident;
+    private final long shared;
+    private final long text;
+    private final long lib;
+    private final long data;
+    private final long dt;
+    private final ArrayList<String> fields;
 
-    public Task(String taskId, Process parentProcess) {
-        this(Long.parseLong(taskId), parentProcess);
+    public Statm(Text origin) throws IOException {
+        fields = new CharacterDelimited(origin, " ").read();
+        size = Long.parseLong(fields.get(0));
+        resident = Long.parseLong(fields.get(1));
+        shared = Long.parseLong(fields.get(2));
+        text = Long.parseLong(fields.get(3));
+        lib = Long.parseLong(fields.get(4));
+        data = Long.parseLong(fields.get(5));
+        dt = Long.parseLong(fields.get(6));
+        timestamp = origin.timestamp();
+
     }
 
-    public Task(long taskId, Process parentProcess) {
-        this.taskId = taskId;
-        this.processId = parentProcess.pid();
-        this.procDirectory = new File("/proc/" + processId + "/task/", Long.toString(processId));
+    @Override
+    public ArrayList<String> read() {
+        return fields;
     }
 
-    public Stat stat() throws IOException {
-        return new Stat(new CharacterDelimited(new RowFile(procDirectory, "stat"), " "));
+    public void printStatistics() {
+        LOGGER.info("{}\n{}\n{}\n{}\n{}\n{}\n{}\n", size, resident, shared, text, lib, data, dt);
     }
 
-    public Statm statm() throws IOException {
-        return new Statm(new RowFile(procDirectory, "statm"));
+    public LocalDateTime timestamp() {
+        return timestamp;
     }
 
-    public ArrayList<String> availableProcFiles() {
-        ArrayList<String> fileNames = procFileNames(new ArrayList<String>(), procDirectory);
-        return fileNames;
+    public void printTimestamp() {
+        LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
     }
 
-    private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) {
-        if (!file.isDirectory()) {
-            nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
-        }
-        else {
-            try {
-                for (File child : file.listFiles()) {
-                    procFileNames(nameList, child);
-                }
-            }
-            catch (NullPointerException npe) {
-                LOGGER.error("I/O Exception while attempting to access children of {}", file.getPath());
-            }
-        }
-        return nameList;
+    public long size() {
+        return size;
     }
 
-    public long tid() {
-        return taskId;
+    public long resident() {
+        return resident;
     }
 
-    public long pid() {
-        return processId;
+    public long shared() {
+        return shared;
     }
 
-    // Only the OS kernel can write or delete files from /proc, so if the process ID directory exists, the process is alive.
-    public boolean isAlive() {
-        return (procDirectory.exists());
+    public long text() {
+        return text;
     }
-}
+
+    public long lib() {
+        return lib;
+    }
+
+    public long data() {
+        return data;
+    }
+
+    public long dt() {
+        return dt;
+    }
+}//

@@ -45,19 +45,48 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Iterator;
 
-public interface Status {
+public class Digits implements Text {
 
-    void printStatistics();
+    private final Text origin;
+    private final LocalDateTime timestamp;
 
-    void printTimestamp();
+    public Digits(Text origin) {
+        this.origin = origin;
+        this.timestamp = origin.timestamp();
+    }
 
-    Map<String, String> statistics();
+    @Override
+    public ArrayList<String> read() throws IOException {
+        ArrayList<String> digitText = new ArrayList<String>();
+        Iterator<String> iterator = origin.read().iterator();
+        while (iterator.hasNext()) {
+            String text = iterator.next();
+            if (isNumeric(text)) {
+                digitText.add(text);
+            }
+        }
+        return digitText;
+    }
 
-    ArrayList<String> rows();
+    private boolean isNumeric(String string) {
+        try {
+            new BigDecimal(string);
+            return true;
+        }
+        catch (NumberFormatException nfe) {
+            return false;
+        }
+    }
 
-    LocalDateTime timestamp();
+    @Override
+    public LocalDateTime timestamp() {
+        return timestamp;
+    }
+
 }

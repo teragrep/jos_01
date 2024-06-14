@@ -45,15 +45,13 @@
  */
 package com.teragrep.jos_01.procfs;
 
+import com.teragrep.jos_01.procfs.status.process.Stat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
-import java.util.Map;
 
 public class TaskTest {
 
@@ -62,10 +60,59 @@ public class TaskTest {
     @Test
     public void statTest() throws IOException {
         Process process = new Process(1);
-        ArrayList<Task> tasks = process.tasks();
-        Map<String, String> statistics = tasks.get(0).stat().statistics();
-        Assertions.assertEquals(52, statistics.size());
-        Assertions.assertEquals("0", statistics.get("ppid"));
-        Assertions.assertEquals("1", statistics.get("pid"));
+        Stat stat = process.stat();
+
+        Assertions.assertNotNull(stat.pid());
+        Assertions.assertNotNull(stat.comm());
+        Assertions.assertNotNull(stat.state());
+        Assertions.assertNotNull(stat.ppid());
+        Assertions.assertNotNull(stat.pgrp());
+        Assertions.assertNotNull(stat.session());
+        Assertions.assertNotNull(stat.tty_nr());
+        Assertions.assertNotNull(stat.tpgid());
+        Assertions.assertNotNull(stat.flags());
+        Assertions.assertNotNull(stat.minflt());
+        Assertions.assertNotNull(stat.cminflt());
+        Assertions.assertNotNull(stat.majflt());
+        Assertions.assertNotNull(stat.cmajflt());
+        Assertions.assertNotNull(stat.utime());
+        Assertions.assertNotNull(stat.stime());
+        Assertions.assertNotNull(stat.cutime());
+        Assertions.assertNotNull(stat.cstime());
+        Assertions.assertNotNull(stat.priority());
+        Assertions.assertNotNull(stat.nice());
+        Assertions.assertNotNull(stat.num_threads());
+        Assertions.assertNotNull(stat.itrealvalue());
+        Assertions.assertNotNull(stat.starttime());
+        Assertions.assertNotNull(stat.vsize());
+        Assertions.assertNotNull(stat.rss());
+        Assertions.assertNotNull(stat.rsslim());
+        Assertions.assertNotNull(stat.startcode());
+        Assertions.assertNotNull(stat.endcode());
+        Assertions.assertNotNull(stat.startstack());
+        Assertions.assertNotNull(stat.kstkesp());
+        Assertions.assertNotNull(stat.kstkeip());
+        Assertions.assertNotNull(stat.signal());
+        Assertions.assertNotNull(stat.blocked());
+        Assertions.assertNotNull(stat.sigignore());
+        Assertions.assertNotNull(stat.sigcatch());
+        Assertions.assertNotNull(stat.wchan());
+        Assertions.assertNotNull(stat.nswap());
+        Assertions.assertNotNull(stat.cnswap());
+        Assertions.assertNotNull(stat.exit_signal());
+        Assertions.assertNotNull(stat.processor());
+        Assertions.assertNotNull(stat.rt_priority());
+        Assertions.assertNotNull(stat.policy());
+        Assertions.assertNotNull(stat.delayacct_blkio_ticks());
+        Assertions.assertNotNull(stat.guest_time());
+        Assertions.assertNotNull(stat.cguest_time());
+        Assertions.assertNotNull(stat.start_data());
+        Assertions.assertNotNull(stat.end_data());
+        Assertions.assertNotNull(stat.start_brk());
+        Assertions.assertNotNull(stat.arg_start());
+        Assertions.assertNotNull(stat.arg_end());
+        Assertions.assertNotNull(stat.env_start());
+        Assertions.assertNotNull(stat.env_end());
+        Assertions.assertNotNull(stat.exit_code());
     }
 }

@@ -49,13 +49,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.teragrep.jos_01.procfs.status.ProcessStat;
-import com.teragrep.jos_01.procfs.status.Statm;
-import com.teragrep.jos_01.procfs.status.Status;
+import com.teragrep.jos_01.procfs.status.process.Stat;
+import com.teragrep.jos_01.procfs.status.RowFile;
+import com.teragrep.jos_01.procfs.status.CharacterDelimited;
+import com.teragrep.jos_01.procfs.status.process.Statm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Process {
+
     private final long processId;
     private final File procDirectory;
     private final Logger LOGGER = LoggerFactory.getLogger(Process.class);
@@ -79,8 +81,8 @@ public class Process {
         this.os = os;
     }
 
-    public ProcessStat stat() throws IOException {
-        return new ProcessStat(new RowFile(procDirectory,"stat"));
+    public Stat stat() throws IOException {
+        return new Stat(new CharacterDelimited(new RowFile(procDirectory, "stat"), " "));
     }
 
     public Statm statm() throws IOException {
@@ -136,35 +138,31 @@ public class Process {
     // Prints RSS in kB
     public float residentSetSize() throws IOException {
         Statm statm = statm();
-        String rssPages = statm.statistics().get("resident");
-        int pageCount = Integer.parseInt(rssPages);
-        float pageSize = os.pageSize();
+        long pageCount = statm.resident();
+        long pageSize = os.pageSize();
         return pageCount * pageSize;
     }
 
-    public float cpuUsage() throws IOException {
+    public double cpuUsage() throws IOException {
         long cpuTicksPerSecond = os.cpuTicksPerSecond();
 
-        float OSUpTime = Float.parseFloat(os.uptime().statistics().get("uptimeSeconds"));
-        ProcessStat status = stat();
+        double OSUpTime = os.uptime().uptimeSeconds();
+        Stat status = stat();
 
-        float utime = Float.parseFloat(status.statistics().get("utime")) / cpuTicksPerSecond;
-        float stime = Float.parseFloat(status.statistics().get("stime")) / cpuTicksPerSecond;
-        float starttime = Float.parseFloat(status.statistics().get("starttime")) / cpuTicksPerSecond;
-        float cpuTime = utime + stime;
+        long utime = status.utime() / cpuTicksPerSecond;
+        long stime = status.stime() / cpuTicksPerSecond;
+        long starttime = status.starttime() / cpuTicksPerSecond;
+        long cpuTime = utime + stime;
 
-        float cpuUsage = cpuTime / (OSUpTime - starttime);
-        return cpuUsage;
+        return cpuTime / (OSUpTime - starttime);
     }
 
     public float cpuTime() throws IOException {
-        ProcessStat status = stat();
+        Stat status = stat();
         long cpuTicksPerSecond = os.cpuTicksPerSecond();
-        float utime = Float.parseFloat(status.statistics().get("utime")) / cpuTicksPerSecond;
-        float stime = Float.parseFloat(status.statistics().get("stime")) / cpuTicksPerSecond;
-
-        float cpuTime = utime + stime;
-        return cpuTime;
+        float utime = (float) status.utime() / cpuTicksPerSecond;
+        float stime = (float) status.stime() / cpuTicksPerSecond;
+        return utime + stime;
     }
 
     public long pid() {

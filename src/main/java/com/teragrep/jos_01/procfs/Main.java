@@ -47,8 +47,8 @@ package com.teragrep.jos_01.procfs;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import com.teragrep.jos_01.procfs.status.ProcessStat;
-import com.teragrep.jos_01.procfs.status.Statm;
+import com.teragrep.jos_01.procfs.status.process.Stat;
+import com.teragrep.jos_01.procfs.status.process.Statm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,17 +67,17 @@ public class Main {
                 .println(
                         "\nProcess methods for specific proc files will provide a status Object representing a snapshot of the proc file at the time of the call."
                 );
-        ProcessStat pstat = process.stat();
-        System.out.println("Process stat = " + pstat.statistics());
+        Stat pstat = process.stat();
+        System.out.println("Process stat = " + pstat.read());
         Statm statm = process.statm();
-        System.out.println("Process statm = " + statm.statistics());
+        System.out.println("Process statm = " + statm.read());
 
         // Status object contains a timestamp and a Map containing keys to find wanted field more easily. Specific proc files are also formatted properly
         System.out
                 .println(
                         "\nStatus object contains a timestamp and a Map containing keys to find wanted field more easily."
                 );
-        System.out.println(pstat.statistics());
+        System.out.println(pstat.read());
         System.out.println(pstat.timestamp());
 
         // Processes can list all of its currently running Threads:
@@ -87,8 +87,8 @@ public class Main {
 
         // Each Thread has the ability to report on its status just like a Process can:
         System.out.println("\nEach Thread has the ability to report on its status just like a Process can:");
-        System.out.println(tasks.get(0).stat().statistics());
-        System.out.println(tasks.get(0).statm().statistics());
+        System.out.println(tasks.get(0).stat().read());
+        System.out.println(tasks.get(0).statm().read());
 
         // High level methods can be used to quickly calculate specific performance statistics:
         System.out.println("\nHigh level methods can be used to quickly calculate specific performance statistics:");
@@ -116,10 +116,10 @@ public class Main {
         // OS statistics are available via the OS class
         System.out.println("\nOS statistics are available via the OS class using similar methods");
         LinuxOS os = new LinuxOS();
-        System.out.println(os.stat().statistics());
-        System.out.println(os.vmstat().statistics());
-        System.out.println(os.meminfo().statistics());
-        System.out.println(os.cpuinfo().statistics());
+        System.out.println(os.stat().read());
+        System.out.println(os.vmstat().read());
+        System.out.println(os.meminfo().read());
+        System.out.println(os.cpuinfo().read());
 
         // OS also has high-level methods just like processes:
         System.out.println("\nOS also has high-level methods just like processes:");

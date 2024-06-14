@@ -45,66 +45,35 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
-import com.teragrep.jos_01.procfs.RowFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Iterator;
 
-public class Uptime implements Status {
+public class Trimmed implements Text {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(Uptime.class);
-
-    private final ArrayList<String> rows;
+    private final Text origin;
     private final LocalDateTime timestamp;
-    private final Map<String, String> statistics;
 
-    private enum fields {
-        uptimeSeconds, combinedCpuCoreIdleTimeSeconds
-    };
+    public Trimmed(Text origin) {
+        this.origin = origin;
+        this.timestamp = origin.timestamp();
+    }
 
-    public Uptime(RowFile rowFile) throws IOException {
-        this.rows = rowFile.readFile();
-        statistics = new LinkedHashMap<String, String>();
-        Pattern pattern = Pattern.compile("(?<uptimeSeconds>\\d+.\\d+) (?<combinedCpuCoreIdleTimeSeconds>\\d+.\\d+)");
-        for (String row : rows) {
-            Matcher matcher = pattern.matcher(row);
-            if (matcher.find()) {
-                for (int i = 0; i < matcher.groupCount(); i++) {
-                    statistics.put(fields.values()[i].name(), matcher.group(fields.values()[i].name()));
-                }
-            }
+    @Override
+    public ArrayList<String> read() throws IOException {
+        ArrayList<String> trimmedText = new ArrayList<String>();
+        Iterator<String> iterator = origin.read().iterator();
+        while (iterator.hasNext()) {
+            String trimmed = iterator.next().trim();
+            trimmedText.add(trimmed);
         }
-        timestamp = LocalDateTime.now();
+        return trimmedText;
     }
 
-    public Map<String, String> statistics() {
-        return statistics;
-    }
-
-    public void printStatistics() {
-        for (Map.Entry<String, String> statistic : statistics.entrySet()) {
-            LOGGER.info(statistic.getKey() + ": ");
-            LOGGER.info(statistic.getValue());
-        }
-    }
-
-    public ArrayList<String> rows() {
-        return this.rows;
-    }
-
+    @Override
     public LocalDateTime timestamp() {
         return timestamp;
     }
 
-    public void printTimestamp() {
-        LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
-    }
 }

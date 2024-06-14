@@ -43,20 +43,59 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs;
+package com.teragrep.jos_01.procfs.status;
 
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-// Exposes a Fake class that can be used for testing without having to compile the C code. Fake class simply returns a hardcoded value
-public interface SysconfInterface {
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
-    final class Fake implements SysconfInterface {
+public class RowFile extends File implements Text {
 
-        @Override
-        public long main() throws RuntimeException {
-            return 100;
-        }
+    private final BufferedReader reader;
+    private final LocalDateTime timestamp;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(RowFile.class);
+
+    public RowFile(File procDirectory, String fileName) throws FileNotFoundException {
+        this(new File(procDirectory, fileName));
     }
 
-    long main() throws IOException, RuntimeException;
+    public RowFile(File procFile) throws FileNotFoundException {
+        this(procFile, new BufferedReader(new FileReader(procFile)));
+    }
+
+    public RowFile(File procFile, BufferedReader reader) {
+        super(procFile.toURI());
+        this.reader = reader;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    @Override
+    public ArrayList<String> read() throws IOException {
+        ArrayList<String> fileRows = new ArrayList<>();
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                fileRows.add(line);
+            }
+        }
+        catch (FileNotFoundException notFoundException) {
+            throw new IOException("File \"" + this.getPath() + "\" not found!", notFoundException);
+        }
+        catch (IOException ioException) {
+            throw new IOException(
+                    "Failed to read file \"" + this.getName() + "\" due to an I/O exception!",
+                    ioException
+            );
+        }
+        return fileRows;
+    }
+
+    @Override
+    public LocalDateTime timestamp() {
+        return timestamp;
+    }
 }

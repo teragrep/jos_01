@@ -45,8 +45,8 @@
  */
 package com.teragrep.jos_01.procfs;
 
-import com.teragrep.jos_01.procfs.status.ProcessStat;
-import com.teragrep.jos_01.procfs.status.Statm;
+import com.teragrep.jos_01.procfs.status.process.Stat;
+import com.teragrep.jos_01.procfs.status.process.Statm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Iterator;
 
 public class ProcessTest {
 
@@ -65,13 +65,12 @@ public class ProcessTest {
     Process systemd;
     Process kthreadd;
 
-    public class TestThread implements Runnable {
+    public static class TestThread implements Runnable {
 
-        ProcessBuilder processBuilder;
-        java.lang.Process process;
+        private final ProcessBuilder processBuilder;
+        private java.lang.Process process;
 
-        public TestThread(ProcessBuilder processBuilder)
-                throws IOException, NoSuchFieldException, IllegalAccessException {
+        public TestThread(ProcessBuilder processBuilder) {
             this.processBuilder = processBuilder;
         }
 
@@ -106,28 +105,32 @@ public class ProcessTest {
     @Test
     public void readSystemdFileTest() throws IOException {
         systemd = new Process(1);
-        Map<String, String> systemdStats = systemd.stat().statistics();
-        Assertions.assertEquals("1", systemdStats.get("pid"));
-        Assertions.assertEquals("(systemd)", systemdStats.get("comm"));
-        Assertions.assertEquals(52, systemdStats.size());
-        for (Map.Entry<String, String> entry : systemdStats.entrySet()) {
-            Assertions.assertNotNull(entry.getValue());
-            Assertions.assertNotNull(entry.getKey());
+        Stat stat = systemd.stat();
+        Assertions.assertEquals(1, stat.pid());
+        Assertions.assertEquals("(systemd)", stat.comm());
+        Iterator iterator = stat.read().iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            Assertions.assertNotNull(iterator.next());
+            i++;
         }
+        Assertions.assertEquals(52, i);
     }
 
     // Kthreadd process (pid = 2) should have 52 fields in its Stat file, and it should have (kthreadd) as comm value and 2 as pid value in the file. None of the fields should be null
     @Test
     public void readKthreaddFileTest() throws IOException {
         kthreadd = new Process(2);
-        Map<String, String> kthreaddStats = kthreadd.stat().statistics();
-        Assertions.assertEquals("2", kthreaddStats.get("pid"));
-        Assertions.assertEquals("(kthreadd)", kthreaddStats.get("comm"));
-        Assertions.assertEquals(52, kthreaddStats.size());
-        for (Map.Entry<String, String> entry : kthreaddStats.entrySet()) {
-            Assertions.assertNotNull(entry.getValue());
-            Assertions.assertNotNull(entry.getKey());
+        Stat stat = kthreadd.stat();
+        Assertions.assertEquals(2, stat.pid());
+        Assertions.assertEquals("(kthreadd)", stat.comm());
+        Iterator iterator = stat.read().iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            Assertions.assertNotNull(iterator.next());
+            i++;
         }
+        Assertions.assertEquals(52, i);
     }
 
     // Process object should be able to be instantiated with an integer and a String
@@ -246,99 +249,97 @@ public class ProcessTest {
     @Test
     public void correctNumberOfTasksTest() throws IOException {
         Process process = new Process(1);
-        String statTaskcount = process.stat().statistics().get("num_threads");
+        Stat stat = process.stat();
+        long statTaskcount = process.stat().num_threads();
         int taskCount = process.tasks().size();
-        Assertions.assertEquals(statTaskcount, String.valueOf(taskCount));
+        Assertions.assertEquals(statTaskcount, Long.parseLong(String.valueOf(taskCount)));
 
         Process jvm = new Process(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-        String jvmStatTaskcount = jvm.stat().statistics().get("num_threads");
+        long jvmStatTaskcount = jvm.stat().num_threads();
         int jvmTaskCount = jvm.tasks().size();
-        Assertions.assertEquals(jvmStatTaskcount, String.valueOf(jvmTaskCount));
+        Assertions.assertEquals(jvmStatTaskcount, Long.parseLong(String.valueOf(jvmTaskCount)));
     }
 
     // Stat status object should contain all of the listed fields.
     @Test
     public void statTest() throws IOException {
-        String[] expectedKeys = {
-                "pid",
-                "comm",
-                "state",
-                "ppid",
-                "pgrp",
-                "session",
-                "tty_nr",
-                "tpgid",
-                "flags",
-                "minflt",
-                "cminflt",
-                "majflt",
-                "cmajflt",
-                "utime",
-                "stime",
-                "cutime",
-                "cstime",
-                "priority",
-                "nice",
-                "num_threads",
-                "itrealvalue",
-                "starttime",
-                "vsize",
-                "rss",
-                "rsslim",
-                "startcode",
-                "endcode",
-                "startstack",
-                "kstkesp",
-                "kstkeip",
-                "signal",
-                "blocked",
-                "sigignore",
-                "sigcatch",
-                "wchan",
-                "nswap",
-                "cnswap",
-                "exit_signal",
-                "processor",
-                "rt_priority",
-                "policy",
-                "delayacct_blkio_ticks",
-                "guest_time",
-                "cguest_time",
-                "start_data",
-                "end_data",
-                "start_brk",
-                "arg_start",
-                "arg_end",
-                "env_start",
-                "env_end",
-                "exit_code"
-        };
         Process process = new Process(1);
-        ProcessStat stat = process.stat();
-        for (String key : expectedKeys) {
-            Assertions.assertNotNull(stat.statistics().get(key));
-        }
+        Stat stat = process.stat();
+
+        Assertions.assertNotNull(stat.pid());
+        Assertions.assertNotNull(stat.comm());
+        Assertions.assertNotNull(stat.state());
+        Assertions.assertNotNull(stat.ppid());
+        Assertions.assertNotNull(stat.pgrp());
+        Assertions.assertNotNull(stat.session());
+        Assertions.assertNotNull(stat.tty_nr());
+        Assertions.assertNotNull(stat.tpgid());
+        Assertions.assertNotNull(stat.flags());
+        Assertions.assertNotNull(stat.minflt());
+        Assertions.assertNotNull(stat.cminflt());
+        Assertions.assertNotNull(stat.majflt());
+        Assertions.assertNotNull(stat.cmajflt());
+        Assertions.assertNotNull(stat.utime());
+        Assertions.assertNotNull(stat.stime());
+        Assertions.assertNotNull(stat.cutime());
+        Assertions.assertNotNull(stat.cstime());
+        Assertions.assertNotNull(stat.priority());
+        Assertions.assertNotNull(stat.nice());
+        Assertions.assertNotNull(stat.num_threads());
+        Assertions.assertNotNull(stat.itrealvalue());
+        Assertions.assertNotNull(stat.starttime());
+        Assertions.assertNotNull(stat.vsize());
+        Assertions.assertNotNull(stat.rss());
+        Assertions.assertNotNull(stat.rsslim());
+        Assertions.assertNotNull(stat.startcode());
+        Assertions.assertNotNull(stat.endcode());
+        Assertions.assertNotNull(stat.startstack());
+        Assertions.assertNotNull(stat.kstkesp());
+        Assertions.assertNotNull(stat.kstkeip());
+        Assertions.assertNotNull(stat.signal());
+        Assertions.assertNotNull(stat.blocked());
+        Assertions.assertNotNull(stat.sigignore());
+        Assertions.assertNotNull(stat.sigcatch());
+        Assertions.assertNotNull(stat.wchan());
+        Assertions.assertNotNull(stat.nswap());
+        Assertions.assertNotNull(stat.cnswap());
+        Assertions.assertNotNull(stat.exit_signal());
+        Assertions.assertNotNull(stat.processor());
+        Assertions.assertNotNull(stat.rt_priority());
+        Assertions.assertNotNull(stat.policy());
+        Assertions.assertNotNull(stat.delayacct_blkio_ticks());
+        Assertions.assertNotNull(stat.guest_time());
+        Assertions.assertNotNull(stat.cguest_time());
+        Assertions.assertNotNull(stat.start_data());
+        Assertions.assertNotNull(stat.end_data());
+        Assertions.assertNotNull(stat.start_brk());
+        Assertions.assertNotNull(stat.arg_start());
+        Assertions.assertNotNull(stat.arg_end());
+        Assertions.assertNotNull(stat.env_start());
+        Assertions.assertNotNull(stat.env_end());
+        Assertions.assertNotNull(stat.exit_code());
     }
 
     // Statm status object should contain all of the listed fields.
     @Test
     public void statmTest() throws IOException {
-        String[] expectedKeys = {
-                "size", "resident", "shared", "text", "lib", "data", "dt"
-        };
         Process process = new Process(1);
         Statm statm = process.statm();
-        for (String key : expectedKeys) {
-            Assertions.assertNotNull(statm.statistics().get(key));
-        }
+        Assertions.assertNotNull(statm.size());
+        Assertions.assertNotNull(statm.resident());
+        Assertions.assertNotNull(statm.shared());
+        Assertions.assertNotNull(statm.text());
+        Assertions.assertNotNull(statm.lib());
+        Assertions.assertNotNull(statm.data());
+        Assertions.assertNotNull(statm.dt());
     }
 
     // Timestamps should be available and should be different if the proc method is called later
     @Test
     public void timestampTest() throws IOException {
         systemd = new Process(1);
-        ProcessStat stat = systemd.stat();
-        ProcessStat stat2 = systemd.stat();
+        Stat stat = systemd.stat();
+        Stat stat2 = systemd.stat();
         Statm statm = systemd.statm();
 
         // Timestamps should always have a value
@@ -353,14 +354,14 @@ public class ProcessTest {
     // Get the JVM process this test is running in, and make two delayed calls to cpuTime to make sure cpuTime actually increments as process is in use
     // Uses SysconfInterface.Fake() to get a hardcoded CPU tick rate (100) without actually having to compile Native C code.
     @Test
-    public void CpuTimeTest() throws IOException, InterruptedException {
+    public void CpuTimeTest() throws IOException {
 
         long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
         Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
         float cpuTime1 = jvm.cpuTime();
-        ArrayList<String> workArray = new ArrayList<String>();
-        for (int i = 0; i < 10000; i++) {
-            workArray.add("JVM doing important work for tests");
+        ArrayList<Double> workArray = new ArrayList<Double>();
+        for (int i = 0; i < 30000000; i++) { // Needs to do a lot of work to have different CPUtimes since the times are in seconds, not ticks
+            workArray.add(Math.random());
         }
         float cpuTime2 = jvm.cpuTime();
         Assertions.assertNotEquals(cpuTime2, cpuTime1);
@@ -368,7 +369,7 @@ public class ProcessTest {
 
     // As resident set size for the whole JVM fluctuates a lot we need to create a real chonker of an object to be sure that RSS increases when creating objects
     @Test
-    public void residentSetSizeTest() throws IOException, InterruptedException {
+    public void residentSetSizeTest() throws IOException {
         Process jvm = new Process(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
         float rssBefore = jvm.residentSetSize();
         float freeMemoryBefore = Runtime.getRuntime().freeMemory();
@@ -384,16 +385,16 @@ public class ProcessTest {
 
     // CpuUsage of JVM should increase over time
     @Test
-    public void cpuUsageTest() throws IOException, InterruptedException {
+    public void cpuUsageTest() throws IOException {
 
         long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
         Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
-        float cpuUsage1 = jvm.cpuUsage();
+        double cpuUsage1 = jvm.cpuUsage();
         ArrayList<String> workArray = new ArrayList<String>();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 3000000; i++) {
             workArray.add("JVM doing important work for tests");
         }
-        float cpuUsage2 = jvm.cpuUsage();
+        double cpuUsage2 = jvm.cpuUsage();
         Assertions.assertNotEquals(cpuUsage1, cpuUsage2);
     }
 }

@@ -43,20 +43,41 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.jos_01.procfs;
+package com.teragrep.jos_01.procfs.status;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-// Exposes a Fake class that can be used for testing without having to compile the C code. Fake class simply returns a hardcoded value
-public interface SysconfInterface {
+public class Replaced implements Text {
 
-    final class Fake implements SysconfInterface {
+    private final Text origin;
+    private final LocalDateTime timestamp;
+    private final String regex;
+    private final String replacement;
 
-        @Override
-        public long main() throws RuntimeException {
-            return 100;
-        }
+    public Replaced(Text origin, String regex, String replacement) {
+        this.origin = origin;
+        this.regex = regex;
+        this.replacement = replacement;
+        this.timestamp = origin.timestamp();
     }
 
-    long main() throws IOException, RuntimeException;
+    @Override
+    public ArrayList<String> read() throws IOException {
+        ArrayList<String> replacedText = new ArrayList<String>();
+        Iterator<String> iterator = origin.read().iterator();
+        while (iterator.hasNext()) {
+            String trimmed = iterator.next().replaceAll(regex, replacement);
+            replacedText.add(trimmed);
+        }
+        return replacedText;
+    }
+
+    @Override
+    public LocalDateTime timestamp() {
+        return timestamp;
+    }
+
 }
