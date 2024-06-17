@@ -55,15 +55,20 @@ public class Digits implements Text {
 
     private final Text origin;
     private final LocalDateTime timestamp;
+    private final ArrayList<String> digitText;
 
     public Digits(Text origin) {
+        this(origin, new ArrayList<String>());
+    }
+
+    public Digits(Text origin, ArrayList<String> digitText) {
         this.origin = origin;
         this.timestamp = origin.timestamp();
+        this.digitText = digitText;
     }
 
     @Override
     public ArrayList<String> read() throws IOException {
-        ArrayList<String> digitText = new ArrayList<String>();
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String text = iterator.next();

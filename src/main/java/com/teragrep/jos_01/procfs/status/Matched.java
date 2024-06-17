@@ -57,20 +57,21 @@ public class Matched implements Text {
     private final Text origin;
     private final LocalDateTime timestamp;
     private final Pattern pattern;
+    private final ArrayList<String> matchedText;
 
     public Matched(Text origin, String regex) {
-        this(origin, Pattern.compile(regex));
+        this(origin, Pattern.compile(regex), new ArrayList<String>());
     }
 
-    public Matched(Text origin, Pattern pattern) {
+    public Matched(Text origin, Pattern pattern, ArrayList<String> matchedText) {
         this.origin = origin;
         this.pattern = pattern;
         this.timestamp = origin.timestamp();
+        this.matchedText = matchedText;
     }
 
     @Override
     public ArrayList<String> read() throws IOException {
-        ArrayList<String> matchedText = new ArrayList<String>();
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String text = iterator.next();

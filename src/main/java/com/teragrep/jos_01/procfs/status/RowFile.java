@@ -56,7 +56,7 @@ public class RowFile extends File implements Text {
 
     private final BufferedReader reader;
     private final LocalDateTime timestamp;
-
+    private final ArrayList<String> fileRows;
     private final Logger LOGGER = LoggerFactory.getLogger(RowFile.class);
 
     public RowFile(File procDirectory, String fileName) throws FileNotFoundException {
@@ -64,13 +64,14 @@ public class RowFile extends File implements Text {
     }
 
     public RowFile(File procFile) throws FileNotFoundException {
-        this(procFile, new BufferedReader(new FileReader(procFile)));
+        this(procFile, new BufferedReader(new FileReader(procFile)), new ArrayList<String>());
     }
 
-    public RowFile(File procFile, BufferedReader reader) {
+    public RowFile(File procFile, BufferedReader reader, ArrayList<String> fileRows) {
         super(procFile.toURI());
         this.reader = reader;
         this.timestamp = LocalDateTime.now();
+        this.fileRows = fileRows;
     }
 
     @Override

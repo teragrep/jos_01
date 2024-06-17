@@ -56,16 +56,21 @@ public class CharacterDelimited implements Text {
     private final Text origin;
     private final String delimiter;
     private final LocalDateTime timestamp;
+    private final ArrayList<String> delimitedFields;
 
     public CharacterDelimited(Text origin, String delimiter) {
+        this(origin, delimiter, new ArrayList<String>());
+    }
+
+    public CharacterDelimited(Text origin, String delimiter, ArrayList<String> delimitedFields) {
         this.origin = origin;
         this.delimiter = delimiter;
         this.timestamp = origin.timestamp();
+        this.delimitedFields = delimitedFields;
     }
 
     @Override
     public ArrayList<String> read() throws IOException {
-        ArrayList<String> delimitedFields = new ArrayList<String>();
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String[] splitFields = iterator.next().split(delimiter);

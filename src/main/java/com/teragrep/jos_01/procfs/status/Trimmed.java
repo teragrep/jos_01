@@ -54,15 +54,20 @@ public class Trimmed implements Text {
 
     private final Text origin;
     private final LocalDateTime timestamp;
+    private final ArrayList<String> trimmedText;
 
     public Trimmed(Text origin) {
+        this(origin, new ArrayList<String>());
+    }
+
+    public Trimmed(Text origin, ArrayList<String> trimmedText) {
         this.origin = origin;
         this.timestamp = origin.timestamp();
+        this.trimmedText = trimmedText;
     }
 
     @Override
     public ArrayList<String> read() throws IOException {
-        ArrayList<String> trimmedText = new ArrayList<String>();
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String trimmed = iterator.next().trim();

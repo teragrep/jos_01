@@ -56,12 +56,18 @@ public class Replaced implements Text {
     private final LocalDateTime timestamp;
     private final String regex;
     private final String replacement;
+    private final ArrayList<String> replacedText;
 
     public Replaced(Text origin, String regex, String replacement) {
+        this(origin, regex, replacement, new ArrayList<String>());
+    }
+
+    public Replaced(Text origin, String regex, String replacement, ArrayList<String> replacedText) {
         this.origin = origin;
         this.regex = regex;
         this.replacement = replacement;
         this.timestamp = origin.timestamp();
+        this.replacedText = replacedText;
     }
 
     @Override

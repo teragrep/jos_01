@@ -54,15 +54,20 @@ public class NonEmptyLines implements Text {
 
     private final Text origin;
     private final LocalDateTime timestamp;
+    private final ArrayList<String> nonEmptyText;
 
     public NonEmptyLines(Text origin) {
+        this(origin, new ArrayList<String>());
+    }
+
+    public NonEmptyLines(Text origin, ArrayList<String> nonEmptyText) {
         this.origin = origin;
         this.timestamp = origin.timestamp();
+        this.nonEmptyText = nonEmptyText;
     }
 
     @Override
     public ArrayList<String> read() throws IOException {
-        ArrayList<String> nonEmptyText = new ArrayList<String>();
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String text = iterator.next();
