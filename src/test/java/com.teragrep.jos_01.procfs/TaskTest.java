@@ -46,6 +46,7 @@
 package com.teragrep.jos_01.procfs;
 
 import com.teragrep.jos_01.procfs.status.process.Stat;
+import com.teragrep.jos_01.procfs.status.process.Statm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -60,7 +61,8 @@ public class TaskTest {
     @Test
     public void statTest() throws IOException {
         Process process = new Process(1);
-        Stat stat = process.stat();
+        Task task = process.tasks().get(0);
+        Stat stat = task.stat();
 
         Assertions.assertNotNull(stat.pid());
         Assertions.assertNotNull(stat.comm());
@@ -114,5 +116,37 @@ public class TaskTest {
         Assertions.assertNotNull(stat.env_start());
         Assertions.assertNotNull(stat.env_end());
         Assertions.assertNotNull(stat.exit_code());
+    }
+
+    // Statm status object should contain all of the listed fields.
+    @Test
+    public void statmTest() throws IOException {
+        Process process = new Process(1);
+        Task task = process.tasks().get(0);
+        Statm statm = task.statm();
+        Assertions.assertNotNull(statm.size());
+        Assertions.assertNotNull(statm.resident());
+        Assertions.assertNotNull(statm.shared());
+        Assertions.assertNotNull(statm.text());
+        Assertions.assertNotNull(statm.lib());
+        Assertions.assertNotNull(statm.data());
+        Assertions.assertNotNull(statm.dt());
+    }
+
+    @Test
+    public void timestampTest() throws IOException {
+        Process systemd = new Process(1);
+        Task task = systemd.tasks().get(0);
+        Stat stat = task.stat();
+        Stat stat2 = task.stat();
+        Statm statm = task.statm();
+
+        // Timestamps should always have a value
+        Assertions.assertTrue(stat.timestamp() != null);
+        Assertions.assertTrue(statm.timestamp() != null);
+
+        // Timestamps should be different if called at different times, even when calling the same method again
+        Assertions.assertFalse(stat.timestamp().equals(stat2.timestamp()));
+        Assertions.assertFalse(stat.timestamp().equals(statm.timestamp()));
     }
 }
