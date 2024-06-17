@@ -151,11 +151,14 @@ public class Vmstat implements Text {
     private final ArrayList<String> fields;
 
     public Vmstat(Text origin) throws IOException {
-        fields = new Matched(origin,"nr_free_pages.*|nr_inactive_anon.*|nr_active_anon.*|nr_inactive_file.*|nr_active_file.*|nr_unevictable.*|nr_mlock.*|nr_anon_pages.*|nr_mapped.*|nr_file_pages.*|nr_dirty.*|nr_writeback.*|nr_slab_reclaimable.*|nr_slab_unreclaimable.*|nr_page_table_pages.*|nr_kernel_stack.*|nr_unstable.*|nr_bounce.*|nr_vmscan_write.*|nr_vmscan_immediate_reclaim.*|nr_writeback_temp.*|nr_isolated_anon.*|nr_isolated_file.*|nr_shmem.*|nr_dirtied.*|nr_written.*|numa_hit.*|numa_miss.*|numa_foreign.*|numa_interleave.*|numa_local.*|numa_other.*|nr_free_cma.*|nr_dirty_threshold.*|nr_dirty_background_threshold.*|pgpgin.*|pgpgout.*|pswpin.*|pswpout.*|pgalloc_dma.*|pgalloc_dma32.*|pgalloc_normal.*|pgalloc_movable.*|pgfree.*|pgactivate.*|pgdeactivate.*|pgfault.*|pgmajfault.*|pgscan_direct_throttle.*|zone_reclaim_failed.*|pginodesteal.*|slabs_scanned.*|kswapd_inodesteal.*|kswapd_low_wmark_hit_quickly.*|kswapd_high_wmark_hit_quickly.*|pageoutrun.*|pgrotated.*|drop_pagecache.*|drop_slab.*|pgmigrate_success.*|pgmigrate_fail.*|compact_migrate_scanned.*|compact_free_scanned.*|compact_isolated.*|compact_stall.*|compact_fail.*|compact_success.*|htlb_buddy_alloc_success.*|htlb_buddy_alloc_fail.*|unevictable_pgs_culled.*|unevictable_pgs_scanned.*|unevictable_pgs_rescued.*|unevictable_pgs_mlocked.*|unevictable_pgs_munlocked.*|unevictable_pgs_cleared.*|unevictable_pgs_stranded.*|thp_fault_alloc.*|thp_fault_fallback.*|thp_collapse_alloc.*|thp_collapse_alloc_failed.*|thp_zero_page_alloc.*|thp_zero_page_alloc_failed.*").read();
+        fields = new Matched(
+                origin,
+                "nr_free_pages.*|nr_inactive_anon.*|nr_active_anon.*|nr_inactive_file.*|nr_active_file.*|nr_unevictable.*|nr_mlock.*|nr_anon_pages.*|nr_mapped.*|nr_file_pages.*|nr_dirty.*|nr_writeback.*|nr_slab_reclaimable.*|nr_slab_unreclaimable.*|nr_page_table_pages.*|nr_kernel_stack.*|nr_unstable.*|nr_bounce.*|nr_vmscan_write.*|nr_vmscan_immediate_reclaim.*|nr_writeback_temp.*|nr_isolated_anon.*|nr_isolated_file.*|nr_shmem.*|nr_dirtied.*|nr_written.*|numa_hit.*|numa_miss.*|numa_foreign.*|numa_interleave.*|numa_local.*|numa_other.*|nr_free_cma.*|nr_dirty_threshold.*|nr_dirty_background_threshold.*|pgpgin.*|pgpgout.*|pswpin.*|pswpout.*|pgalloc_dma.*|pgalloc_dma32.*|pgalloc_normal.*|pgalloc_movable.*|pgfree.*|pgactivate.*|pgdeactivate.*|pgfault.*|pgmajfault.*|pgscan_direct_throttle.*|zone_reclaim_failed.*|pginodesteal.*|slabs_scanned.*|kswapd_inodesteal.*|kswapd_low_wmark_hit_quickly.*|kswapd_high_wmark_hit_quickly.*|pageoutrun.*|pgrotated.*|drop_pagecache.*|drop_slab.*|pgmigrate_success.*|pgmigrate_fail.*|compact_migrate_scanned.*|compact_free_scanned.*|compact_isolated.*|compact_stall.*|compact_fail.*|compact_success.*|htlb_buddy_alloc_success.*|htlb_buddy_alloc_fail.*|unevictable_pgs_culled.*|unevictable_pgs_scanned.*|unevictable_pgs_rescued.*|unevictable_pgs_mlocked.*|unevictable_pgs_munlocked.*|unevictable_pgs_cleared.*|unevictable_pgs_stranded.*|thp_fault_alloc.*|thp_fault_fallback.*|thp_collapse_alloc.*|thp_collapse_alloc_failed.*|thp_zero_page_alloc.*|thp_zero_page_alloc_failed.*"
+        ).read();
         LinkedHashMap<String, String> keyValuePairs = new LinkedHashMap<>();
-        for(String field : fields){
+        for (String field : fields) {
             String[] pair = field.split(" ");
-            keyValuePairs.put(pair[0],pair[1]);
+            keyValuePairs.put(pair[0], pair[1]);
         }
         nr_free_pages = Long.parseLong(keyValuePairs.get("nr_free_pages"));
         nr_inactive_anon = Long.parseLong(keyValuePairs.get("nr_inactive_anon"));
@@ -258,7 +261,6 @@ public class Vmstat implements Text {
     public long nr_free_pages() {
         return nr_free_pages;
     }
-
 
     public long nr_inactive_anon() {
         return nr_inactive_anon;

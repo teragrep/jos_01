@@ -57,9 +57,11 @@ public class Matched implements Text {
     private final Text origin;
     private final LocalDateTime timestamp;
     private final Pattern pattern;
+
     public Matched(Text origin, String regex) {
-        this(origin,Pattern.compile(regex));
+        this(origin, Pattern.compile(regex));
     }
+
     public Matched(Text origin, Pattern pattern) {
         this.origin = origin;
         this.pattern = pattern;
@@ -73,7 +75,7 @@ public class Matched implements Text {
         while (iterator.hasNext()) {
             String text = iterator.next();
             Matcher matcher = pattern.matcher(text);
-            if(matcher.matches()){
+            if (matcher.matches()) {
                 matchedText.add(text);
             }
         }

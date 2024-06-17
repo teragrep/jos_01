@@ -111,7 +111,7 @@ public class Stat implements Text {
     }
 
     @Override
-    public ArrayList<String> read(){
+    public ArrayList<String> read() {
         return fields;
     }
 

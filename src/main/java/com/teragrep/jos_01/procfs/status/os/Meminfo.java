@@ -103,7 +103,21 @@ public class Meminfo implements Text {
     private final long DirectMap4k;
 
     public Meminfo(Text origin) throws IOException {
-        fields = new Digits(new Trimmed(new Replaced(new CharacterDelimited(new Matched(origin,"MemTotal.*|MemFree.*|MemAvailable.*|Buffers.*|Cached.*|SwapCached.*|Active.*|Inactive.*|Activeanon.*|Inactiveanon.*|Activefile.*|Inactivefile.*|SwapTotal.*|SwapFree.*|Dirty.*|Writeback.*|AnonPages.*|Mapped.*|Shmem:.*|KReclaimable.*|Slab.*|SReclaimable.*|SUnreclaim.*|KernelStack.*|PageTables.*|NFS_Unstable.*|Bounce.*|WritebackTmp.*|CommitLimit.*|Committed_AS.*|VmallocTotal.*|VmallocUsed.*|VmallocChunk.*|DirectMap4k.*"), ":"), "kB", ""))).read();
+        fields = new Digits(
+                new Trimmed(
+                        new Replaced(
+                                new CharacterDelimited(
+                                        new Matched(
+                                                origin,
+                                                "MemTotal.*|MemFree.*|MemAvailable.*|Buffers.*|Cached.*|SwapCached.*|Active.*|Inactive.*|Activeanon.*|Inactiveanon.*|Activefile.*|Inactivefile.*|SwapTotal.*|SwapFree.*|Dirty.*|Writeback.*|AnonPages.*|Mapped.*|Shmem:.*|KReclaimable.*|Slab.*|SReclaimable.*|SUnreclaim.*|KernelStack.*|PageTables.*|NFS_Unstable.*|Bounce.*|WritebackTmp.*|CommitLimit.*|Committed_AS.*|VmallocTotal.*|VmallocUsed.*|VmallocChunk.*|DirectMap4k.*"
+                                        ),
+                                        ":"
+                                ),
+                                "kB",
+                                ""
+                        )
+                )
+        ).read();
         MemTotal = Long.parseLong(fields.get(0));
         MemFree = Long.parseLong(fields.get(1));
         MemAvailable = Long.parseLong(fields.get(2));
@@ -209,6 +223,7 @@ public class Meminfo implements Text {
     public long SwapFree() {
         return SwapFree;
     }
+
     public long Dirty() {
         return Dirty;
     }

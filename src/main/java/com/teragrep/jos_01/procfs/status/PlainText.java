@@ -48,7 +48,6 @@ package com.teragrep.jos_01.procfs.status;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class PlainText implements Text {
