@@ -81,11 +81,6 @@ public class Task {
         return new Statm(new RowFile(procDirectory, "statm"));
     }
 
-    public ArrayList<String> availableProcFiles() {
-        ArrayList<String> fileNames = procFileNames(new ArrayList<String>(), procDirectory);
-        return fileNames;
-    }
-
     private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) {
         if (!file.isDirectory()) {
             nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
