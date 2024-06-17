@@ -72,7 +72,6 @@ public class Replaced implements Text {
 
     @Override
     public ArrayList<String> read() throws IOException {
-        ArrayList<String> replacedText = new ArrayList<String>();
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String trimmed = iterator.next().replaceAll(regex, replacement);

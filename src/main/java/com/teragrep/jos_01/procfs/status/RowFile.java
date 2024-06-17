@@ -76,7 +76,6 @@ public class RowFile extends File implements Text {
 
     @Override
     public ArrayList<String> read() throws IOException {
-        ArrayList<String> fileRows = new ArrayList<>();
         try {
             String line;
             while ((line = reader.readLine()) != null) {
