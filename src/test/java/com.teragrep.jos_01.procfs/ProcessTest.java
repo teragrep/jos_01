@@ -87,7 +87,7 @@ public class ProcessTest {
 
     private ArrayList<Integer> getPidByCommand(String command) {
         ArrayList<Integer> pids = new ArrayList<Integer>();
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
 
             java.lang.Process ps = Runtime.getRuntime().exec("ps");
             BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
@@ -106,7 +106,7 @@ public class ProcessTest {
     // Kthreadd process (pid = 1) should have 52 fields in its Stat file, and it should have (systemd) as comm value and 1 as pid value in the file. None of the fields should be null
     @Test
     public void readSystemdFileTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             systemd = new Process(1);
             Stat stat = systemd.stat();
             Assertions.assertEquals(1, stat.pid());
@@ -126,7 +126,7 @@ public class ProcessTest {
     // Kthreadd process (pid = 2) should have 52 fields in its Stat file, and it should have (kthreadd) as comm value and 2 as pid value in the file. None of the fields should be null
     @Test
     public void readKthreaddFileTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             kthreadd = new Process(2);
             Stat stat = kthreadd.stat();
             Assertions.assertEquals(2, stat.pid());
@@ -161,7 +161,7 @@ public class ProcessTest {
     // After starting a sleeping process in a new thread, isAlive should return true. After killing the process, it should return false.
     @Test
     public void isAliveTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("sleep", "10");
 
@@ -180,14 +180,13 @@ public class ProcessTest {
             Thread.sleep(10);
             Assertions.assertFalse(sleepingProcess.isAlive());
 
-
         });
     }
 
     // The number of tasks should be equal to the number of threads in /proc/pid/stat. Test for both systemd and the current JVM
     @Test
     public void correctNumberOfTasksTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             Process process = new Process(1);
             Stat stat = process.stat();
             long statTaskcount = process.stat().num_threads();
@@ -205,7 +204,7 @@ public class ProcessTest {
     // Stat status object should contain all of the listed fields.
     @Test
     public void statTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             Process process = new Process(1);
             Stat stat = process.stat();
 
@@ -268,23 +267,23 @@ public class ProcessTest {
     // Statm status object should contain all of the listed fields.
     @Test
     public void statmTest() {
-        Assertions.assertDoesNotThrow(()->{
-        Process process = new Process(1);
-        Statm statm = process.statm();
-        Assertions.assertNotNull(statm.size());
-        Assertions.assertNotNull(statm.resident());
-        Assertions.assertNotNull(statm.shared());
-        Assertions.assertNotNull(statm.text());
-        Assertions.assertNotNull(statm.lib());
-        Assertions.assertNotNull(statm.data());
-        Assertions.assertNotNull(statm.dt());
+        Assertions.assertDoesNotThrow(() -> {
+            Process process = new Process(1);
+            Statm statm = process.statm();
+            Assertions.assertNotNull(statm.size());
+            Assertions.assertNotNull(statm.resident());
+            Assertions.assertNotNull(statm.shared());
+            Assertions.assertNotNull(statm.text());
+            Assertions.assertNotNull(statm.lib());
+            Assertions.assertNotNull(statm.data());
+            Assertions.assertNotNull(statm.dt());
         });
     }
 
     // Timestamps should be available and should be different if the proc method is called later
     @Test
     public void timestampTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             systemd = new Process(1);
             Stat stat = systemd.stat();
             Stat stat2 = systemd.stat();
@@ -304,8 +303,8 @@ public class ProcessTest {
     // Get the JVM process this test is running in, and make two delayed calls to cpuTime to make sure cpuTime actually increments as process is in use
     // Uses SysconfInterface.Fake() to get a hardcoded CPU tick rate (100) without actually having to compile Native C code.
     @Test
-    public void CpuTimeTest()  {
-        Assertions.assertDoesNotThrow(()->{
+    public void CpuTimeTest() {
+        Assertions.assertDoesNotThrow(() -> {
             long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
             Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
             float cpuTime1 = jvm.cpuTime();
@@ -321,8 +320,8 @@ public class ProcessTest {
 
     // As resident set size for the whole JVM fluctuates a lot we need to create a real chonker of an object to be sure that RSS increases when creating objects
     @Test
-    public void residentSetSizeTest()  {
-        Assertions.assertDoesNotThrow(()->{
+    public void residentSetSizeTest() {
+        Assertions.assertDoesNotThrow(() -> {
             Process jvm = new Process(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
             float rssBefore = jvm.residentSetSize();
             float freeMemoryBefore = Runtime.getRuntime().freeMemory();
@@ -339,11 +338,11 @@ public class ProcessTest {
 
     // CpuUsage of JVM should increase over time
     @Test
-    public void cpuUsageTest()  {
+    public void cpuUsageTest() {
 
         long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
         Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
-        Assertions.assertDoesNotThrow(() ->{
+        Assertions.assertDoesNotThrow(() -> {
             double cpuUsage1 = jvm.cpuUsage();
             ArrayList<String> workArray = new ArrayList<String>();
             for (int i = 0; i < 3000000; i++) {

@@ -48,8 +48,6 @@ package com.teragrep.jos_01.procfs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 public class SysconfTest {
 
     private long tickrate;
@@ -57,7 +55,7 @@ public class SysconfTest {
     // Tickrate should be positive integer value and Sysconf should not return a -1
     @Test
     public void SysconfTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             tickrate = 0;
             Sysconf sysconf = new Sysconf();
             tickrate = sysconf.main();

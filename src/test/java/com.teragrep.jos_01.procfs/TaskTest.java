@@ -52,15 +52,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 public class TaskTest {
 
     private final Logger LOGGER = LoggerFactory.getLogger(TaskTest.class);
 
     @Test
     public void statTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             Process process = new Process(1);
             Task task = process.tasks().get(0);
             Stat stat = task.stat();
@@ -123,7 +121,7 @@ public class TaskTest {
     // Statm status object should contain all of the listed fields.
     @Test
     public void statmTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             Process process = new Process(1);
             Task task = process.tasks().get(0);
             Statm statm = task.statm();
@@ -139,7 +137,7 @@ public class TaskTest {
 
     @Test
     public void timestampTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             Process systemd = new Process(1);
             Task task = systemd.tasks().get(0);
             Stat stat = task.stat();

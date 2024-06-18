@@ -49,14 +49,12 @@ import com.teragrep.jos_01.procfs.status.os.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 public class LinuxOSTest {
 
     // Uptime should have 2 fields, and the values should be positive floats.
     @Test
     public void upTimeTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS();
             Uptime uptime = os.uptime();
             Assertions.assertEquals(2, uptime.read().size());
@@ -69,7 +67,7 @@ public class LinuxOSTest {
     // The number of cpu lines is one aggregate line + one line for each logical core. The number of logical cores should be the same as reported in /proc/cpuinfo
     @Test
     public void statTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS();
             Stat stat = os.stat();
 
@@ -84,14 +82,13 @@ public class LinuxOSTest {
             Assertions.assertTrue(stat.softirq().size() >= 0);
         });
 
-
     }
 
     // Check that vmStat instantiates every required keys
     // vmstat might have varying number of keys
     @Test
     public void vmStatTest() {
-        Assertions.assertDoesNotThrow(()->{
+        Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS();
             Vmstat vmstat = os.vmstat();
             Assertions.assertTrue(vmstat.nr_free_pages() >= 0);
@@ -181,8 +178,8 @@ public class LinuxOSTest {
 
     // CPUInfo should have 27 fields for every logical cpu (cpuThread) listed.
     @Test
-    public void cpuInfoTest()  {
-        Assertions.assertDoesNotThrow(()->{
+    public void cpuInfoTest() {
+        Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS();
             Assertions.assertEquals(os.cpuThreadCount() * 27, os.cpuinfo().read().size());
         });
@@ -190,8 +187,8 @@ public class LinuxOSTest {
 
     // MemInfo should have exactly 34 fields, and object should be initialized with non-negative integer values.
     @Test
-    public void memInfoTest()  {
-        Assertions.assertDoesNotThrow(()->{
+    public void memInfoTest() {
+        Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS();
             Meminfo meminfo = os.meminfo();
             Assertions.assertEquals(34, meminfo.read().size());
@@ -239,8 +236,8 @@ public class LinuxOSTest {
     // CpuThreadCount should either match or be greater than the number of physical cores
     // CpuThreadCount and number of physical cores should be greater or equal to the number of CPUs installed
     @Test
-    public void highLevelMethodsTest()  {
-        Assertions.assertDoesNotThrow(()->{
+    public void highLevelMethodsTest() {
+        Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS();
             Assertions.assertTrue(Integer.signum(os.cpuCount()) == 1);
             Assertions.assertEquals(Runtime.getRuntime().availableProcessors(), os.cpuThreadCount());
