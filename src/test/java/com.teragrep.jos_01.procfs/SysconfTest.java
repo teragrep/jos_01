@@ -57,14 +57,12 @@ public class SysconfTest {
     // Tickrate should be positive integer value and Sysconf should not return a -1
     @Test
     public void SysconfTest() {
-        tickrate = 0;
-        Sysconf sysconf = new Sysconf();
-        try {
+        Assertions.assertDoesNotThrow(()->{
+            tickrate = 0;
+            Sysconf sysconf = new Sysconf();
             tickrate = sysconf.main();
-        }
-        catch (IOException e) {
-            System.err.println(e);
-        }
-        Assertions.assertFalse(tickrate == 0 && tickrate == -1);
+            System.out.println(tickrate);
+            Assertions.assertFalse(tickrate == 0 && tickrate == -1);
+        });
     }
 }
