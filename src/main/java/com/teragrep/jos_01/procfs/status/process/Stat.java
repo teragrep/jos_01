@@ -172,7 +172,6 @@ public class Stat implements Text {
         env_end = Long.parseLong(fields.get(50));
         exit_code = Long.parseLong(fields.get(51));
         timestamp = origin.timestamp();
-
     }
 
     @Override

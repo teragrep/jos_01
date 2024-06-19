@@ -139,15 +139,14 @@ public class Process {
     }
 
     public double cpuUsage() throws IOException {
-        long cpuTicksPerSecond = os.cpuTicksPerSecond();
+        double cpuTicksPerSecond = os.cpuTicksPerSecond();
 
         double OSUpTime = os.uptime().uptimeSeconds();
         Stat status = stat();
-
-        long utime = status.utime() / cpuTicksPerSecond;
-        long stime = status.stime() / cpuTicksPerSecond;
-        long starttime = status.starttime() / cpuTicksPerSecond;
-        long cpuTime = utime + stime;
+        double utime = status.utime() / cpuTicksPerSecond;
+        double stime = status.stime() / cpuTicksPerSecond;
+        double starttime = status.starttime() / cpuTicksPerSecond;
+        double cpuTime = utime + stime;
 
         return cpuTime / (OSUpTime - starttime);
     }
