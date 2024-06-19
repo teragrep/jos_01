@@ -159,21 +159,19 @@ public class ProcessTest {
     public void isAliveTest() {
         Assertions.assertDoesNotThrow(() -> {
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("sleep", "10");
+            pb.command("sleep", "2");
 
             TestThread processThread = new TestThread(pb);
             processThread.run();
 
             ArrayList<Integer> pids = getPidByCommand("sleep");
+            Assertions.assertEquals(1, pids.size());
 
             Process sleepingProcess = new Process(pids.get(0));
 
             Assertions.assertTrue(sleepingProcess.isAlive());
 
-            java.lang.Process kill = Runtime.getRuntime().exec("kill " + pids.get(0));
-            kill.waitFor();
-
-            Thread.sleep(10);
+            Thread.sleep(2000);
             Assertions.assertFalse(sleepingProcess.isAlive());
 
         });
