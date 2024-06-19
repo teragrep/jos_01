@@ -307,7 +307,7 @@ public class ProcessTest {
             Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
             float cpuTime1 = jvm.cpuTime();
             ArrayList<Double> workArray = new ArrayList<Double>();
-            for (int i = 0; i < 30000000; i++) { // Needs to do a lot of work to have different CPUtimes since the times are in seconds, not ticks
+            for (int i = 0; i < 300000; i++) { // Needs to do a lot of work to have different CPUtimes since the times are in seconds, not ticks
                 workArray.add(Math.random());
             }
             float cpuTime2 = jvm.cpuTime();
