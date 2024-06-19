@@ -75,11 +75,11 @@ public class LinuxOSTest {
             Assertions.assertEquals(7 + numberOfCpus, stat.read().size());
 
             Assertions.assertTrue(stat.ctxt() >= 0);
-            Assertions.assertTrue(stat.intr().size() >= 0);
+            Assertions.assertTrue(stat.intr().size() >= 1);
             Assertions.assertTrue(stat.processes() >= 0);
             Assertions.assertTrue(stat.procs_blocked() >= 0);
             Assertions.assertTrue(stat.procs_running() >= 0);
-            Assertions.assertTrue(stat.softirq().size() >= 0);
+            Assertions.assertTrue(stat.softirq().size() >= 1);
         });
 
     }
@@ -239,12 +239,12 @@ public class LinuxOSTest {
     public void highLevelMethodsTest() {
         Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS();
-            Assertions.assertTrue(Integer.signum(os.cpuCount()) == 1);
+            Assertions.assertEquals(true, Integer.signum(os.cpuCount()) == 1);
             Assertions.assertEquals(Runtime.getRuntime().availableProcessors(), os.cpuThreadCount());
-            Assertions.assertTrue(Integer.signum(os.cpuPhysicalCoreCount()) == 1);
+            Assertions.assertEquals(true, Integer.signum(os.cpuPhysicalCoreCount()) == 1);
             Assertions.assertTrue(os.cpuThreadCount() >= os.cpuPhysicalCoreCount());
             Assertions.assertTrue(os.cpuThreadCount() >= os.cpuCount() && os.cpuPhysicalCoreCount() >= os.cpuCount());
-            Assertions.assertTrue(Integer.signum(os.cpuCount()) == 1);
+            Assertions.assertEquals(true, Integer.signum(os.cpuCount()) == 1);
             Assertions.assertTrue(os.pageSize() > 0);
             Assertions.assertTrue(os.totalRAM() > Runtime.getRuntime().maxMemory() / 1000);
         });

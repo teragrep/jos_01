@@ -145,8 +145,8 @@ public class TaskTest {
             Statm statm = task.statm();
 
             // Timestamps should always have a value
-            Assertions.assertTrue(stat.timestamp() != null);
-            Assertions.assertTrue(statm.timestamp() != null);
+            Assertions.assertNotNull(stat.timestamp());
+            Assertions.assertNotNull(statm.timestamp());
 
             // Timestamps should be different if called at different times, even when calling the same method again
             Assertions.assertFalse(stat.timestamp().equals(stat2.timestamp()));

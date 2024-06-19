@@ -53,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
@@ -86,6 +87,19 @@ public class ProcessTest {
     }
 
     private ArrayList<Integer> getPidByCommand(String command) {
+        Assertions.assertDoesNotThrow(() -> {
+            File binDirectory = new File("/bin");
+            File[] installedPrograms = binDirectory.listFiles();
+            boolean psInstalled = false;
+            for (File program : installedPrograms) {
+                if (program.getName().equals("ps")) {
+                    psInstalled = true;
+                    break;
+                }
+            }
+            Assertions.assertTrue(psInstalled);
+        });
+
         ArrayList<Integer> pids = new ArrayList<Integer>();
         Assertions.assertDoesNotThrow(() -> {
 
@@ -103,34 +117,16 @@ public class ProcessTest {
         return pids;
     }
 
-    // Kthreadd process (pid = 1) should have 52 fields in its Stat file, and it should have (systemd) as comm value and 1 as pid value in the file. None of the fields should be null
+    // JVM process should have 52 fields in its Stat file, and it should have (systemd) as comm value and 1 as pid value in the file. None of the fields should be null
     @Test
-    public void readSystemdFileTest() {
+    public void readJvmFileTest() {
         Assertions.assertDoesNotThrow(() -> {
-            systemd = new Process(1);
-            Stat stat = systemd.stat();
-            Assertions.assertEquals(1, stat.pid());
-            Assertions.assertEquals("(systemd)", stat.comm());
-            Iterator iterator = stat.read().iterator();
-            int i = 0;
-            while (iterator.hasNext()) {
-                Assertions.assertNotNull(iterator.next());
-                i++;
-            }
-            Assertions.assertEquals(52, i);
 
-        });
-        systemd = new Process(1);
-    }
-
-    // Kthreadd process (pid = 2) should have 52 fields in its Stat file, and it should have (kthreadd) as comm value and 2 as pid value in the file. None of the fields should be null
-    @Test
-    public void readKthreaddFileTest() {
-        Assertions.assertDoesNotThrow(() -> {
-            kthreadd = new Process(2);
-            Stat stat = kthreadd.stat();
-            Assertions.assertEquals(2, stat.pid());
-            Assertions.assertEquals("(kthreadd)", stat.comm());
+            int jvmPid = Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+            Process jvm = new Process(jvmPid);
+            Stat stat = jvm.stat();
+            Assertions.assertEquals(jvmPid, stat.pid());
+            Assertions.assertEquals("(java)", stat.comm());
             Iterator iterator = stat.read().iterator();
             int i = 0;
             while (iterator.hasNext()) {
@@ -183,21 +179,25 @@ public class ProcessTest {
         });
     }
 
-    // The number of tasks should be equal to the number of threads in /proc/pid/stat. Test for both systemd and the current JVM
+    // The number of tasks should be equal to the number of threads in /proc/pid/stat. Test for process id 1
     @Test
     public void correctNumberOfTasksTest() {
         Assertions.assertDoesNotThrow(() -> {
             Process process = new Process(1);
-            Stat stat = process.stat();
             long statTaskcount = process.stat().num_threads();
             int taskCount = process.tasks().size();
             Assertions.assertEquals(statTaskcount, Long.parseLong(String.valueOf(taskCount)));
+        });
+    }
 
+    // The number of tasks should be equal to the number of threads in /proc/pid/stat. Test for the current JVM
+    @Test
+    public void correctNumberOfTasksInJvmTest() {
+        Assertions.assertDoesNotThrow(() -> {
             Process jvm = new Process(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
             long jvmStatTaskcount = jvm.stat().num_threads();
             int jvmTaskCount = jvm.tasks().size();
             Assertions.assertEquals(jvmStatTaskcount, Long.parseLong(String.valueOf(jvmTaskCount)));
-
         });
     }
 
@@ -290,8 +290,8 @@ public class ProcessTest {
             Statm statm = systemd.statm();
 
             // Timestamps should always have a value
-            Assertions.assertTrue(stat.timestamp() != null);
-            Assertions.assertTrue(statm.timestamp() != null);
+            Assertions.assertNotNull(stat.timestamp());
+            Assertions.assertNotNull(statm.timestamp());
 
             // Timestamps should be different if called at different times, even when calling the same method again
             Assertions.assertFalse(stat.timestamp().equals(stat2.timestamp()));

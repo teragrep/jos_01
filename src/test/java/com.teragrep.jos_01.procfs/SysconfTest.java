@@ -59,8 +59,8 @@ public class SysconfTest {
             tickrate = 0;
             Sysconf sysconf = new Sysconf();
             tickrate = sysconf.main();
-            System.out.println(tickrate);
-            Assertions.assertFalse(tickrate == 0 && tickrate == -1);
+            Assertions.assertFalse(tickrate == -1);
+            Assertions.assertFalse(tickrate == 0);
         });
     }
 }
