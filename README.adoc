@@ -31,6 +31,9 @@ See the official documentation on https://docs.teragrep.com[docs.teragrep.com].
 Requirements:
 Java version 1.8
 
+Copy src/main/c to your projects src/main directory
+Copy <plugins> from jos_01 pom.xml to your project's pom.xml
+
 Run "mvn clean install" successfully before use.
 Maven build includes automake scripts to compile the code in "sysconf.c", which is used in the program during runtime via JNA.
 Requirements for compiling the C code:
