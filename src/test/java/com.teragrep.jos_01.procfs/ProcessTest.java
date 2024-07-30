@@ -339,12 +339,15 @@ public class ProcessTest {
     public void memoryPercentageTest() {
         Assertions.assertDoesNotThrow(() -> {
             LinuxOS os = new LinuxOS(new SysconfInterface.Fake());
-            Process jvm = new Process(Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]),os);
+            Process jvm = new Process(
+                    Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]),
+                    os
+            );
             float memoryPercentage = jvm.memoryPercentage();
             float rss = jvm.residentSetSize();
             float totalMemory = os.totalRAM();
             Assertions.assertTrue(memoryPercentage >= 0 && memoryPercentage <= 100);
-            Assertions.assertEquals(memoryPercentage,rss/totalMemory,0.0001);
+            Assertions.assertEquals(memoryPercentage, rss / totalMemory, 0.0001);
         });
     }
 
