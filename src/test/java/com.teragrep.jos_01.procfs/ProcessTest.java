@@ -334,6 +334,20 @@ public class ProcessTest {
         });
     }
 
+    // As resident set size for the whole JVM fluctuates a lot we need to create a real chonker of an object to be sure that RSS increases when creating objects
+    @Test
+    public void memoryPercentageTest() {
+        Assertions.assertDoesNotThrow(() -> {
+            LinuxOS os = new LinuxOS(new SysconfInterface.Fake());
+            Process jvm = new Process(Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]),os);
+            float memoryPercentage = jvm.memoryPercentage();
+            float rss = jvm.residentSetSize();
+            float totalMemory = os.totalRAM();
+            Assertions.assertTrue(memoryPercentage >= 0 && memoryPercentage <= 100);
+            Assertions.assertEquals(memoryPercentage,rss/totalMemory,0.0001);
+        });
+    }
+
     // CpuUsage of JVM should increase over time
     @Test
     public void cpuUsageTest() {

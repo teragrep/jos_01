@@ -137,6 +137,12 @@ public class Process {
         long pageSize = os.pageSize();
         return pageCount * pageSize;
     }
+    // Returns the percentage of system memory used up by this process using 0-1 scale
+    public float memoryPercentage() throws IOException {
+        float rss = residentSetSize();
+        float memoryPercentage = rss/os.totalRAM();
+        return memoryPercentage;
+    }
 
     public double cpuUsage() throws IOException {
         double cpuTicksPerSecond = os.cpuTicksPerSecond();
