@@ -52,9 +52,16 @@ public interface SysconfInterface {
 
     final class Fake implements SysconfInterface {
 
+        private final int tickRate;
+        public Fake(){
+            this(100);
+        }
+        public Fake(int tickRate){
+            this.tickRate = tickRate;
+        }
         @Override
         public long main() throws RuntimeException {
-            return 100;
+            return tickRate;
         }
     }
 
