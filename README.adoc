@@ -5,18 +5,20 @@
 
 = Java Operating System Statistics (jos_01)
 
-// Add a short description of your project. Tell what your project does and what it's used for.
-
-This project will extract statistics from the operating system into Java objects.
+This project will extract statistics from the operating system and running processes into Java objects.
 You can use this to easily get information such as memory usage about running processes and the operating system itself.
+The information provided is based on the Linux filesystem's /proc files.
 
 == Features
 
 // List your project's features
 
 Check if a process is alive using process id.
-Get statistics on the OS or any running process using your system's /proc files as the source.
+Get statistics on the OS or any running process using your system's /proc files as the source of truth.
 High level functions calculate process performance statistics automatically, such as residentSetSize()
+Create objects representing the current state of a /proc file and get access to the file's values.
+
+This project can be used to easily create system or process monitoring solutions in Java applications.
 
 == Documentation
 
@@ -24,13 +26,15 @@ See the official documentation on https://docs.teragrep.com[docs.teragrep.com].
 
 == Limitations
 
-// If your project has limitations, please list them. Otherwise remove this section.
+Only supports Linux-based operating systems
+Relies on availability of /proc files, so JOS-01 needs to have access to these files.
 
 == How to [compile/use/implement]
 
 Requirements:
 Java version 1.8
 
+Installation:
 Copy src/main/c to your projects src/main directory
 Copy <plugins> from jos_01 pom.xml to your project's pom.xml
 
@@ -41,8 +45,41 @@ Requirements for compiling the C code:
 - autoreconf
 - gcc
 
+Usage:
+Operating system statistics:
+Start by creating a LinuxOS object.
+Optionally provide an object implementing SysconfInterface to manually configure the Operating system CPU tick rate.
+Use methods of LinuxOS object to get information on operating system
 
-// add instructions how people can start to use your project
+Process statistics:
+Create a Process object by supplying a valid process ID to Process' constructor.
+Optionally provide a specific LinuxOS object during construction so that OS configuration is applied to Process object's methods
+
+
+Examples of use:
+
+Creating a new LinuxOS object with automatic configuration:
+LinuxOS os = new LinuxOS();
+
+Creating a new Process object with automatic configuration:
+Process process = new Process(250);
+
+Creating a new LinuxOS object with manual CPU tickrate configuration (skipping usage of JNA to automatically get CPU tickrate)
+LinuxOS os = new LinuxOS(SysconfInterface.Fake(100));
+
+CPU count of current system:
+LinuxOS os = new LinuxOS();
+System.out.println(os.cpuCount());
+
+Manually configure CPU tickrate and get CpuTime of process with pid 1:
+LinuxOS os = new LinuxOS(SysconfInterface.Fake(1000));
+Process process = new Process(1,os);
+System.out.println(process.cpuTime());
+
+Access /proc/stat files of process with pid 250 and print out "comm" value:
+Process process = new Process(250);
+Stat stat = process.stat();
+System.out.println(stat.comm());
 
 == Contributing
 
