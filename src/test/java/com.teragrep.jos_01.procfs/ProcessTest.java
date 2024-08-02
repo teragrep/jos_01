@@ -141,17 +141,21 @@ public class ProcessTest {
     // Process object should be able to be instantiated with an integer and a String
     @Test
     public void constructorTest() {
-        Process process = new Process(1);
-        Process processString = new Process("1");
-        Assertions.assertTrue(process.isAlive());
-        Assertions.assertTrue(processString.isAlive());
+        Assertions.assertDoesNotThrow(() -> {
+            Process process = new Process(1);
+            Process processString = new Process("1");
+            Assertions.assertTrue(process.isAlive());
+            Assertions.assertTrue(processString.isAlive());
+        });
     }
 
     // If a process with the designated ID is not found, the returned Process object should be a stub, and isAlive should return false.
     @Test
     public void noSuchProcessTest() {
-        Process process = new Process(-1);
-        Assertions.assertFalse(process.isAlive());
+        Assertions.assertDoesNotThrow(() -> {
+            Process process = new Process(-1);
+            Assertions.assertFalse(process.isAlive());
+        });
     }
 
     // After starting a sleeping process in a new thread, isAlive should return true. After killing the process, it should return false.
@@ -354,10 +358,9 @@ public class ProcessTest {
     // CpuUsage of JVM should increase over time
     @Test
     public void cpuUsageTest() {
-
-        long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-        Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
         Assertions.assertDoesNotThrow(() -> {
+            long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+            Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
             double cpuUsage1 = jvm.cpuUsage();
             ArrayList<String> workArray = new ArrayList<String>();
             for (int i = 0; i < 3000000; i++) {

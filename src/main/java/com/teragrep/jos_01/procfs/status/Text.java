@@ -45,13 +45,12 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public interface Text {
 
-    ArrayList<String> read() throws IOException;
+    ArrayList<String> read() throws Exception;
 
     LocalDateTime timestamp();
 }

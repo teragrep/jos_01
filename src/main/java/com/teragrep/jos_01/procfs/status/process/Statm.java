@@ -50,7 +50,6 @@ import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -71,7 +70,7 @@ public class Statm implements Text {
     private final long dt;
     private final ArrayList<String> fields;
 
-    public Statm(Text origin) throws IOException {
+    public Statm(Text origin) throws Exception {
         fields = new CharacterDelimited(origin, " ").read();
         size = Long.parseLong(fields.get(0));
         resident = Long.parseLong(fields.get(1));

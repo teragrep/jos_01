@@ -50,8 +50,6 @@ import com.sun.jna.Native;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 public class Sysconf implements SysconfInterface {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Sysconf.class);
@@ -66,19 +64,19 @@ public class Sysconf implements SysconfInterface {
 
     // Returns the number of clock ticks per second.
     // If an error occurs, this funcion returns -1
-    public long main() throws IOException, RuntimeException {
+    public long main() throws Exception {
         long clk_tck;
         try {
             clk_tck = LibSysconf.INSTANCE.main();
         }
         catch (UnsatisfiedLinkError unsatisfiedLinkError) {
-            throw new IOException(
+            throw new Exception(
                     "Failed to initialize Native C library! Make sure that classes/lib/opt/Fail-Safe/jos_01/lib/sysconf/sysconf.so exists and is readable! Try running \"mvn clean install\" to generate required files",
                     unsatisfiedLinkError
             );
         }
         if (clk_tck == -1) {
-            throw new RuntimeException(
+            throw new Exception(
                     "Could not get system clock tick rate! sysconf(_SC_CLK_TCK) returned -1, indicating an error!"
             );
         }

@@ -59,15 +59,15 @@ public class RowFile extends File implements Text {
     private final ArrayList<String> fileRows;
     private final Logger LOGGER = LoggerFactory.getLogger(RowFile.class);
 
-    public RowFile(File procDirectory, String fileName) throws FileNotFoundException {
+    public RowFile(File procDirectory, String fileName) throws Exception {
         this(new File(procDirectory, fileName));
     }
 
-    public RowFile(File procFile) throws FileNotFoundException {
+    public RowFile(File procFile) throws Exception {
         this(procFile, new BufferedReader(new FileReader(procFile)), new ArrayList<String>());
     }
 
-    public RowFile(File procFile, BufferedReader reader, ArrayList<String> fileRows) {
+    public RowFile(File procFile, BufferedReader reader, ArrayList<String> fileRows) throws Exception {
         super(procFile.toURI());
         this.reader = reader;
         this.timestamp = LocalDateTime.now();
@@ -75,21 +75,15 @@ public class RowFile extends File implements Text {
     }
 
     @Override
-    public ArrayList<String> read() throws IOException {
+    public ArrayList<String> read() throws Exception {
         try {
             String line;
             while ((line = reader.readLine()) != null) {
                 fileRows.add(line);
             }
         }
-        catch (FileNotFoundException notFoundException) {
-            throw new IOException("File \"" + this.getPath() + "\" not found!", notFoundException);
-        }
-        catch (IOException ioException) {
-            throw new IOException(
-                    "Failed to read file \"" + this.getName() + "\" due to an I/O exception!",
-                    ioException
-            );
+        catch (Exception e) {
+            throw new Exception("Failed to read from file!", e);
         }
         return fileRows;
     }

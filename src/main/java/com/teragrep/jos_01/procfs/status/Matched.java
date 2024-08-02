@@ -45,7 +45,6 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -71,7 +70,7 @@ public class Matched implements Text {
     }
 
     @Override
-    public ArrayList<String> read() throws IOException {
+    public ArrayList<String> read() throws Exception {
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String text = iterator.next();

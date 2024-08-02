@@ -49,7 +49,6 @@ import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class Uptime implements Text {
         uptimeSeconds, combinedCpuCoreIdleTimeSeconds
     }
 
-    public Uptime(Text origin) throws IOException {
+    public Uptime(Text origin) throws Exception {
         fields = origin.read();
         uptimeSeconds = Double.parseDouble(fields.get(0));
         combinedCpuCoreIdleTimeSeconds = Double.parseDouble(fields.get(1));

@@ -50,7 +50,6 @@ import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -117,7 +116,7 @@ public class Stat implements Text {
     private final long env_end;
     private final long exit_code;
 
-    public Stat(Text origin) throws IOException {
+    public Stat(Text origin) throws Exception {
         fields = new CharacterDelimited(origin, " ").read();
         pid = Long.parseLong(fields.get(0));
         comm = fields.get(1);

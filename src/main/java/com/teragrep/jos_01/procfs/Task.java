@@ -53,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Task {
@@ -63,21 +62,21 @@ public class Task {
     private final File procDirectory;
     private final Logger LOGGER = LoggerFactory.getLogger(Task.class);
 
-    public Task(String taskId, Process parentProcess) {
+    public Task(String taskId, Process parentProcess) throws Exception {
         this(Long.parseLong(taskId), parentProcess);
     }
 
-    public Task(long taskId, Process parentProcess) {
+    public Task(long taskId, Process parentProcess) throws Exception {
         this.taskId = taskId;
         this.processId = parentProcess.pid();
         this.procDirectory = new File("/proc/" + processId + "/task/", Long.toString(processId));
     }
 
-    public Stat stat() throws IOException {
+    public Stat stat() throws Exception {
         return new Stat(new CharacterDelimited(new RowFile(procDirectory, "stat"), " "));
     }
 
-    public Statm statm() throws IOException {
+    public Statm statm() throws Exception {
         return new Statm(new RowFile(procDirectory, "statm"));
     }
 
@@ -86,13 +85,10 @@ public class Task {
             nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
         }
         else {
-            try {
-                for (File child : file.listFiles()) {
+            for (File child : file.listFiles()) {
+                if (child != null) {
                     procFileNames(nameList, child);
                 }
-            }
-            catch (NullPointerException npe) {
-                LOGGER.error("I/O Exception while attempting to access children of {}", file.getPath());
             }
         }
         return nameList;

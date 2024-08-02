@@ -49,7 +49,6 @@ import com.teragrep.jos_01.procfs.status.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -64,7 +63,7 @@ public class Cpuinfo implements Text {
     private final ArrayList<Processor> processors;
     private final ArrayList<String> fields;
 
-    public Cpuinfo(Text origin) throws IOException {
+    public Cpuinfo(Text origin) throws Exception {
         fields = new NonEmptyLines(new Replaced(origin, "\\s+", " ")).read();
         this.processors = new ArrayList<Processor>();
         ArrayList<String> processorFields = new ArrayList<>();

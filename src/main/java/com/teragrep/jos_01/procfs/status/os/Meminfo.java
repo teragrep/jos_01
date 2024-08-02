@@ -49,7 +49,6 @@ import com.teragrep.jos_01.procfs.status.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -102,7 +101,7 @@ public class Meminfo implements Text {
     private final long VmallocChunk;
     private final long DirectMap4k;
 
-    public Meminfo(Text origin) throws IOException {
+    public Meminfo(Text origin) throws Exception {
         fields = new Digits(
                 new Trimmed(
                         new Replaced(

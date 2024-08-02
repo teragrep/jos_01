@@ -46,7 +46,6 @@
 package com.teragrep.jos_01.procfs;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import com.teragrep.jos_01.procfs.status.process.Stat;
@@ -63,63 +62,67 @@ public class Process {
     private final Logger LOGGER = LoggerFactory.getLogger(Process.class);
     private final LinuxOS os;
 
-    public Process(String processId) {
+    public Process(String processId) throws Exception {
         this(Long.parseLong(processId));
     }
 
-    public Process(long processId) {
+    public Process(long processId) throws Exception {
         this(processId, new File("/proc", Long.toString(processId)), new LinuxOS());
     }
 
-    public Process(long processId, LinuxOS os) {
+    public Process(long processId, LinuxOS os) throws Exception {
         this(processId, new File("/proc", Long.toString(processId)), os);
     }
 
-    public Process(long processId, File procDirectory, LinuxOS os) {
+    public Process(long processId, File procDirectory, LinuxOS os) throws Exception {
         this.processId = processId;
         this.procDirectory = procDirectory;
         this.os = os;
     }
 
-    public Stat stat() throws IOException {
-        return new Stat(new CharacterDelimited(new RowFile(procDirectory, "stat"), " "));
+    public Stat stat() throws Exception {
+        try {
+            return new Stat(new CharacterDelimited(new RowFile(procDirectory, "stat"), " "));
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to create a Stat object!", e);
+        }
     }
 
-    public Statm statm() throws IOException {
-        return new Statm(new RowFile(procDirectory, "statm"));
+    public Statm statm() throws Exception {
+        try {
+            return new Statm(new RowFile(procDirectory, "statm"));
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to create a Statm object!", e);
+        }
     }
 
-    private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) {
+    private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) throws Exception {
         if (!file.isDirectory()) {
             nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
         }
         else {
-            try {
-                File[] subdirectories = file.listFiles();
-                if (subdirectories == null) {
-                    throw new IOException(
-                            "Failed to get all file names! Either no permission to open file at " + file.getPath()
-                                    + " or it is not a directory!"
-                    );
-                }
-                for (File child : file.listFiles()) {
-                    procFileNames(nameList, child);
-                }
+            File[] subdirectories = file.listFiles();
+            if (subdirectories == null) {
+                throw new Exception(
+                        "Failed to get all file names! Either no permission to open file at " + file.getPath()
+                                + " or it is not a directory!"
+                );
             }
-            catch (IOException ioe) {
-                return nameList;
+            for (File child : file.listFiles()) {
+                procFileNames(nameList, child);
             }
-
         }
         return nameList;
     }
 
-    public ArrayList<Task> tasks() throws IOException {
+    public ArrayList<Task> tasks() throws Exception {
         ArrayList<Task> tasks = new ArrayList<Task>();
         File processTaskDirectory = new File(procDirectory, "task");
         File[] childDirectories = processTaskDirectory.listFiles();
         if (childDirectories == null) {
-            throw new IOException(
+            throw new Exception(
                     "Failed to access list of tasks within " + processTaskDirectory.getPath()
                             + " Either no permission or file is not a directory"
             );
@@ -131,39 +134,59 @@ public class Process {
     }
 
     // Prints RSS in kB
-    public float residentSetSize() throws IOException {
-        Statm statm = statm();
-        long pageCount = statm.resident();
-        long pageSize = os.pageSize();
-        return pageCount * pageSize;
+    public float residentSetSize() throws Exception {
+        try {
+            Statm statm = statm();
+            long pageCount = statm.resident();
+            long pageSize = os.pageSize();
+            return pageCount * pageSize;
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate Resident set size of process!", e);
+        }
     }
 
     // Returns the percentage of system memory used up by this process using 0-1 scale
-    public float memoryPercentage() throws IOException {
-        float rss = residentSetSize();
-        float memoryPercentage = rss / os.totalRAM();
-        return memoryPercentage;
+    public float memoryPercentage() throws Exception {
+        try {
+            float rss = residentSetSize();
+            float memoryPercentage = rss / os.totalRAM();
+            return memoryPercentage;
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate process Memory usage percentage!", e);
+        }
     }
 
-    public double cpuUsage() throws IOException {
-        double cpuTicksPerSecond = os.cpuTicksPerSecond();
+    public double cpuUsage() throws Exception {
+        try {
+            double cpuTicksPerSecond = os.cpuTicksPerSecond();
 
-        double OSUpTime = os.uptime().uptimeSeconds();
-        Stat status = stat();
-        double utime = status.utime() / cpuTicksPerSecond;
-        double stime = status.stime() / cpuTicksPerSecond;
-        double starttime = status.starttime() / cpuTicksPerSecond;
-        double cpuTime = utime + stime;
+            double OSUpTime = os.uptime().uptimeSeconds();
+            Stat status = stat();
+            double utime = status.utime() / cpuTicksPerSecond;
+            double stime = status.stime() / cpuTicksPerSecond;
+            double starttime = status.starttime() / cpuTicksPerSecond;
+            double cpuTime = utime + stime;
 
-        return cpuTime / (OSUpTime - starttime);
+            return cpuTime / (OSUpTime - starttime);
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate CPU usage of process!", e);
+        }
     }
 
-    public float cpuTime() throws IOException {
-        Stat status = stat();
-        long cpuTicksPerSecond = os.cpuTicksPerSecond();
-        float utime = (float) status.utime() / cpuTicksPerSecond;
-        float stime = (float) status.stime() / cpuTicksPerSecond;
-        return utime + stime;
+    public float cpuTime() throws Exception {
+        try {
+            Stat status = stat();
+            long cpuTicksPerSecond = os.cpuTicksPerSecond();
+            float utime = (float) status.utime() / cpuTicksPerSecond;
+            float stime = (float) status.stime() / cpuTicksPerSecond;
+            return utime + stime;
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate CPU time of process!", e);
+        }
     }
 
     public long pid() {

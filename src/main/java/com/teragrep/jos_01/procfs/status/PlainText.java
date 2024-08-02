@@ -45,7 +45,6 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +58,7 @@ public class PlainText implements Text {
         this(new ArrayList<String>(Collections.singletonList(text)), LocalDateTime.now());
     }
 
-    public PlainText(Text origin) throws IOException {
+    public PlainText(Text origin) throws Exception {
         this(origin.read(), origin.timestamp());
     }
 

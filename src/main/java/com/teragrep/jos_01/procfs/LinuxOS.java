@@ -46,7 +46,6 @@
 package com.teragrep.jos_01.procfs;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.teragrep.jos_01.procfs.status.*;
 import com.teragrep.jos_01.procfs.status.os.*;
@@ -64,9 +63,11 @@ public class LinuxOS {
     public LinuxOS(SysconfInterface sysconf) {
         this("/proc", sysconf);
     }
+
     public LinuxOS(String procDirectoryPath) {
         this(procDirectoryPath, new Sysconf());
     }
+
     public LinuxOS() {
         this("/proc", new Sysconf());
     }
@@ -76,64 +77,115 @@ public class LinuxOS {
         this.sysconf = sysconf;
     }
 
-    public Stat stat() throws IOException {
-        return new Stat(new RowFile(procDirectory, "stat"));
+    public Stat stat() throws Exception {
+        try {
+            return new Stat(new RowFile(procDirectory, "stat"));
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to create a Stat object!", e);
+        }
     }
 
-    public Vmstat vmstat() throws IOException {
-        return new Vmstat(new RowFile(procDirectory, "vmstat"));
+    public Vmstat vmstat() throws Exception {
+        try {
+            return new Vmstat(new RowFile(procDirectory, "vmstat"));
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to create a Vmstat object!", e);
+        }
     }
 
-    public Meminfo meminfo() throws IOException {
-        return new Meminfo(new RowFile(procDirectory, "meminfo"));
+    public Meminfo meminfo() throws Exception {
+        try {
+            return new Meminfo(new RowFile(procDirectory, "meminfo"));
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to create a Meminfo object!", e);
+        }
     }
 
     // Estimates page size in kB.
-    public long pageSize() throws IOException {
-        Vmstat vmstat = vmstat();
-        Meminfo meminfo = meminfo();
-        long mapped = meminfo.Mapped();
-        long nr_mapped = vmstat.nr_mapped();
-        return mapped / nr_mapped;
+    public long pageSize() throws Exception {
+        try {
+            Vmstat vmstat = vmstat();
+            Meminfo meminfo = meminfo();
+            long mapped = meminfo.Mapped();
+            long nr_mapped = vmstat.nr_mapped();
+            return mapped / nr_mapped;
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate page size! ", e);
+        }
     }
 
     // Returns total RAM in kB
-    public long totalRAM() throws IOException {
-        Meminfo meminfo = meminfo();
-        return meminfo.MemTotal();
-    }
+    public long totalRAM() throws Exception {
+        try {
 
-    public int cpuCount() throws IOException {
-        Cpuinfo cpuinfo = cpuinfo();
-        return cpuinfo.cpuCount();
-    }
-
-    public int cpuPhysicalCoreCount() throws IOException {
-        Cpuinfo cpuinfo = cpuinfo();
-        return cpuinfo.cpuPhysicalCoreCount();
-    }
-
-    public int cpuThreadCount() throws IOException {
-        Cpuinfo cpuinfo = cpuinfo();
-        return cpuinfo.cpuThreadCount();
-    }
-
-    public Cpuinfo cpuinfo() throws IOException {
-        return new Cpuinfo(new RowFile(procDirectory, "cpuinfo"));
-    }
-
-    public Uptime uptime() throws IOException {
-        return new Uptime(new CharacterDelimited(new RowFile(procDirectory, "uptime"), " "));
-    }
-
-    public long cpuTicksPerSecond() throws IOException {
-        long clkTck = sysconf.main();
-        if (clkTck == -1) {
-            throw new IOException(
-                    "Failed to get system cpu tick rate! Call to Sysconf(_SC_CLK_TCK) returned -1, indicating an error."
-            );
+            Meminfo meminfo = meminfo();
+            return meminfo.MemTotal();
         }
-        return clkTck;
+        catch (Exception e) {
+            throw new Exception("Failed to calculate total system RAM!", e);
+        }
+    }
+
+    public int cpuCount() throws Exception {
+        try {
+            Cpuinfo cpuinfo = cpuinfo();
+            return cpuinfo.cpuCount();
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate system CPU count!", e);
+        }
+    }
+
+    public int cpuPhysicalCoreCount() throws Exception {
+        try {
+            Cpuinfo cpuinfo = cpuinfo();
+            return cpuinfo.cpuPhysicalCoreCount();
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate system phyical CPU core count!", e);
+        }
+    }
+
+    public int cpuThreadCount() throws Exception {
+        try {
+            Cpuinfo cpuinfo = cpuinfo();
+            return cpuinfo.cpuThreadCount();
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to calculate system CPU thread count!", e);
+        }
+    }
+
+    public Cpuinfo cpuinfo() throws Exception {
+        try {
+            return new Cpuinfo(new RowFile(procDirectory, "cpuinfo"));
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to create a Cpuinfo object!", e);
+        }
+    }
+
+    public Uptime uptime() throws Exception {
+        try {
+            return new Uptime(new CharacterDelimited(new RowFile(procDirectory, "uptime"), " "));
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to create a Uptime object!", e);
+        }
+    }
+
+    public long cpuTicksPerSecond() throws Exception {
+        try {
+            long clkTck = sysconf.main();
+            return clkTck;
+        }
+        catch (Exception e) {
+            throw new Exception("Failed to get system CPU tick rate!", e);
+        }
     }
 
 }

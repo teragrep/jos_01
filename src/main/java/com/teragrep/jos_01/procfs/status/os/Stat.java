@@ -49,7 +49,6 @@ import com.teragrep.jos_01.procfs.status.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class Stat implements Text {
     private final long procs_running;
     private final long procs_blocked;
 
-    public Stat(Text origin) throws IOException {
+    public Stat(Text origin) throws Exception {
         timestamp = origin.timestamp();
         fields = new PlainText(new Replaced(origin, " +", " ")).read();
         cpus = new ArrayList<ArrayList<Long>>();

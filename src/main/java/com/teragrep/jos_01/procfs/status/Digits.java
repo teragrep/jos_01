@@ -45,7 +45,6 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class Digits implements Text {
     }
 
     @Override
-    public ArrayList<String> read() throws IOException {
+    public ArrayList<String> read() throws Exception {
         Iterator<String> iterator = origin.read().iterator();
         while (iterator.hasNext()) {
             String text = iterator.next();
