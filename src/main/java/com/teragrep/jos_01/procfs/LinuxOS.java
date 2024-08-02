@@ -64,7 +64,9 @@ public class LinuxOS {
     public LinuxOS(SysconfInterface sysconf) {
         this("/proc", sysconf);
     }
-
+    public LinuxOS(String procDirectoryPath) {
+        this(procDirectoryPath, new Sysconf());
+    }
     public LinuxOS() {
         this("/proc", new Sysconf());
     }
