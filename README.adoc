@@ -1,8 +1,3 @@
-// Before publishing your new repository:
-// 1. Write the readme file
-// 2. Update the issues link in Contributing section in the readme file
-// 3. Update the discussion link in config.yml file in .github/ISSUE_TEMPLATE directory
-
 = Java Operating System Statistics (jos_01)
 
 This project will extract statistics from the operating system and running processes into Java objects.
@@ -10,8 +5,6 @@ You can use this to easily get information such as memory usage about running pr
 The information provided is based on the Linux filesystem's /proc files.
 
 == Features
-
-// List your project's features
 
 Check if a process is alive using process id.
 Get statistics on the OS or any running process using your system's /proc files as the source of truth.
@@ -33,6 +26,7 @@ Relies on availability of /proc files, so JOS-01 needs to have access to these f
 
 Requirements:
 Java version 1.8
+Maven
 
 Installation:
 Copy src/main/c to your projects src/main directory
@@ -82,8 +76,6 @@ Stat stat = process.stat();
 System.out.println(stat.comm());
 
 == Contributing
-
-// Change the repository name in the issues link to match with your project's name
 
 You can involve yourself with our project by https://github.com/teragrep/jos_01/issues/new/choose[opening an issue] or submitting a pull request.
 
