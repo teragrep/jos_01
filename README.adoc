@@ -29,15 +29,18 @@ Java version 1.8
 Maven
 
 Installation:
-Copy src/main/c to your projects src/main directory
-Copy <plugins> from jos_01 pom.xml to your project's pom.xml
+Include the following dependency into your project's pom.xml file:
+    <dependency>
+      <groupId>com.teragrep</groupId>
+      <artifactId>jos_01</artifactId>
+    </dependency>
 
-Run "mvn clean install" successfully before use.
-Maven build includes automake scripts to compile the code in "sysconf.c", which is used in the program during runtime via JNA.
-Requirements for compiling the C code:
-- automake
-- autoreconf
-- gcc
+// Run "mvn clean install" successfully before use.
+// Maven build includes automake scripts to compile the code in "sysconf.c", which is used in the program during runtime via JNA.
+// Requirements for compiling the C code:
+// - automake
+// - autoreconf
+// - gcc
 
 Usage:
 Operating system statistics:
