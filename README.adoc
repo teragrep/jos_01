@@ -2,14 +2,14 @@
 
 This project will extract statistics from the operating system and running processes into Java objects.
 You can use this to easily get information such as memory usage about running processes and the operating system itself.
-The information provided is based on the Linux filesystem's /proc files.
+The information provided is based on the Linux filesystem's `/proc` files.
 
 == Features
 
-Check if a process is alive using process id.
-Get statistics on the OS or any running process using your system's /proc files as the source of truth.
-High level functions calculate process performance statistics automatically, such as residentSetSize()
-Create objects representing the current state of a /proc file and get access to the file's values.
+- Can be used to check if a process is alive using process ID.
+- Provides statistics on the OS or any running process using your system's `/proc` files as the source of truth.
+- Provides high level methods that calculate OS or process performance statistics automatically, such as `residentSetSize()`.
+- Can be used to create Java objects representing the current state of a `/proc` file and get access to the file's values.
 
 This project can be used to easily create system or process monitoring solutions in Java applications.
 
@@ -19,64 +19,57 @@ See the official documentation on https://docs.teragrep.com[docs.teragrep.com].
 
 == Limitations
 
-Only supports Linux-based operating systems
-Relies on availability of /proc files, so JOS-01 needs to have access to these files.
+- Only supports Linux-based operating systems
+- Requires access to `/proc` files in order to function
 
-== How to [compile/use/implement]
+== How to use
 
-Requirements:
-Java version 1.8
-Maven
+## Requirements
+- Java version 1.8
+- Maven
 
-Installation:
+## Installation
 Include the following dependency into your project's pom.xml file:
     <dependency>
       <groupId>com.teragrep</groupId>
       <artifactId>jos_01</artifactId>
     </dependency>
 
-// Run "mvn clean install" successfully before use.
-// Maven build includes automake scripts to compile the code in "sysconf.c", which is used in the program during runtime via JNA.
-// Requirements for compiling the C code:
-// - automake
-// - autoreconf
-// - gcc
-
-Usage:
-Operating system statistics:
+## Usage
+### Operating system statistics
 Start by creating a LinuxOS object.
 Optionally provide an object implementing SysconfInterface to manually configure the Operating system CPU tick rate.
 Use methods of LinuxOS object to get information on operating system
 
-Process statistics:
+### Process statistics
 Create a Process object by supplying a valid process ID to Process' constructor.
 Optionally provide a specific LinuxOS object during construction so that OS configuration is applied to Process object's methods
 
 
-Examples of use:
+## Examples of use
 
-Creating a new LinuxOS object with automatic configuration:
-LinuxOS os = new LinuxOS();
+### Creating a new LinuxOS object with automatic configuration
+    LinuxOS os = new LinuxOS();
 
-Creating a new Process object with automatic configuration:
-Process process = new Process(250);
+### Creating a new Process object with automatic configuration
+    Process process = new Process(250);
 
-Creating a new LinuxOS object with manual CPU tickrate configuration (skipping usage of JNA to automatically get CPU tickrate)
-LinuxOS os = new LinuxOS(SysconfInterface.Fake(100));
+### Creating a new LinuxOS object with manual CPU tickrate configuration
+    LinuxOS os = new LinuxOS(SysconfInterface.Fake(100));
 
-CPU count of current system:
-LinuxOS os = new LinuxOS();
-System.out.println(os.cpuCount());
+### CPU count of current system:
+    LinuxOS os = new LinuxOS();
+    System.out.println(os.cpuCount());
 
-Manually configure CPU tickrate and get CpuTime of process with pid 1:
-LinuxOS os = new LinuxOS(SysconfInterface.Fake(1000));
-Process process = new Process(1,os);
-System.out.println(process.cpuTime());
+### Manually configure CPU tickrate and get CpuTime of process with ID 1
+    LinuxOS os = new LinuxOS(SysconfInterface.Fake(1000));
+    Process process = new Process(1,os);
+    System.out.println(process.cpuTime());
 
-Access /proc/stat files of process with pid 250 and print out "comm" value:
-Process process = new Process(250);
-Stat stat = process.stat();
-System.out.println(stat.comm());
+### Access /proc/stat files of process with ID 250 and print out "comm" value
+    Process process = new Process(250);
+    Stat stat = process.stat();
+    System.out.println(stat.comm());
 
 == Contributing
 
