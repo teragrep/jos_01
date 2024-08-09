@@ -25,10 +25,12 @@ See the official documentation on https://docs.teragrep.com[docs.teragrep.com].
 == How to use
 
 === Requirements
+
 - Java version 1.8
 - Maven
 
 === Installation
+
 Include the following dependency into your project's pom.xml file:
 
     <dependency>
@@ -39,13 +41,14 @@ Include the following dependency into your project's pom.xml file:
 === Usage
 
 ==== Operating system statistics
+
 Start by creating a LinuxOS object.
-Optionally provide an object implementing SysconfInterface to manually configure the Operating system CPU tick rate.
-Use methods of LinuxOS object to get information on operating system
+Optionally provide a configuration object by implementing `SysconfInterface` to manually configure the Operating system CPU tick rate.
+Use methods of LinuxOS object to get information on operating system.
 
 ==== Process statistics
 Create a Process object by supplying a valid process ID to Process' constructor.
-Optionally provide a specific LinuxOS object during construction so that OS configuration is applied to Process object's methods
+Optionally provide a specific LinuxOS object during construction, so that OS configuration is applied to Process object's methods
 
 
 === Examples of use
