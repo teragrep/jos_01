@@ -48,7 +48,7 @@ Use methods of LinuxOS object to get information on operating system.
 
 ==== Process statistics
 Create a Process object by supplying a valid process ID to Process' constructor.
-Optionally provide a specific LinuxOS object during construction, so that OS configuration is applied to Process object's methods
+Optionally provide a specific LinuxOS object during construction, so that OS configuration is applied to Process object's methods.
 
 
 === Examples of use
