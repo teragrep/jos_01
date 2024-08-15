@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/opt/Fail-Safe/jos_01/lib/sysconf'
+libdir='/opt/teragrep/jos_01/lib/sysconf'

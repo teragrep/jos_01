@@ -57,7 +57,7 @@ public class Sysconf implements SysconfInterface {
     public interface LibSysconf extends Library {
 
         LibSysconf INSTANCE = (LibSysconf) Native
-                .load("/lib/opt/Fail-Safe/jos_01/lib/sysconf/sysconf.so", LibSysconf.class);
+                .load("/lib/opt/teragrep/jos_01/lib/sysconf/sysconf.so", LibSysconf.class);
 
         public long main();
     }
@@ -71,7 +71,7 @@ public class Sysconf implements SysconfInterface {
         }
         catch (UnsatisfiedLinkError unsatisfiedLinkError) {
             throw new Exception(
-                    "Failed to initialize Native C library! Make sure that classes/lib/opt/Fail-Safe/jos_01/lib/sysconf/sysconf.so exists and is readable! Try running \"mvn clean install\" to generate required files",
+                    "Failed to initialize Native C library! Make sure that classes/lib/opt/teragrep/jos_01/lib/sysconf/sysconf.so exists and is readable! Try running \"mvn clean install\" to generate required files",
                     unsatisfiedLinkError
             );
         }

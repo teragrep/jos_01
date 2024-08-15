@@ -219,7 +219,7 @@
             <configuration>
               <executable>./configure</executable>
               <arguments>
-                <argument>--prefix=/opt/Fail-Safe/${project.artifactId}</argument>
+                <argument>--prefix=/opt/teragrep/${project.artifactId}</argument>
               </arguments>
               <workingDirectory>${project.build.directory}/${project.artifactId}/src/main/c</workingDirectory>
               <environmentVariables>
