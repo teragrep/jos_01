@@ -71,7 +71,8 @@ public class Cpuinfo implements Text {
                 processors.add(new Processor(processorFields));
                 processorFields = new ArrayList<>();
             }
-            ArrayList<String> keyValuePair = new Trimmed(new CharacterDelimited((new TimeaddedText(field)), ":")).read();
+            ArrayList<String> keyValuePair = new Trimmed(new CharacterDelimited((new TimeaddedText(field)), ":"))
+                    .read();
             String key;
             String value;
             key = keyValuePair.get(0);

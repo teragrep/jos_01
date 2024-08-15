@@ -47,5 +47,6 @@ package com.teragrep.jos_01.procfs;
 
 // Interface for Sysconf object. Implementations are used to access Sysconf values in different ways.
 public interface SysconfInterface {
+
     long main() throws Exception;
 }

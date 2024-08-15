@@ -94,7 +94,8 @@ public class Stat implements Text {
                 }
             }
             if (field.startsWith("softirq")) {
-                ArrayList<String> softIrqValues = new Digits(new CharacterDelimited(new TimeaddedText(field), " ")).read();
+                ArrayList<String> softIrqValues = new Digits(new CharacterDelimited(new TimeaddedText(field), " "))
+                        .read();
                 ArrayList<Long> softIrqLongs = new ArrayList<Long>();
                 for (String value : softIrqValues) {
                     softirq.add(Long.parseLong(value));
