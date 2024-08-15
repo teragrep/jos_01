@@ -50,6 +50,8 @@ import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public class Vmstat implements Text {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Vmstat.class);
 
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final long nr_free_pages;
     private final long nr_inactive_anon;
     private final long nr_active_anon;
@@ -249,12 +251,12 @@ public class Vmstat implements Text {
         return fields;
     }
 
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 
     public void printTimestamp() {
-        LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
+        LOGGER.info(Date.from(timestamp).toString());
     }
 
     public long nr_free_pages() {

@@ -46,6 +46,7 @@
 package com.teragrep.jos_01.procfs.status;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,7 +54,7 @@ import java.util.Iterator;
 public class Digits implements Text {
 
     private final Text origin;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final ArrayList<String> digitText;
 
     public Digits(Text origin) {
@@ -89,7 +90,7 @@ public class Digits implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 

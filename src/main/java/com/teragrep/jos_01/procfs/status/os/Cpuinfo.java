@@ -49,6 +49,7 @@ import com.teragrep.jos_01.procfs.status.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -59,7 +60,7 @@ import java.util.*;
 public class Cpuinfo implements Text {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Cpuinfo.class);
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final ArrayList<Processor> processors;
     private final ArrayList<String> fields;
 
@@ -126,12 +127,12 @@ public class Cpuinfo implements Text {
         return fields;
     }
 
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 
     public void printTimestamp() {
-        LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
+        LOGGER.info(Date.from(timestamp).toString());
     }
 
     private static class Processor {

@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,7 +55,7 @@ import java.util.regex.Pattern;
 public class Matched implements Text {
 
     private final Text origin;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final Pattern pattern;
     private final ArrayList<String> matchedText;
 
@@ -83,7 +84,7 @@ public class Matched implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 

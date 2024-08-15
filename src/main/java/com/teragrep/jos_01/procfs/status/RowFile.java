@@ -49,13 +49,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class RowFile extends File implements Text {
 
     private final BufferedReader reader;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final ArrayList<String> fileRows;
     private final Logger LOGGER = LoggerFactory.getLogger(RowFile.class);
 
@@ -70,7 +71,7 @@ public class RowFile extends File implements Text {
     public RowFile(File procFile, BufferedReader reader, ArrayList<String> fileRows) throws Exception {
         super(procFile.toURI());
         this.reader = reader;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Instant.now();
         this.fileRows = fileRows;
     }
 
@@ -89,7 +90,7 @@ public class RowFile extends File implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 }

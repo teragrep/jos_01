@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,7 @@ public class CharacterDelimited implements Text {
 
     private final Text origin;
     private final String delimiter;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final ArrayList<String> delimitedFields;
 
     public CharacterDelimited(Text origin, String delimiter) {
@@ -79,7 +80,7 @@ public class CharacterDelimited implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 

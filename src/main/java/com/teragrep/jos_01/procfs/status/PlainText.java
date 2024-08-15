@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,17 +53,17 @@ import java.util.Collections;
 public class PlainText implements Text {
 
     private final ArrayList<String> fields;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
 
     public PlainText(String text) {
-        this(new ArrayList<String>(Collections.singletonList(text)), LocalDateTime.now());
+        this(new ArrayList<String>(Collections.singletonList(text)), Instant.now());
     }
 
     public PlainText(Text origin) throws Exception {
         this(origin.read(), origin.timestamp());
     }
 
-    public PlainText(ArrayList<String> text, LocalDateTime timestamp) {
+    public PlainText(ArrayList<String> text, Instant timestamp) {
         fields = text;
         this.timestamp = timestamp;
     }
@@ -73,7 +74,7 @@ public class PlainText implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 }

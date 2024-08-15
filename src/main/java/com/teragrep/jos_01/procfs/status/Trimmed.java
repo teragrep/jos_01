@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,7 +53,7 @@ import java.util.Iterator;
 public class Trimmed implements Text {
 
     private final Text origin;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final ArrayList<String> trimmedText;
 
     public Trimmed(Text origin) {
@@ -76,7 +77,7 @@ public class Trimmed implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 

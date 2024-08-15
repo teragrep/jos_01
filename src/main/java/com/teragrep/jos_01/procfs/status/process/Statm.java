@@ -50,6 +50,7 @@ import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -60,7 +61,7 @@ import java.util.*;
 public class Statm implements Text {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Statm.class);
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final long size;
     private final long resident;
     private final long shared;
@@ -92,12 +93,12 @@ public class Statm implements Text {
         LOGGER.info("{}\n{}\n{}\n{}\n{}\n{}\n{}\n", size, resident, shared, text, lib, data, dt);
     }
 
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 
     public void printTimestamp() {
-        LOGGER.info(timestamp.format(DateTimeFormatter.ISO_DATE));
+        LOGGER.info(Date.from(timestamp).toString());
     }
 
     public long size() {

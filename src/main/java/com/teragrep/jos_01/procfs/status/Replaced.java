@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,7 +53,7 @@ import java.util.Iterator;
 public class Replaced implements Text {
 
     private final Text origin;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final String regex;
     private final String replacement;
     private final ArrayList<String> replacedText;
@@ -80,7 +81,7 @@ public class Replaced implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 

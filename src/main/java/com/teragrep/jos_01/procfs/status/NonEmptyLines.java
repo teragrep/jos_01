@@ -45,6 +45,7 @@
  */
 package com.teragrep.jos_01.procfs.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,7 +53,7 @@ import java.util.Iterator;
 public class NonEmptyLines implements Text {
 
     private final Text origin;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final ArrayList<String> nonEmptyText;
 
     public NonEmptyLines(Text origin) {
@@ -78,7 +79,7 @@ public class NonEmptyLines implements Text {
     }
 
     @Override
-    public LocalDateTime timestamp() {
+    public Instant timestamp() {
         return timestamp;
     }
 
