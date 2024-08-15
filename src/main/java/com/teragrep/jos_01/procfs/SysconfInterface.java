@@ -45,26 +45,7 @@
  */
 package com.teragrep.jos_01.procfs;
 
-// Exposes a Fake class that can be used for testing without having to compile the C code. Fake class simply returns a hardcoded value
+// Interface for Sysconf object. Implementations are used to access Sysconf values in different ways.
 public interface SysconfInterface {
-
-    final class Fake implements SysconfInterface {
-
-        private final int tickRate;
-
-        public Fake() {
-            this(100);
-        }
-
-        public Fake(int tickRate) {
-            this.tickRate = tickRate;
-        }
-
-        @Override
-        public long main() {
-            return tickRate;
-        }
-    }
-
     long main() throws Exception;
 }

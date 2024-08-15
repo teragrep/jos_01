@@ -308,7 +308,7 @@ public class ProcessTest {
     public void CpuTimeTest() {
         Assertions.assertDoesNotThrow(() -> {
             long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-            Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
+            Process jvm = new Process(pid, new LinuxOS(new FakeSysconf()));
             float cpuTime1 = jvm.cpuTime();
             ArrayList<Double> workArray = new ArrayList<Double>();
             for (int i = 0; i < 300000; i++) { // Needs to do a lot of work to have different CPUtimes since the times are in seconds, not ticks
@@ -342,7 +342,7 @@ public class ProcessTest {
     @Test
     public void memoryPercentageTest() {
         Assertions.assertDoesNotThrow(() -> {
-            LinuxOS os = new LinuxOS(new SysconfInterface.Fake());
+            LinuxOS os = new LinuxOS(new FakeSysconf());
             Process jvm = new Process(
                     Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]),
                     os
@@ -360,7 +360,7 @@ public class ProcessTest {
     public void cpuUsageTest() {
         Assertions.assertDoesNotThrow(() -> {
             long pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-            Process jvm = new Process(pid, new LinuxOS(new SysconfInterface.Fake()));
+            Process jvm = new Process(pid, new LinuxOS(new FakeSysconf()));
             double cpuUsage1 = jvm.cpuUsage();
             ArrayList<String> workArray = new ArrayList<String>();
             for (int i = 0; i < 3000000; i++) {
