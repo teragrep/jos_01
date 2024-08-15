@@ -74,13 +74,13 @@ public class Stat implements Text {
 
     public Stat(Text origin) throws Exception {
         timestamp = origin.timestamp();
-        fields = new PlainText(new Replaced(origin, " +", " ")).read();
+        fields = new TimeaddedText(new Replaced(origin, " +", " ")).read();
         cpus = new ArrayList<ArrayList<Long>>();
         intr = new ArrayList<Long>();
         softirq = new ArrayList<Long>();
         for (String field : fields) {
             if (field.startsWith("cpu")) {
-                ArrayList<String> cpuValues = new Digits(new CharacterDelimited(new PlainText(field), " ")).read();
+                ArrayList<String> cpuValues = new Digits(new CharacterDelimited(new TimeaddedText(field), " ")).read();
                 ArrayList<Long> cpuLongs = new ArrayList<Long>();
                 for (String value : cpuValues) {
                     cpuLongs.add(Long.parseLong(value));
@@ -88,13 +88,13 @@ public class Stat implements Text {
                 cpus.add(cpuLongs);
             }
             if (field.startsWith("intr")) {
-                ArrayList<String> intrValues = new Digits(new CharacterDelimited(new PlainText(field), " ")).read();
+                ArrayList<String> intrValues = new Digits(new CharacterDelimited(new TimeaddedText(field), " ")).read();
                 for (String value : intrValues) {
                     intr.add(Long.parseLong(value));
                 }
             }
             if (field.startsWith("softirq")) {
-                ArrayList<String> softIrqValues = new Digits(new CharacterDelimited(new PlainText(field), " ")).read();
+                ArrayList<String> softIrqValues = new Digits(new CharacterDelimited(new TimeaddedText(field), " ")).read();
                 ArrayList<Long> softIrqLongs = new ArrayList<Long>();
                 for (String value : softIrqValues) {
                     softirq.add(Long.parseLong(value));

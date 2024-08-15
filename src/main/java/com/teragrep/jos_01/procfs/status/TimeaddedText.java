@@ -49,20 +49,20 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class PlainText implements Text {
+public class TimeaddedText implements Text {
 
     private final ArrayList<String> fields;
     private final Instant timestamp;
 
-    public PlainText(String text) {
+    public TimeaddedText(String text) {
         this(new ArrayList<String>(Collections.singletonList(text)), Instant.now());
     }
 
-    public PlainText(Text origin) throws Exception {
+    public TimeaddedText(Text origin) throws Exception {
         this(origin.read(), origin.timestamp());
     }
 
-    public PlainText(ArrayList<String> text, Instant timestamp) {
+    public TimeaddedText(ArrayList<String> text, Instant timestamp) {
         fields = text;
         this.timestamp = timestamp;
     }
