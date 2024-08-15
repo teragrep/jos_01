@@ -47,7 +47,6 @@ package com.teragrep.jos_01.procfs.status;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 
