@@ -131,7 +131,7 @@ public class Cpuinfo implements Text {
     }
 
     public void printTimestamp() {
-        LOGGER.info(Date.from(timestamp).toString());
+        LOGGER.info(timestamp.toString());
     }
 
     private static class Processor {

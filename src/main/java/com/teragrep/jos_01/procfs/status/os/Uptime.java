@@ -49,7 +49,6 @@ import com.teragrep.jos_01.procfs.status.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 
@@ -84,7 +83,7 @@ public class Uptime implements Text {
     }
 
     public void printTimestamp() {
-        LOGGER.info(Date.from(timestamp).toString());
+        LOGGER.info(timestamp.toString());
     }
 
     public double uptimeSeconds() {

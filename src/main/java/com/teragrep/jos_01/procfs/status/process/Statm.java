@@ -96,7 +96,7 @@ public class Statm implements Text {
     }
 
     public void printTimestamp() {
-        LOGGER.info(Date.from(timestamp).toString());
+        LOGGER.info(timestamp.toString());
     }
 
     public long size() {

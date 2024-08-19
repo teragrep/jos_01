@@ -49,7 +49,6 @@ import com.teragrep.jos_01.procfs.status.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 
@@ -164,7 +163,7 @@ public class Meminfo implements Text {
     }
 
     public void printTimestamp() {
-        LOGGER.info(Date.from(timestamp).toString());
+        LOGGER.info(timestamp.toString());
     }
 
     public long MemTotal() {

@@ -51,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 
@@ -183,7 +182,7 @@ public class Stat implements Text {
     }
 
     public void printTimestamp() {
-        LOGGER.info(Date.from(timestamp).toString());
+        LOGGER.info(timestamp.toString());
     }
 
     public long pid() {
