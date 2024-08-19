@@ -81,7 +81,7 @@ public class Replaced implements Text {
 
     @Override
     public Instant timestamp() {
-        return timestamp;
+        return origin.timestamp();
     }
 
 }

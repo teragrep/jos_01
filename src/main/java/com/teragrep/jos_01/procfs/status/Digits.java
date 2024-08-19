@@ -90,7 +90,7 @@ public class Digits implements Text {
 
     @Override
     public Instant timestamp() {
-        return timestamp;
+        return origin.timestamp();
     }
 
 }

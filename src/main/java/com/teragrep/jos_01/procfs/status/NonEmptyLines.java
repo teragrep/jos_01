@@ -79,7 +79,7 @@ public class NonEmptyLines implements Text {
 
     @Override
     public Instant timestamp() {
-        return timestamp;
+        return origin.timestamp();
     }
 
 }
