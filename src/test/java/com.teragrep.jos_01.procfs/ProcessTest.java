@@ -117,6 +117,20 @@ public class ProcessTest {
         return pids;
     }
 
+    // Should be able to change default proc directory.
+    @Test
+    public void procDirectoryTest() {
+        Assertions.assertDoesNotThrow(() -> {
+            Process process = new Process(1);
+            Assertions.assertTrue(process.isAlive());
+        });
+        Assertions.assertThrows(Exception.class, () -> {
+            LinuxOS os = new LinuxOS("ThisProcDirectoryDoesntExist");
+            Process process = new Process(1, os);
+            System.out.println(process.stat().read());
+        });
+    }
+
     // JVM process should have 52 fields in its Stat file, and it should have (systemd) as comm value and 1 as pid value in the file. None of the fields should be null
     @Test
     public void readJvmFileTest() {

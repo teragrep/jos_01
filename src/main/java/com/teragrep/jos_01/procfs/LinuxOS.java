@@ -188,4 +188,8 @@ public class LinuxOS {
         }
     }
 
+    public File procDirectory() {
+        return procDirectory;
+    }
+
 }

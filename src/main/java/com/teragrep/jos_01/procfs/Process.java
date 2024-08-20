@@ -67,11 +67,11 @@ public class Process {
     }
 
     public Process(long processId) throws Exception {
-        this(processId, new File("/proc", Long.toString(processId)), new LinuxOS());
+        this(processId, new LinuxOS());
     }
 
     public Process(long processId, LinuxOS os) throws Exception {
-        this(processId, new File("/proc", Long.toString(processId)), os);
+        this(processId, new File(os.procDirectory(), Long.toString(processId)), os);
     }
 
     public Process(long processId, File procDirectory, LinuxOS os) throws Exception {
