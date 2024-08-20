@@ -98,25 +98,6 @@ public class Process {
         }
     }
 
-    private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) throws Exception {
-        if (!file.isDirectory()) {
-            nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
-        }
-        else {
-            File[] subdirectories = file.listFiles();
-            if (subdirectories == null) {
-                throw new Exception(
-                        "Failed to get all file names! Either no permission to open file at " + file.getPath()
-                                + " or it is not a directory!"
-                );
-            }
-            for (File child : file.listFiles()) {
-                procFileNames(nameList, child);
-            }
-        }
-        return nameList;
-    }
-
     public ArrayList<Task> tasks() throws Exception {
         ArrayList<Task> tasks = new ArrayList<Task>();
         File processTaskDirectory = new File(procDirectory, "task");

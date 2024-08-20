@@ -53,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
 
 public class Task {
 
@@ -78,20 +77,6 @@ public class Task {
 
     public Statm statm() throws Exception {
         return new Statm(new RowFile(procDirectory, "statm"));
-    }
-
-    private ArrayList<String> procFileNames(ArrayList<String> nameList, File file) {
-        if (!file.isDirectory()) {
-            nameList.add(file.getPath().replace(procDirectory.getPath(), ""));
-        }
-        else {
-            for (File child : file.listFiles()) {
-                if (child != null) {
-                    procFileNames(nameList, child);
-                }
-            }
-        }
-        return nameList;
     }
 
     public long tid() {
