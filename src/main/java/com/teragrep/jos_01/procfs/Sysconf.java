@@ -56,8 +56,7 @@ public class Sysconf implements SysconfInterface {
 
     public interface LibSysconf extends Library {
 
-        LibSysconf INSTANCE = (LibSysconf) Native
-                .load("/lib/opt/teragrep/jos_01/lib/sysconf/sysconf.so", LibSysconf.class);
+        LibSysconf INSTANCE = (LibSysconf) Native.load("/sysconf.so", LibSysconf.class);
 
         public long main();
     }

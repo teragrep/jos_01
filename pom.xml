@@ -104,6 +104,16 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.4.0</version>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${project.basedir}/target/jos_01/src/main/c/.libs</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
         <version>2.43.0</version>
