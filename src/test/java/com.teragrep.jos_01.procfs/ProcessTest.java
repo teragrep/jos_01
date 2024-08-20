@@ -127,7 +127,7 @@ public class ProcessTest {
         Assertions.assertThrows(Exception.class, () -> {
             LinuxOS os = new LinuxOS("ThisProcDirectoryDoesntExist");
             Process process = new Process(1, os);
-            System.out.println(process.stat().read());
+            process.stat().read();
         });
     }
 
